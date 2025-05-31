@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Price Tracker</title>
+
+    <!-- Material Design CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        .header-color {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-panel {
+            margin: 1rem 0;
+        }
+
+        .price-high {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .price-medium {
+            color: #d69e2e;
+            font-weight: bold;
+        }
+
+        .price-low {
+            color: #38a169;
+            font-weight: bold;
+        }
+
+        .source-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .source-bookscouter {
+            background-color: #3182ce;
+        }
+
+        .source-christianbook {
+            background-color: #d53f8c;
+        }
+
+        .source-rainbowresource {
+            background-color: #38a169;
+        }
+
+        .source-camelcamelcamel {
+            background-color: #ed8936;
+        }
+    </style>
+</head>
+
+<body class="grey lighten-4">
+
+    <!-- Navigation -->
+    <nav class="header-color">
+        <div class="nav-wrapper container">
+            <a href="/" class="brand-logo">
+                <i class="material-icons left">book</i>Book Price Tracker
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li class="active"><a href="/"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+                <li><a href="/admin"><i class="material-icons left">settings</i>Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 2rem;">
+
+        <!-- Header Stats -->
+        <div class="row">
+            <div class="col s12 m4">
+                <div class="card-panel center-align white">
+                    <i class="material-icons large blue-text">library_books</i>
+                    <h5 class="blue-text">{{ isbns|length }}</h5>
+                    <p>Books Tracked</p>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel center-align white">
+                    <i class="material-icons large green-text">trending_up</i>
+                    <h5 class="green-text">{{ total_records }}</h5>
+                    <p>Total Price Records</p>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel center-align white">
+                    <i class="material-icons large orange-text">schedule</i>
+                    <h5 class="orange-text">Daily</h5>
+                    <p>Update Frequency</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        {% if error %}
+        <div class="card-panel red lighten-4">
+            <span class="red-text"><strong>Error:</strong> {{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Prices Table -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    <i class="material-icons left">attach_money</i>
+                    Current Prices
+                </span>
+
+                {% if prices %}
+                <div class="row">
+                    <div class="col s12">
+                        <table class="striped responsive-table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>ISBN</th>
+                                    <th>Source</th>
+                                    <th>Price</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for price in prices %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ price.title or 'Unknown Title' }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="grey-text">{{ price.isbn }}</span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="source-badge source-{{ price.source.lower().replace('.', '').replace(' ', '') }}">
+                                            {{ price.source }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% set price_val = price.price|float %}
+                                        {% if price_val > 50 %}
+                                        <span class="price-high">${{ "%.2f"|format(price_val) }}</span>
+                                        {% elif price_val > 25 %}
+                                        <span class="price-medium">${{ "%.2f"|format(price_val) }}</span>
+                                        {% else %}
+                                        <span class="price-low">${{ "%.2f"|format(price_val) }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="grey-text">
+                                            {{ price.timestamp|truncate(16, True, '') }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if price.url %}
+                                        <a href="{{ price.url }}" target="_blank" class="btn-small blue">
+                                            <i class="material-icons left">open_in_new</i>View
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
+                <div class="center-align" style="padding: 2rem;">
+                    <i class="material-icons large grey-text">inbox</i>
+                    <h5 class="grey-text">No price data available</h5>
+                    <p class="grey-text">Run the scraper to start collecting book prices.</p>
+                    <a href="#" class="btn waves-effect waves-light blue">
+                        <i class="material-icons left">play_arrow</i>
+                        Start Scraping
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        {% if charts %}
+        <div class="row">
+            <!-- Price Comparison Chart -->
+            {% if charts.price_comparison %}
+            <div class="col s12 l6">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">bar_chart</i>
+                            Price Comparison
+                        </span>
+                        <div class="center-align">
+                            <img src="data:image/png;base64,{{ charts.price_comparison }}" alt="Price Comparison Chart"
+                                class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Source Summary Chart -->
+            {% if charts.source_summary %}
+            <div class="col s12 l6">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">pie_chart</i>
+                            Data by Source
+                        </span>
+                        <div class="center-align">
+                            <img src="data:image/png;base64,{{ charts.source_summary }}" alt="Source Summary Chart"
+                                class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Price Trends Chart -->
+            {% if charts.price_trends %}
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">trending_up</i>
+                            Price Trends
+                        </span>
+                        <div class="center-align">
+                            <img src="data:image/png;base64,{{ charts.price_trends }}" alt="Price Trends Chart"
+                                class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ISBNs Being Tracked -->
+        {% if isbns %}
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    <i class="material-icons left">format_list_numbered</i>
+                    Tracked ISBNs
+                </span>
+                <div class="row">
+                    {% for isbn in isbns %}
+                    <div class="col s12 m6 l4">
+                        <div class="chip">
+                            {{ isbn }}
+                            <i class="close material-icons">close</i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer header-color" style="margin-top: 3rem;">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 center-align">
+                    <p class="white-text">Book Price Tracker - Built with Flask & Material Design</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Material Design JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        // Initialize Material Design components
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize tooltips
+            var tooltips = document.querySelectorAll('.tooltipped');
+            M.Tooltip.init(tooltips);
+
+            // Initialize dropdowns
+            var dropdowns = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(dropdowns);
+        });
+    </script>
+</body>
+
+</html>

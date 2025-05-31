@@ -1,0 +1,19 @@
+# Book Price Tracker - Python Dependencies
+
+# Core dependencies
+flask
+pandas
+requests
+selenium
+webdriver-manager
+beautifulsoup4
+schedule
+matplotlib
+plotly
+seaborn
+
+# Optional: for advanced scraping and browser automation
+playwright
+
+# Optional: for better logging with rotation
+loguru

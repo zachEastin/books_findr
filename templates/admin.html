@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Price Tracker - Admin</title>
+
+    <!-- Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+
+    <style>
+        .admin-card {
+            margin: 20px 0;
+        }
+
+        .isbn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .isbn-item:last-child {
+            border-bottom: none;
+        }
+
+        .isbn-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background-color: #4CAF50;
+        }
+
+        .status-error {
+            background-color: #f44336;
+        }
+
+        .status-pending {
+            background-color: #ff9800;
+        }
+    </style>
+</head>
+
+<body class="grey lighten-4">
+    <!-- Navigation -->
+    <nav class="blue darken-3">
+        <div class="nav-wrapper container">
+            <a href="/" class="brand-logo">
+                <i class="material-icons left">trending_up</i>Book Price Tracker
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+                <li class="active"><a href="/admin"><i class="material-icons left">settings</i>Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <h4 class="blue-text text-darken-3">
+                    <i class="material-icons left">settings</i>Administration Panel
+                </h4>
+                <p class="grey-text">Manage ISBNs and scraping operations</p>
+            </div>
+        </div>
+
+        <!-- Add ISBN Section -->
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card admin-card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">add</i>Add New ISBN
+                        </span>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="new-isbn" type="text" placeholder="9780134685991">
+                                <label for="new-isbn">ISBN (10 or 13 digits)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <button class="btn blue waves-effect waves-light" onclick="addISBN()">
+                            <i class="material-icons left">add</i>Add ISBN
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col s12 m6">
+                <div class="card admin-card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">flash_on</i>Quick Actions
+                        </span>
+                        <p>Perform bulk operations</p>
+                    </div>
+                    <div class="card-action">
+                        <button class="btn green waves-effect waves-light" onclick="scrapeAll()">
+                            <i class="material-icons left">sync</i>Scrape All
+                        </button>
+                        <button class="btn orange waves-effect waves-light" onclick="loadISBNs()">
+                            <i class="material-icons left">refresh</i>Refresh List
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISBN List -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card admin-card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">list</i>Tracked ISBNs
+                            <span class="badge blue white-text" id="isbn-count">0</span>
+                        </span>
+                        <div id="isbn-list" class="collection">
+                            <!-- ISBNs will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card admin-card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">history</i>Recent Activity
+                        </span>
+                        <div id="activity-log">
+                            <div class="grey-text">Loading recent activity...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Design JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        // Initialize Materialize components
+        document.addEventListener('DOMContentLoaded', function () {
+            M.AutoInit();
+            loadISBNs();
+            loadActivity();
+        });
+
+        // Load ISBNs
+        async function loadISBNs() {
+            try {
+                const response = await fetch('/api/isbns');
+                const data = await response.json();
+
+                const isbnList = document.getElementById('isbn-list');
+                const isbnCount = document.getElementById('isbn-count');
+
+                if (data.isbns && data.isbns.length > 0) {
+                    isbnList.innerHTML = data.isbns.map(isbn => `
+                        <div class="isbn-item">
+                            <div>
+                                <strong>${isbn}</strong>
+                                <span class="status-indicator status-pending"></span>
+                                <span class="grey-text">Ready for scraping</span>
+                            </div>
+                            <div class="isbn-actions">
+                                <button class="btn-small blue waves-effect waves-light" onclick="scrapeISBN('${isbn}')">
+                                    <i class="material-icons">sync</i>
+                                </button>
+                                <button class="btn-small red waves-effect waves-light" onclick="removeISBN('${isbn}')">
+                                    <i class="material-icons">delete</i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    isbnList.innerHTML = '<div class="grey-text center-align">No ISBNs being tracked</div>';
+                }
+
+                isbnCount.textContent = data.count || 0;
+            } catch (error) {
+                console.error('Error loading ISBNs:', error);
+                M.toast({ html: 'Error loading ISBNs', classes: 'red' });
+            }
+        }
+
+        // Add new ISBN
+        async function addISBN() {
+            const isbnInput = document.getElementById('new-isbn');
+            const isbn = isbnInput.value.trim();
+
+            if (!isbn) {
+                M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/isbns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isbn: isbn })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    isbnInput.value = '';
+                    loadISBNs();
+                } else {
+                    M.toast({ html: data.error, classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error adding ISBN:', error);
+                M.toast({ html: 'Error adding ISBN', classes: 'red' });
+            }
+        }
+
+        // Remove ISBN
+        async function removeISBN(isbn) {
+            if (!confirm(`Remove ISBN ${isbn} from tracking?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/isbns/${isbn}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    loadISBNs();
+                } else {
+                    M.toast({ html: data.error, classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error removing ISBN:', error);
+                M.toast({ html: 'Error removing ISBN', classes: 'red' });
+            }
+        }
+
+        // Scrape specific ISBN
+        async function scrapeISBN(isbn) {
+            M.toast({ html: `Starting scrape for ${isbn}...`, classes: 'blue' });
+
+            try {
+                const response = await fetch(`/api/scrape/${isbn}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    loadActivity();
+                } else {
+                    M.toast({ html: data.error, classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error scraping ISBN:', error);
+                M.toast({ html: 'Error scraping ISBN', classes: 'red' });
+            }
+        }
+
+        // Scrape all ISBNs
+        async function scrapeAll() {
+            if (!confirm('Start scraping all tracked ISBNs? This may take several minutes.')) {
+                return;
+            }
+
+            M.toast({ html: 'Starting bulk scrape operation...', classes: 'blue' });
+            // This would trigger a bulk scrape - implement as needed
+        }
+
+        // Load recent activity
+        async function loadActivity() {
+            try {
+                const response = await fetch('/api/prices/recent');
+                if (response.ok) {
+                    const data = await response.json();
+                    const activityLog = document.getElementById('activity-log');
+
+                    if (data.length > 0) {
+                        activityLog.innerHTML = data.slice(0, 10).map(record => `
+                            <div class="activity-item" style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong>${record.isbn}</strong> - ${record.source}
+                                        ${record.price ? `<span class="green-text">$${record.price}</span>` : '<span class="red-text">Failed</span>'}
+                                    </div>
+                                    <small class="grey-text">${new Date(record.timestamp).toLocaleString()}</small>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        activityLog.innerHTML = '<div class="grey-text">No recent activity</div>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Enter key support for ISBN input
+        document.getElementById('new-isbn').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addISBN();
+            }
+        });
+    </script>
+</body>
+
+</html>
