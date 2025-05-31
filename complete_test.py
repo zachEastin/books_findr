@@ -11,7 +11,7 @@ import pandas as pd
 
 # Test configuration
 BASE_URL = "http://127.0.0.1:5000"
-TEST_ISBN = "9781449361328"  # Learning Python by Mark Lutz
+TEST_ISBN = "1593173350"  # Learning Python by Mark Lutz
 
 
 def test_basic_api():

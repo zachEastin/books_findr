@@ -88,9 +88,6 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> Dict:
         # Wait for page to load
         WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
-
         # Try to find book title
         try:
             title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
@@ -158,9 +155,6 @@ def _scrape_christianbook_sync(isbn: str, search_url: str) -> Dict:
 
         # Wait for search results
         WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
 
         # Look for the first search result
         try:
@@ -251,9 +245,6 @@ def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> Dict:
 
         # Wait for search results
         WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
 
         # Look for search results
         try:
@@ -393,7 +384,7 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> Dict:
 
 
 # Async scraper functions
-async def scrape_bookscouter_async(isbn: str) -> Dict:
+async def scrape_bookscouter(isbn: str) -> Dict:
     """
     Async scrape book price from BookScouter
 
@@ -431,7 +422,7 @@ async def scrape_bookscouter_async(isbn: str) -> Dict:
     return result
 
 
-async def scrape_christianbook_async(isbn: str) -> Dict:
+async def scrape_christianbook(isbn: str) -> Dict:
     """
     Async scrape book price from Christianbook.com
 
@@ -470,7 +461,7 @@ async def scrape_christianbook_async(isbn: str) -> Dict:
     return result
 
 
-async def scrape_rainbowresource_async(isbn: str) -> Dict:
+async def scrape_rainbowresource(isbn: str) -> Dict:
     """
     Async scrape book price from RainbowResource.com
 
@@ -509,7 +500,7 @@ async def scrape_rainbowresource_async(isbn: str) -> Dict:
     return result
 
 
-async def scrape_camelcamelcamel_async(isbn: str) -> Dict:
+async def scrape_camelcamelcamel(isbn: str) -> Dict:
     """
     Async scrape Amazon price history from CamelCamelCamel
     Note: This gets the current Amazon price, not historical data
@@ -549,7 +540,7 @@ async def scrape_camelcamelcamel_async(isbn: str) -> Dict:
     return result
 
 
-async def scrape_all_sources_async(isbn: str) -> List[Dict]:
+async def scrape_all_sources(isbn: str) -> List[Dict]:
     """
     Async scrape an ISBN from all sources concurrently
 
@@ -560,12 +551,14 @@ async def scrape_all_sources_async(isbn: str) -> List[Dict]:
         List of result dictionaries from all sources
     """
     log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn}")
-    start_time = time.time()  # Create async tasks for all scrapers
+    start_time = time.time()
+
+    # Create async tasks for all scrapers
     tasks = [
-        scrape_bookscouter_async(isbn),
-        scrape_christianbook_async(isbn),
-        scrape_rainbowresource_async(isbn),
-        # scrape_camelcamelcamel_async(isbn),  # Uncomment to include CamelCamelCamel
+        scrape_bookscouter(isbn),
+        scrape_christianbook(isbn),
+        scrape_rainbowresource(isbn),
+        # scrape_camelcamelcamel(isbn),  # Uncomment to include CamelCamelCamel
     ]
 
     try:
@@ -632,7 +625,7 @@ async def scrape_multiple_isbns(isbns: List[str], batch_size: int = MAX_CONCURRE
         scraper_logger.info(f"Processing batch {i // batch_size + 1}: ISBNs {i + 1}-{min(i + batch_size, len(isbns))}")
 
         # Create tasks for this batch
-        batch_tasks = [scrape_all_sources_async(isbn) for isbn in batch]
+        batch_tasks = [scrape_all_sources(isbn) for isbn in batch]
 
         try:
             # Run batch concurrently
@@ -773,48 +766,6 @@ def scrape_all_isbns(isbn_file: str = None) -> None:
     asyncio.run(scrape_all_isbns_async(isbn_file))
 
 
-# Sync wrapper functions for backward compatibility
-def scrape_bookscouter_sync(isbn: str) -> Dict:
-    """Sync wrapper for scrape_bookscouter_async"""
-    return asyncio.run(scrape_bookscouter_async(isbn))
-
-
-def scrape_christianbook_sync(isbn: str) -> Dict:
-    """Sync wrapper for scrape_christianbook_async"""
-    return asyncio.run(scrape_christianbook_async(isbn))
-
-
-def scrape_rainbowresource_sync(isbn: str) -> Dict:
-    """Sync wrapper for scrape_rainbowresource_async"""
-    return asyncio.run(scrape_rainbowresource_async(isbn))
-
-
-def scrape_camelcamelcamel_sync(isbn: str) -> Dict:
-    """Sync wrapper for scrape_camelcamelcamel_async"""
-    return asyncio.run(scrape_camelcamelcamel_async(isbn))
-
-
-def scrape_all_sources_sync(isbn: str) -> List[Dict]:
-    """
-    Sync wrapper for scrape_all_sources_async - maintains backward compatibility
-
-    Args:
-        isbn: The ISBN to scrape
-
-    Returns:
-        List of result dictionaries from all sources
-    """
-    return asyncio.run(scrape_all_sources_async(isbn))
-
-
-# Backward compatibility: Export sync versions under original names
-scrape_bookscouter = scrape_bookscouter_sync
-scrape_christianbook = scrape_christianbook_sync
-scrape_rainbowresource = scrape_rainbowresource_sync
-scrape_camelcamelcamel = scrape_camelcamelcamel_sync
-scrape_all_sources = scrape_all_sources_sync
-
-
 if __name__ == "__main__":
     # Test the async scrapers
     test_isbn = "9780134685991"  # Effective Java
@@ -822,20 +773,21 @@ if __name__ == "__main__":
     async def test_async_scrapers():
         print("Testing async scraper functions...")
 
-        # Test individual scrapers        print("\n1. Testing async BookScouter...")
-        result = await scrape_bookscouter_async(test_isbn)
+        # Test individual scrapers
+        print("\n1. Testing async BookScouter...")
+        result = await scrape_bookscouter(test_isbn)
         print(f"   Result: {result}")
 
         print("\n2. Testing async Christianbook...")
-        result = await scrape_christianbook_async(test_isbn)
+        result = await scrape_christianbook(test_isbn)
         print(f"   Result: {result}")
 
         print("\n3. Testing async RainbowResource...")
-        result = await scrape_rainbowresource_async(test_isbn)
+        result = await scrape_rainbowresource(test_isbn)
         print(f"   Result: {result}")
 
         print("\n4. Testing async all sources (concurrent)...")
-        all_results = await scrape_all_sources_async(test_isbn)
+        all_results = await scrape_all_sources(test_isbn)
         save_results_to_csv(all_results)
         print(f"   Saved {len(all_results)} results to CSV")
 

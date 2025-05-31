@@ -5,7 +5,6 @@ Main entry point for the web interface
 
 from flask import Flask, render_template, jsonify, request
 import pandas as pd
-import os
 from datetime import datetime
 import logging
 from pathlib import Path
@@ -276,6 +275,30 @@ def trigger_scrape(isbn):
 
     except Exception as e:
         logger.error(f"Error during manual scrape: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/scrape/all", methods=["POST"])
+def trigger_bulk_scrape():
+    """Trigger bulk scraping for all tracked ISBNs"""
+    try:
+        from scripts.scraper import scrape_all_isbns, load_isbns_from_file
+
+        # Get list of ISBNs first
+        isbns = load_isbns_from_file()
+
+        if not isbns:
+            return jsonify({"error": "No ISBNs found to scrape"}), 400
+
+        logger.info(f"Bulk scrape triggered for {len(isbns)} ISBNs")
+
+        # Start the bulk scraping process
+        scrape_all_isbns()
+
+        return jsonify({"message": f"Bulk scraping completed for {len(isbns)} ISBNs", "isbn_count": len(isbns)})
+
+    except Exception as e:
+        logger.error(f"Error during bulk scrape: {e}")
         return jsonify({"error": str(e)}), 500
 
 

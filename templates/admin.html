@@ -285,44 +285,72 @@
                 console.error('Error scraping ISBN:', error);
                 M.toast({ html: 'Error scraping ISBN', classes: 'red' });
             }
-        }
-
-        // Scrape all ISBNs
+            }        // Scrape all ISBNs
         async function scrapeAll() {
             if (!confirm('Start scraping all tracked ISBNs? This may take several minutes.')) {
                 return;
             }
 
             M.toast({ html: 'Starting bulk scrape operation...', classes: 'blue' });
-            // This would trigger a bulk scrape - implement as needed
-        }
 
-        // Load recent activity
+            try {
+            const response = await f        crape/all', {
+                    method: 'POST'
+                });
+
+                       = await r        ();
+              if (response.ok) {
+                    M.toast({ html: data.message,         een' })                   loadActivity();
+                } else {
+                 .toast({ html: d            es: 're                    }
+            } catch (error) {
+                console.error('Error during bulk scrape:', error);
+                M.toast({ html: 'Error during bulk scrape operation', classes: 'red' });
+            }
+        }        // Load recent activity
         async function loadActivity() {
+            const activityLog = document.getElementById('activity-log');
+            
             try {
                 const response = await fetch('/api/prices/recent');
+                
                 if (response.ok) {
                     const data = await response.json();
-                    const activityLog = document.getElementById('activity-log');
 
-                    if (data.length > 0) {
-                        activityLog.innerHTML = data.slice(0, 10).map(record => `
-                            <div class="activity-item" style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <strong>${record.isbn}</strong> - ${record.source}
-                                        ${record.price ? `<span class="green-text">$${record.price}</span>` : '<span class="red-text">Failed</span>'}
+                    if (data && data.length > 0) {
+                   yLog.innerHTML = data.slice(0, 10).map(record => {
+                            // Handle aN values safely
+                            const isbn = record.isbn || 'Unknown ISBN';
+                            const source = record.source || 'Unknown Source';
+                            const price = (record.price !== null && record.price !== undefined && !isNaN(record.price)) 
+                                ? record.price 
+                                : null;
+                            const timestamp = record.timestamp ? new Date(record.timestamp).toLocaleString() : 'Unknown time';
+                            const title = record.title && record.itle !== 'NaN' ? ` - ${record.title}` : '';
+
+                            return `
+                                <div class="activity-item" style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                    <div style="display: flex; justify-content: space-between; alig                                <div>
+                                            <strong>${isbn}</strong>${title} from ${source}
+                                            ${price !== null ? `<span class="green-text"> - $${price}</span>` : '<span class="red-text"> - Failed</span>'}
+                                        </div>
+                                        <small class="grey-text">${timestamp}</small>
                                     </div>
-                                    <small class="grey-text">${new Date(record.timestamp).toLocaleString()}</small>
                                 </div>
-                            </div>
-                        `).join('');
+                            `;
+                        }).join('');
                     } else {
-                        activityLog.innerHTML = '<div class="grey-text">No recent activity</div>';
+                        activityLog.innerHTML = '<div class="grey-text">No recent activity found</div>';
                     }
+                } else {
+                    // Handle non-200 responses
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    activityLog.innerHTML = '<div class="red-text">Error loading recent activity</div>';
                 }
             } catch (error) {
                 console.error('Error loading activity:', error);
+                activityLog.innerHTML = '<div class="red-text">Failed to load recent activity. Please check the console for details.</div>';
             }
         }
 
