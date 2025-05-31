@@ -57,6 +57,84 @@
         .source-camelcamelcamel {
             background-color: #ed8936;
         }
+
+        .status-success {
+            color: #38a169;
+        }
+
+        .status-failed {
+            color: #e53e3e;
+        }
+
+        .search-highlight {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .price-cell {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .book-title {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .isbn-code {
+            font-family: 'Courier New', monospace;
+            background-color: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .refresh-indicator {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .isbn-card {
+            transition: box-shadow 0.3s ease;
+        }
+
+        .isbn-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-source-card {
+            transition: background-color 0.2s ease;
+        }
+
+        .price-source-card:hover {
+            background-color: #f0f0f0 !important;
+        }
+
+        .source-badge.source-bookscouter {
+            background-color: #3182ce;
+        }
+
+        .source-badge.source-christianbook {
+            background-color: #d53f8c;
+        }
+
+        .source-badge.source-rainbowresource {
+            background-color: #38a169;
+        }
     </style>
 </head>
 
@@ -115,13 +193,51 @@
             <div class="card-content">
                 <span class="card-title">
                     <i class="material-icons left">attach_money</i>
-                    Current Prices
+                    Current Prices <a href="/api/prices" class="btn-small blue right" target="_blank" style="margin-left: 10px;">
+                        <i class="material-icons left">cloud_download</i>Export JSON
+                    </a>
+                    <a href="/export/csv" class="btn-small green right" download>
+                        <i class="material-icons left">file_download</i>Export CSV
+                    </a>
                 </span>
+
+                <!-- Search and Filter Controls -->
+                <div class="row" style="margin-bottom: 1rem;">
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <i class="material-icons prefix">search</i>
+                            <input type="text" id="search-input" placeholder="Search books, ISBNs, or sources...">
+                            <label for="search-input">Search</label>
+                        </div>
+                    </div>
+                    <div class="col s12 m3">
+                        <div class="input-field">
+                            <select id="source-filter">
+                                <option value="">All Sources</option>
+                                <option value="BookScouter">BookScouter</option>
+                                <option value="Christianbook">Christianbook</option>
+                                <option value="RainbowResource">RainbowResource</option>
+                            </select>
+                            <label>Filter by Source</label>
+                        </div>
+                    </div>
+                    <div class="col s12 m3">
+                        <div class="input-field">
+                            <select id="price-filter">
+                                <option value="">All Prices</option>
+                                <option value="low">Under $25</option>
+                                <option value="medium">$25 - $50</option>
+                                <option value="high">Over $50</option>
+                            </select>
+                            <label>Filter by Price</label>
+                        </div>
+                    </div>
+                </div>
 
                 {% if prices %}
                 <div class="row">
                     <div class="col s12">
-                        <table class="striped responsive-table">
+                        <table class="striped responsive-table data-table" id="prices-table">
                             <thead>
                                 <tr>
                                     <th>Book Title</th>
@@ -129,17 +245,21 @@
                                     <th>Source</th>
                                     <th>Price</th>
                                     <th>Last Updated</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for price in prices %}
-                                <tr>
+                                <tr data-isbn="{{ price.isbn }}" data-source="{{ price.source }}" data-price="{{ price.price|float }}">
                                     <td>
-                                        <strong>{{ price.title or 'Unknown Title' }}</strong>
+                                        <strong class="book-title">{{ price.title or 'Unknown Title' }}</strong>
+                                        {% if price.notes %}
+                                        <br><small class="grey-text">{{ price.notes }}</small>
+                                        {% endif %}
                                     </td>
                                     <td>
-                                        <span class="grey-text">{{ price.isbn }}</span>
+                                        <span class="isbn-code">{{ price.isbn }}</span>
                                     </td>
                                     <td>
                                         <span
@@ -147,7 +267,8 @@
                                             {{ price.source }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="price-cell">
+                                        {% if price.price %}
                                         {% set price_val = price.price|float %}
                                         {% if price_val > 50 %}
                                         <span class="price-high">${{ "%.2f"|format(price_val) }}</span>
@@ -156,6 +277,9 @@
                                         {% else %}
                                         <span class="price-low">${{ "%.2f"|format(price_val) }}</span>
                                         {% endif %}
+                                        {% else %}
+                                        <span class="grey-text">N/A</span>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <small class="grey-text">
@@ -163,11 +287,25 @@
                                         </small>
                                     </td>
                                     <td>
+                                        {% if price.success %}
+                                        <span class="status-success">
+                                            <i class="material-icons tiny">check_circle</i> Success
+                                        </span>
+                                        {% else %}
+                                        <span class="status-failed">
+                                            <i class="material-icons tiny">error</i> Failed
+                                        </span>
+                                        {% endif %}
+                                        </td>
+                                        <td>
                                         {% if price.url %}
-                                        <a href="{{ price.url }}" target="_blank" class="btn-small blue">
-                                            <i class="material-icons left">open_in_new</i>View
+                                        <a href="{{ price.url }}" target="_blank" class="btn-small blue tooltipped" data-tooltip="View on {{ price.source }}">
+                                            <i class="material-icons">open_in_new</i>
                                         </a>
                                         {% endif %}
+                                        <a href="/api/prices/{{ price.isbn }}" target="_blank" class="btn-small green tooltipped" data-tooltip="API Data">
+                                            <i class="material-icons">code</i>
+                                        </a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -186,6 +324,114 @@
                     </a>
                 </div>
                 {% endif %}
+            </div>
+        </div>
+
+        <!-- Prices by ISBN Section -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content"> <span class="card-title">
+                            <i class="material-icons left">library_books</i>
+                            Prices by ISBN
+                            <div class="right">
+                                <button class="btn-small blue" onclick="loadISBNData()" style="margin-right: 10px;">
+                                    <i class="material-icons left">refresh</i>Refresh
+                                </button>
+                                <i class="material-icons refresh-indicator" id="isbn-loading"
+                                    style="display: none;">autorenew</i>
+                            </div>
+                        </span>
+                        <div id="isbn-prices-container">
+                            <div class="center-align" style="padding: 2rem;">
+                                <div class="preloader-wrapper small active">
+                                    <div class="spinner-layer spinner-blue-only">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div>
+                                        <div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div>
+                                        <div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="grey-text">Loading ISBN data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Summary -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">analytics</i>
+                            Price Summary
+                        </span> {% if prices %}
+                        <div class="row">
+                            <div class="col s12 m3">
+                                <div class="center-align">
+                                    {% set valid_prices =
+                                    prices|selectattr('price')|map(attribute='price')|map('float')|select|list %}
+                                    {% if valid_prices %}
+                                    <h5 class="green-text">
+                                        ${{ "%.2f"|format(valid_prices|min) }}
+                                    </h5>
+                                    <p>Lowest Price</p>
+                                    {% else %}
+                                    <h5 class="grey-text">N/A</h5>
+                                    <p>Lowest Price</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col s12 m3">
+                                <div class="center-align">
+                                    {% set valid_prices =
+                                    prices|selectattr('price')|map(attribute='price')|map('float')|select|list %}
+                                    {% if valid_prices %}
+                                    <h5 class="red-text">
+                                        ${{ "%.2f"|format(valid_prices|max) }}
+                                    </h5>
+                                    <p>Highest Price</p>
+                                    {% else %}
+                                    <h5 class="grey-text">N/A</h5>
+                                    <p>Highest Price</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col s12 m3">
+                                <div class="center-align">
+                                    {% set valid_prices =
+                                    prices|selectattr('price')|map(attribute='price')|map('float')|select|list %}
+                                    {% if valid_prices %}
+                                    <h5 class="blue-text">
+                                        ${{ "%.2f"|format((valid_prices|sum) / (valid_prices|length)) }}
+                                    </h5>
+                                    <p>Average Price</p>
+                                    {% else %}
+                                    <h5 class="grey-text">N/A</h5>
+                                    <p>Average Price</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col s12 m3">
+                                <div class="center-align">
+                                    <h5 class="orange-text">
+                                        {{ prices|selectattr('success', 'equalto', 'True')|list|length }}/{{ prices|length }}
+                                    </h5>
+                                    <p>Success Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -295,7 +541,219 @@
             // Initialize dropdowns
             var dropdowns = document.querySelectorAll('.dropdown-trigger');
             M.Dropdown.init(dropdowns);
+
+            // Initialize selects
+            var selects = document.querySelectorAll('select');
+            M.FormSelect.init(selects);
+
+            // Search and filter functionality
+            const searchInput = document.getElementById('search-input');
+            const sourceFilter = document.getElementById('source-filter');
+            const priceFilter = document.getElementById('price-filter');
+            const table = document.getElementById('prices-table');
+
+            if (table) {
+                const rows = table.querySelectorAll('tbody tr');
+
+                function filterTable() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const selectedSource = sourceFilter.value;
+                    const selectedPriceRange = priceFilter.value;
+
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        const source = row.dataset.source;
+                        const price = parseFloat(row.dataset.price);
+
+                        let showRow = true;
+
+                        // Search filter
+                        if (searchTerm && !text.includes(searchTerm)) {
+                            showRow = false;
+                        }
+
+                        // Source filter
+                        if (selectedSource && source !== selectedSource) {
+                            showRow = false;
+                        }
+
+                        // Price filter
+                        if (selectedPriceRange) {
+                            if (selectedPriceRange === 'low' && price >= 25) showRow = false;
+                            if (selectedPriceRange === 'medium' && (price < 25 || price > 50)) showRow = false;
+                            if (selectedPriceRange === 'high' && price <= 50) showRow = false;
+                        }
+
+                        row.style.display = showRow ? '' : 'none';
+                    });
+                }
+
+                searchInput.addEventListener('input', filterTable);
+                sourceFilter.addEventListener('change', filterTable);
+                priceFilter.addEventListener('change', filterTable);
+            }
+
+            // Load ISBN-grouped data
+            loadISBNData();
         });
+
+    // Function to load and display ISBN-grouped data
+    async function loadISBNData() {
+        const container = document.getElementById('isbn-prices-container');
+        const loadingIcon = document.getElementById('isbn-loading');
+
+        try {
+            loadingIcon.style.display = 'inline-block';
+
+            const response = await fetch('/api/prices-by-isbn');
+            const result = await response.json();
+
+            if (result.error) {
+                throw new Error(result.error);
+            }
+
+            if (!result.data || Object.keys(result.data).length === 0) {
+                container.innerHTML = `
+                        <div class="center-align" style="padding: 2rem;">
+                            <i class="material-icons large grey-text">inbox</i>
+                            <h5 class="grey-text">No ISBN data available</h5>
+                            <p class="grey-text">No price data found for any ISBNs.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            // Create HTML for each ISBN
+            let html = '';
+
+            Object.values(result.data).forEach(isbnData => {
+                const bestPrice = isbnData.min_price;
+                const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
+
+                html += `
+                        <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem;">
+                            <div class="row" style="margin-bottom: 0.5rem;">
+                                <div class="col s12 m8">
+                                    <h6 class="book-title" style="margin: 0; font-weight: 600; color: #2d3748;">
+                                        ${isbnData.title}
+                                    </h6>
+                                    <p style="margin: 0.25rem 0; color: #666;">
+                                        <span class="isbn-code">${isbnData.isbn}</span>
+                                    </p>
+                                </div>
+                                <div class="col s12 m4 right-align">
+                                    ${bestPrice ? `
+                                        <h5 class="${priceClass}" style="margin: 0; font-weight: 600;">
+                                            $${bestPrice.toFixed(2)}
+                                        </h5>
+                                        <small class="grey-text">Best Price</small>
+                                    ` : `
+                                        <h5 class="grey-text" style="margin: 0;">
+                                            N/A
+                                        </h5>
+                                        <small class="grey-text">No Price Data</small>
+                                    `}
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="margin-bottom: 1rem;">
+                                <div class="col s6 m3">
+                                    <div class="center-align">
+                                        <strong class="blue-text">${isbnData.sources.length}</strong>
+                                        <br><small>Sources</small>
+                                    </div>
+                                </div>
+                                <div class="col s6 m3">
+                                    <div class="center-align">
+                                        <strong class="green-text">${isbnData.successful_records}/${isbnData.total_records}</strong>
+                                        <br><small>Success Rate</small>
+                                    </div>
+                                </div>
+                                <div class="col s6 m3">
+                                    <div class="center-align">
+                                        <strong class="orange-text">${isbnData.price_count}</strong>
+                                        <br><small>Valid Prices</small>
+                                    </div>
+                                </div>
+                                <div class="col s6 m3">
+                                    <div class="center-align">
+                                        ${isbnData.avg_price ? `
+                                            <strong class="purple-text">$${isbnData.avg_price.toFixed(2)}</strong>
+                                            <br><small>Avg Price</small>
+                                        ` : `
+                                            <strong class="grey-text">N/A</strong>
+                                            <br><small>Avg Price</small>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="prices-breakdown">
+                                <h6 style="margin-bottom: 0.5rem; color: #555;">Price Breakdown:</h6>
+                                <div class="row">
+                    `;
+
+                // Add individual price entries
+                isbnData.prices.forEach(priceData => {
+                    const sourceClass = priceData.source.toLowerCase().replace(/[^a-z]/g, '');
+                    const priceDisplay = priceData.price ? `$${priceData.price.toFixed(2)}` : 'N/A';
+                    const priceTextClass = priceData.price ?
+                        (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
+                        'grey-text';
+
+                    html += `
+                            <div class="col s12 m6 l4" style="margin-bottom: 0.5rem;">
+                                <div class="price-source-card" style="padding: 0.5rem; border: 1px solid #f0f0f0; border-radius: 4px; background: #fafafa;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span class="source-badge source-${sourceClass}">${priceData.source}</span>
+                                        <span class="${priceTextClass}" style="font-weight: 600;">${priceDisplay}</span>
+                                    </div>
+                                    ${priceData.success === 'True' ?
+                            '<small class="green-text"><i class="material-icons tiny">check</i> Success</small>' :
+                            '<small class="red-text"><i class="material-icons tiny">error</i> Failed</small>'
+                        }
+                                    ${priceData.url ? `
+                                        <div style="margin-top: 0.25rem;">
+                                            <a href="${priceData.url}" target="_blank" class="btn-small blue" style="padding: 0 0.5rem; height: 24px; line-height: 24px; font-size: 0.7rem;">
+                                                <i class="material-icons tiny">open_in_new</i>
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                });
+
+                html += `
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+
+        } catch (error) {
+            console.error('Error loading ISBN data:', error);
+            container.innerHTML = `
+                    <div class="center-align" style="padding: 2rem;">
+                        <i class="material-icons large red-text">error</i>
+                        <h5 class="red-text">Error Loading Data</h5>
+                        <p class="grey-text">${error.message}</p>
+                        <button class="btn blue" onclick="loadISBNData()">
+                            <i class="material-icons left">refresh</i>Retry
+                        </button>
+                    </div>
+                `;
+        } finally {
+            loadingIcon.style.display = 'none';
+        }
+    }
+
+    // Auto-refresh data every 5 minutes
+    setInterval(function () {
+        location.reload();
+    }, 300000);
     </script>
 </body>
 

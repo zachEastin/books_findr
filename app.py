@@ -322,6 +322,151 @@ def get_recent_prices():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/export/csv")
+def export_csv():
+    """Export prices data as CSV file"""
+    try:
+        df = load_prices_data()
+
+        # Create CSV response
+        from flask import make_response
+        import io
+
+        output = io.StringIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+
+        response = make_response(output.getvalue())
+        response.headers["Content-Type"] = "text/csv"
+        response.headers["Content-Disposition"] = (
+            f"attachment; filename=book_prices_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        )
+
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting CSV: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/summary")
+def api_summary():
+    """API endpoint to get summary statistics"""
+    try:
+        df = load_prices_data()
+
+        if df.empty:
+            return jsonify({"message": "No data available"})
+
+        # Calculate statistics
+        price_data = df[df["price"].notna() & (df["price"] != "")]
+
+        if not price_data.empty:
+            price_data["price"] = pd.to_numeric(price_data["price"], errors="coerce")
+            price_data = price_data[price_data["price"].notna()]
+
+            summary = {
+                "total_records": len(df),
+                "unique_books": df["isbn"].nunique(),
+                "unique_sources": df["source"].nunique(),
+                "price_stats": {
+                    "min": float(price_data["price"].min()) if not price_data.empty else 0,
+                    "max": float(price_data["price"].max()) if not price_data.empty else 0,
+                    "mean": float(price_data["price"].mean()) if not price_data.empty else 0,
+                    "median": float(price_data["price"].median()) if not price_data.empty else 0,
+                },
+                "success_rate": len(df[df["success"] == "True"]) / len(df) * 100 if len(df) > 0 else 0,
+                "last_updated": df["timestamp"].max() if "timestamp" in df.columns else None,
+            }
+        else:
+            summary = {
+                "total_records": len(df),
+                "unique_books": df["isbn"].nunique(),
+                "unique_sources": df["source"].nunique(),
+                "price_stats": {"min": 0, "max": 0, "mean": 0, "median": 0},
+                "success_rate": 0,
+                "last_updated": None,
+            }
+
+        return jsonify(summary)
+    except Exception as e:
+        logger.error(f"Error generating summary: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prices-by-isbn")
+def api_prices_by_isbn_grouped():
+    """API endpoint to get prices grouped by ISBN with statistics"""
+    try:
+        df = load_prices_data()
+
+        if df.empty:
+            return jsonify({"message": "No data available", "data": {}})
+
+        # Group by ISBN and calculate statistics
+        result = {}
+
+        for isbn in df["isbn"].unique():
+            isbn_data = df[df["isbn"] == isbn]
+
+            # Get valid prices (non-null, non-empty)
+            valid_prices = isbn_data[isbn_data["price"].notna() & (isbn_data["price"] != "")]
+            if not valid_prices.empty:
+                valid_prices_numeric = pd.to_numeric(valid_prices["price"], errors="coerce")
+                valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
+            else:
+                valid_prices_numeric = pd.Series([])
+
+            # Get book title (first non-empty title)
+            title = (
+                isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]["title"].iloc[0]
+                if len(isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]) > 0
+                else "Unknown Title"
+            )  # Calculate statistics
+            isbn_stats = {
+                "isbn": str(isbn),
+                "title": str(title),
+                "total_records": int(len(isbn_data)),
+                "successful_records": int(len(isbn_data[isbn_data["success"] == "True"])),
+                "sources": [str(source) for source in isbn_data["source"].unique().tolist()],
+                "latest_update": str(isbn_data["timestamp"].max()) if not isbn_data["timestamp"].isna().all() else None,
+                "prices": [],
+            }
+
+            if not valid_prices_numeric.empty:
+                isbn_stats.update(
+                    {
+                        "min_price": float(valid_prices_numeric.min()),
+                        "max_price": float(valid_prices_numeric.max()),
+                        "avg_price": float(valid_prices_numeric.mean()),
+                        "price_count": int(len(valid_prices_numeric)),
+                    }
+                )
+            else:
+                isbn_stats.update({"min_price": None, "max_price": None, "avg_price": None, "price_count": 0})
+
+            # Add individual price records
+            for _, row in isbn_data.iterrows():
+                price_record = {
+                    "source": str(row["source"]) if pd.notna(row["source"]) else "",
+                    "price": float(row["price"])
+                    if row["price"] and str(row["price"]).replace(".", "").isdigit()
+                    else None,
+                    "url": str(row["url"]) if pd.notna(row["url"]) else "",
+                    "timestamp": str(row["timestamp"]) if pd.notna(row["timestamp"]) else "",
+                    "success": str(row["success"]) if pd.notna(row["success"]) else "False",
+                    "notes": str(row["notes"]) if pd.notna(row["notes"]) else "",
+                }
+                isbn_stats["prices"].append(price_record)
+
+            result[str(isbn)] = isbn_stats
+
+        return jsonify({"data": result, "total_isbns": len(result)})
+
+    except Exception as e:
+        logger.error(f"Error generating grouped ISBN data: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     logger.info("Starting Book Price Tracker Flask app")
 
