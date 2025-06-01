@@ -3,7 +3,6 @@ Book Price Tracker - ISBN Metadata Management
 Handles storage and retrieval of book metadata (titles, authors, etc.)
 """
 
-import csv
 import pandas as pd
 from pathlib import Path
 from datetime import datetime

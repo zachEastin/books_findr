@@ -206,81 +206,84 @@ def add_isbn():
     try:
         from scripts.google_books_api import GoogleBooksAPI
         from scripts.isbn_metadata import save_isbn_metadata
+        import asyncio
 
         data = request.json
-        isbn = data.get("isbn", "").strip()
+        isbn_input = data.get("isbn", "").strip()
 
-        if not isbn:
+        if not isbn_input:
             return jsonify({"error": "ISBN is required"}), 400
 
-        # Validate ISBN format (basic check)
-        clean_isbn = isbn.replace("-", "").replace(" ", "")
-        # if not clean_isbn.isdigit() or len(clean_isbn) not in [10, 13]:
-        if len(clean_isbn) not in [10, 13]:
-            return jsonify({"error": "Invalid ISBN format"}), 400
-
         isbn_file = BASE_DIR / "isbns.json"
-
-        # Check if ISBN already exists
-        # existing_isbns = []
         if isbn_file.exists():
             isbn_dict = json.loads(isbn_file.read_bytes())
         else:
             isbn_dict = {}
 
-        if isbn in isbn_dict:
-            return jsonify({"error": "ISBN already being tracked"}), 400
+        # Helper function to process a single ISBN
+        async def process_isbn(isbn):
+            result = {"isbn": isbn, "success": False, "error": None, "metadata": None}
+            clean_isbn = isbn.replace("-", "").replace(" ", "")
+            if len(clean_isbn) not in [10, 13]:
+                result["error"] = "Invalid ISBN format"
+                return result
+            if isbn in isbn_dict:
+                result["error"] = "ISBN already being tracked"
+                return result
+            google_books_api = GoogleBooksAPI()
+            metadata_result = {"success": False, "source": "manual"}
+            if google_books_api.is_available():
+                logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
+                metadata_result = google_books_api.fetch_book_metadata(isbn)
+                metadata_result["source"] = "google_books"
+            else:
+                logger.warning("Google Books API not available, adding ISBN without metadata")
+                metadata_result = google_books_api.normalize_isbn(isbn)
+                metadata_result["source"] = "manual"
+            if metadata_result.get("success") or metadata_result.get("isbn13"):
+                metadata_result["isbn_input"] = isbn
+                save_isbn_metadata(metadata_result)
+                logger.info(f"Saved metadata for ISBN {isbn}")
+                isbn_dict[isbn] = {
+                    "title": metadata_result.get("title", ""),
+                    "isbn13": metadata_result.get("isbn13", ""),
+                    "isbn10": metadata_result.get("isbn10", ""),
+                    "authors": metadata_result.get("authors", []),
+                    "year": metadata_result.get("year", ""),
+                    "source": metadata_result.get("source", "manual"),
+                    "notes": metadata_result.get("notes", ""),
+                }
+                result["success"] = True
+                result["metadata"] = metadata_result
+            else:
+                result["error"] = metadata_result.get("error", "Unknown error")
+            return result
 
-        # Try to fetch metadata from Google Books
-        google_books_api = GoogleBooksAPI()
-        metadata_result = {"success": False, "source": "manual"}
-
-        if google_books_api.is_available():
-            logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
-            metadata_result = google_books_api.fetch_book_metadata(isbn)
-            metadata_result["source"] = "google_books"
-        else:
-            logger.warning("Google Books API not available, adding ISBN without metadata")
-            # Basic ISBN normalization without Google Books
-            metadata_result = google_books_api.normalize_isbn(isbn)
-            metadata_result["source"] = "manual"  # Save metadata if we got it
-        if metadata_result.get("success") or metadata_result.get("isbn13"):
-            metadata_result["isbn_input"] = isbn
-            save_isbn_metadata(metadata_result)
-            logger.info(f"Saved metadata for ISBN {isbn}")
-
-        # Add ISBN to tracking file
-        isbn_dict[isbn] = {
-            "title": metadata_result.get("title", ""),
-            "isbn13": metadata_result.get("isbn13", ""),
-            "isbn10": metadata_result.get("isbn10", ""),
-            "authors": metadata_result.get("authors", []),
-            "year": metadata_result.get("year", ""),
-            "source": metadata_result.get("source", "manual"),
-            "notes": metadata_result.get("notes", ""),
-        }
-
-        (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
-
-        # Prepare response
-        response_data = {"message": f"ISBN {isbn} added successfully"}
-
-        if metadata_result.get("success"):
-            response_data["metadata"] = {
-                "title": metadata_result.get("title"),
-                "isbn13": metadata_result.get("isbn13"),
-                "isbn10": metadata_result.get("isbn10"),
-                "authors": metadata_result.get("authors", []),
-                "source": metadata_result.get("source"),
+        # Check for multiple ISBNs
+        if "," in isbn_input:
+            isbn_list = [i.strip() for i in isbn_input.split(",") if i.strip()]
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            results = loop.run_until_complete(asyncio.gather(*(process_isbn(isbn) for isbn in isbn_list)))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            summary = {
+                "added": [r["isbn"] for r in results if r["success"]],
+                "failed": [{"isbn": r["isbn"], "error": r["error"]} for r in results if not r["success"]],
+                "count_added": sum(1 for r in results if r["success"]),
+                "count_failed": sum(1 for r in results if not r["success"]),
             }
-            logger.info(f"Added new ISBN with metadata: {isbn} - {metadata_result.get('title')}")
+            return jsonify({"message": f"Processed {len(isbn_list)} ISBNs", **summary})
         else:
-            response_data["warning"] = (
-                f"Added ISBN but could not fetch metadata: {metadata_result.get('error', 'Unknown error')}"
-            )
-            logger.warning(f"Added ISBN {isbn} without metadata: {metadata_result.get('error')}")
-
-        return jsonify(response_data)
+            # Single ISBN logic (as before, but using helper)
+            result = asyncio.run(process_isbn(isbn_input))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            if result["success"]:
+                response_data = {"message": f"ISBN {isbn_input} added successfully", "metadata": result["metadata"]}
+                logger.info(f"Added new ISBN with metadata: {isbn_input} - {result['metadata'].get('title')}")
+            else:
+                response_data = {"error": result["error"]}
+                logger.warning(f"Failed to add ISBN {isbn_input}: {result['error']}")
+            return jsonify(response_data)
 
     except Exception as e:
         logger.error(f"Error adding ISBN: {e}")
