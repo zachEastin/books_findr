@@ -182,7 +182,7 @@ def get_isbns():
             for isbn, meta in isbn_dict.items():
                 isbns_data.append(
                     {
-                        "isbn": meta.get(isbn),
+                        "isbn": isbn,
                         "isbn13": meta.get("isbn13", isbn),
                         "title": meta.get("title", ""),
                         "authors": meta.get("authors", []),
