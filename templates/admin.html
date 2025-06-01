@@ -196,6 +196,11 @@
                 return;
             }
 
+            if (isbn.includes(',')) {
+                const isbns = isbn.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                M.toast({ html: `Processing ${isbns.length} ISBNs`, classes: 'blue' });
+            }
+
             try {
                 const response = await fetch('/api/isbns', {
                     method: 'POST',
