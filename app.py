@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime
 import logging
 from pathlib import Path
+import json
 
 # Import visualization module
 try:
@@ -168,13 +169,30 @@ def admin():
 
 @app.route("/api/isbns")
 def get_isbns():
-    """Get list of ISBNs being tracked"""
+    """Get list of ISBNs being tracked with metadata"""
     try:
-        isbn_file = BASE_DIR / "isbns.txt"
+        from scripts.isbn_metadata import get_all_isbn_metadata
+
+        isbn_file = BASE_DIR / "isbns.json"
+        isbn_dict = json.loads(isbn_file.read_bytes()) if isbn_file.exists() else {}
+        isbns_data = []
+
+        # Load ISBNs
         if isbn_file.exists():
-            with open(isbn_file, "r") as f:
-                isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
-            return jsonify({"isbns": isbns, "count": len(isbns)})
+            for isbn, meta in isbn_dict.items():
+                isbns_data.append(
+                    {
+                        "isbn": meta.get("isbn13", isbn),
+                        "title": meta.get("title", ""),
+                        "authors": meta.get("authors", []),
+                        "year": meta.get("year", ""),
+                        "source": meta.get("source", "manual"),
+                        "notes": meta.get("notes", ""),
+                    }
+                )
+
+            return jsonify({"isbns": isbns_data, "count": len(isbns_data)})
+
         return jsonify({"isbns": [], "count": 0})
     except Exception as e:
         logger.error(f"Error loading ISBNs: {e}")
@@ -183,8 +201,11 @@ def get_isbns():
 
 @app.route("/api/isbns", methods=["POST"])
 def add_isbn():
-    """Add a new ISBN to track"""
+    """Add a new ISBN to track with metadata fetching"""
     try:
+        from scripts.google_books_api import GoogleBooksAPI
+        from scripts.isbn_metadata import save_isbn_metadata
+
         data = request.json
         isbn = data.get("isbn", "").strip()
 
@@ -192,26 +213,73 @@ def add_isbn():
             return jsonify({"error": "ISBN is required"}), 400
 
         # Validate ISBN format (basic check)
-        if not isbn.replace("-", "").isdigit() or len(isbn.replace("-", "")) not in [10, 13]:
+        clean_isbn = isbn.replace("-", "").replace(" ", "")
+        # if not clean_isbn.isdigit() or len(clean_isbn) not in [10, 13]:
+        if len(clean_isbn) not in [10, 13]:
             return jsonify({"error": "Invalid ISBN format"}), 400
 
-        isbn_file = BASE_DIR / "isbns.txt"
+        isbn_file = BASE_DIR / "isbns.json"
 
         # Check if ISBN already exists
-        existing_isbns = []
+        # existing_isbns = []
         if isbn_file.exists():
-            with open(isbn_file, "r") as f:
-                existing_isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+            isbn_dict = json.loads(isbn_file.read_bytes())
+        else:
+            isbn_dict = {}
 
-        if isbn in existing_isbns:
+        if isbn in isbn_dict:
             return jsonify({"error": "ISBN already being tracked"}), 400
 
-        # Add ISBN to file
-        with open(isbn_file, "a") as f:
-            f.write(f"\n{isbn}")
+        # Try to fetch metadata from Google Books
+        google_books_api = GoogleBooksAPI()
+        metadata_result = {"success": False, "source": "manual"}
 
-        logger.info(f"Added new ISBN: {isbn}")
-        return jsonify({"message": f"ISBN {isbn} added successfully"})
+        if google_books_api.is_available():
+            logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
+            metadata_result = google_books_api.fetch_book_metadata(isbn)
+            metadata_result["source"] = "google_books"
+        else:
+            logger.warning("Google Books API not available, adding ISBN without metadata")
+            # Basic ISBN normalization without Google Books
+            metadata_result = google_books_api.normalize_isbn(isbn)
+            metadata_result["source"] = "manual"  # Save metadata if we got it
+        if metadata_result.get("success") or metadata_result.get("isbn13"):
+            metadata_result["isbn_input"] = isbn
+            save_isbn_metadata(metadata_result)
+            logger.info(f"Saved metadata for ISBN {isbn}")
+
+        # Add ISBN to tracking file
+        isbn_dict[isbn] = {
+            "title": metadata_result.get("title", ""),
+            "isbn13": metadata_result.get("isbn13", ""),
+            "isbn10": metadata_result.get("isbn10", ""),
+            "authors": metadata_result.get("authors", []),
+            "year": metadata_result.get("year", ""),
+            "source": metadata_result.get("source", "manual"),
+            "notes": metadata_result.get("notes", ""),
+        }
+
+        (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+
+        # Prepare response
+        response_data = {"message": f"ISBN {isbn} added successfully"}
+
+        if metadata_result.get("success"):
+            response_data["metadata"] = {
+                "title": metadata_result.get("title"),
+                "isbn13": metadata_result.get("isbn13"),
+                "isbn10": metadata_result.get("isbn10"),
+                "authors": metadata_result.get("authors", []),
+                "source": metadata_result.get("source"),
+            }
+            logger.info(f"Added new ISBN with metadata: {isbn} - {metadata_result.get('title')}")
+        else:
+            response_data["warning"] = (
+                f"Added ISBN but could not fetch metadata: {metadata_result.get('error', 'Unknown error')}"
+            )
+            logger.warning(f"Added ISBN {isbn} without metadata: {metadata_result.get('error')}")
+
+        return jsonify(response_data)
 
     except Exception as e:
         logger.error(f"Error adding ISBN: {e}")
@@ -220,35 +288,27 @@ def add_isbn():
 
 @app.route("/api/isbns/<isbn>", methods=["DELETE"])
 def remove_isbn(isbn):
-    """Remove an ISBN from tracking"""
+    """Remove an ISBN from tracking and its metadata"""
     try:
-        isbn_file = BASE_DIR / "isbns.txt"
+        from scripts.isbn_metadata import delete_isbn_metadata
+
+        isbn_file = BASE_DIR / "isbns.json"
 
         if not isbn_file.exists():
             return jsonify({"error": "No ISBNs file found"}), 404
 
         # Read all ISBNs
-        with open(isbn_file, "r") as f:
-            lines = f.readlines()
+        isbn_dict = json.loads(isbn_file.read_bytes())
 
         # Filter out the ISBN to remove
-        filtered_lines = []
-        isbn_removed = False
-
-        for line in lines:
-            if line.strip() == isbn:
-                isbn_removed = True
-                continue
-            filtered_lines.append(line)
-
-        if not isbn_removed:
+        if isbn in isbn_dict:
+            del isbn_dict[isbn]
+        else:
             return jsonify({"error": "ISBN not found"}), 404
 
         # Write back to file
-        with open(isbn_file, "w") as f:
-            f.writelines(filtered_lines)
+        isbn_file.write_text(json.dumps(isbn_dict, indent=4))
 
-        logger.info(f"Removed ISBN: {isbn}")
         return jsonify({"message": f"ISBN {isbn} removed successfully"})
 
     except Exception as e:
@@ -397,6 +457,8 @@ def api_summary():
 def api_prices_by_isbn_grouped():
     """API endpoint to get prices grouped by ISBN with statistics"""
     try:
+        from scripts.isbn_metadata import get_isbn_metadata
+
         df = load_prices_data()
 
         if df.empty:
@@ -414,14 +476,28 @@ def api_prices_by_isbn_grouped():
                 valid_prices_numeric = pd.to_numeric(valid_prices["price"], errors="coerce")
                 valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
             else:
-                valid_prices_numeric = pd.Series([])
-
-            # Get book title (first non-empty title)
-            title = (
-                isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]["title"].iloc[0]
-                if len(isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]) > 0
-                else "Unknown Title"
-            )  # Calculate statistics
+                valid_prices_numeric = pd.Series([])  # Get book title - prioritize ISBNdb metadata over price data
+            title = "Unknown Title"
+            try:
+                # First try to get title from ISBNdb metadata
+                metadata = get_isbn_metadata(str(isbn))
+                if metadata and metadata.get("title"):
+                    title = str(metadata["title"])
+                    logger.info(f"Using ISBNdb title for {isbn}: {title}")
+                else:
+                    # Fallback to title from price data
+                    price_title_data = isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]
+                    if len(price_title_data) > 0:
+                        title = str(price_title_data["title"].iloc[0])
+                        logger.info(f"Using price data title for {isbn}: {title}")
+                    else:
+                        logger.warning(f"No title found for {isbn}")
+            except Exception as e:
+                logger.warning(f"Error getting title for {isbn}: {e}")
+                # Fallback to title from price data
+                price_title_data = isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]
+                if len(price_title_data) > 0:
+                    title = str(price_title_data["title"].iloc[0])  # Calculate statistics
             isbn_stats = {
                 "isbn": str(isbn),
                 "title": str(title),

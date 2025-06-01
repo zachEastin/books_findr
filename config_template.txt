@@ -1,0 +1,12 @@
+# Configuration file for Book Price Tracker
+# Copy this file to config.txt and add your settings
+
+# ISBNdb API Configuration
+# Get your API key from: https://isbndb.com/
+# ISBNDB_API_KEY=your_api_key_here
+
+# Example:
+# ISBNDB_API_KEY=12345-67890-ABCDE-FGHIJ
+
+# Note: The ISBNdb API key is optional but highly recommended
+# Without it, the book metadata features will be limited

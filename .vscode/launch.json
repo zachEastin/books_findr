@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Python Debugger: Flask",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": true,
+            "autoStartBrowser": true,
+            "justMyCode": true
+        },
+        {
+            "type": "chrome",
+            "name": "http://127.0.0.1:5000/admin",
+            "request": "launch",
+            "url": "http://127.0.0.1:5000/admin"
+        }
+    ]
+}

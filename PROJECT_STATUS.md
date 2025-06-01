@@ -20,7 +20,7 @@ A complete local Python application that tracks book prices from multiple source
 - ✅ **Anti-Bot Protection**: Headless browser configuration with proper user agents
 
 ### Data Management
-- ✅ **ISBN File Management**: Comment-aware parsing of `isbns.txt`
+- ✅ **ISBN File Management**: Comment-aware parsing of `isbns.json`
 - ✅ **CSV Schema**: timestamp, isbn, title, source, price, url, notes, success columns
 - ✅ **Data Validation**: Price cleaning and format validation
 - ✅ **Duplicate Prevention**: Intelligent data merging and deduplication
@@ -44,17 +44,28 @@ A complete local Python application that tracks book prices from multiple source
 - ✅ **Manual Scraping**: On-demand scraping triggers through web UI
 - ✅ **Data Export Ready**: JSON/CSV export capability through APIs
 
+### ISBNdb Integration
+- ✅ **ISBNdb API Integration**: Complete API client for book metadata retrieval
+- ✅ **Book Metadata Storage**: Local JSON storage for ISBN-13, ISBN-10, titles, authors, and publication years
+- ✅ **Enhanced Search Strategies**: Smart scraper logic using ISBN-13 first, then title fallback
+- ✅ **Admin UI Enhancement**: Display book titles from metadata in admin interface
+- ✅ **Dashboard Enhancement**: Show titles from ISBNdb metadata instead of price data in "Prices by ISBN" section
+- ✅ **Configuration Template**: Template file for ISBNdb API key setup
+
 ## 🚀 CURRENT STATUS
 
 ### ✅ FULLY FUNCTIONAL
 1. **Flask Web Server**: Running on http://127.0.0.1:5000
 2. **Admin Interface**: Complete ISBN management at http://127.0.0.1:5000/admin
-3. **Data Storage**: Working CSV storage with sample data
-4. **Logging**: All operations logged to `logs/` directory
-5. **ChromeDriver**: Automatically downloading and configuring Chrome drivers
-6. **Scraping**: All 4 main scrapers operational (may need selector updates)
-7. **HTTP Scrapers**: Alternative scrapers working with real price data
-8. **Charts**: Live data visualization in web interface
+3. **ISBNdb Integration**: Full book metadata retrieval and display
+4. **Enhanced Scrapers**: Smart search strategies using ISBN-13, titles, and fallbacks
+5. **Data Storage**: Working CSV storage with metadata integration
+6. **Logging**: All operations logged to `logs/` directory
+7. **ChromeDriver**: Automatically downloading and configuring Chrome drivers
+8. **Scraping**: All 4 main scrapers operational with enhanced search logic
+9. **HTTP Scrapers**: Alternative scrapers working with real price data
+10. **Charts**: Live data visualization in web interface
+11. **Book Metadata**: Titles displayed from ISBNdb instead of scraper data
 
 ### 📊 TEST RESULTS
 - **Health API**: ✅ Working (`/health`)
@@ -101,7 +112,7 @@ python manage.py schedule --start 09:00
 - `templates/index.html` - Dashboard UI
 - `templates/admin.html` - Admin interface
 - `data/prices.csv` - Price data storage
-- `isbns.txt` - ISBN tracking list
+- `isbns.json` - ISBN tracking list and metadata
 
 ## 🎯 NEXT STEPS (OPTIONAL ENHANCEMENTS)
 
@@ -173,3 +184,17 @@ The Book Price Tracker is a fully functional, production-ready application that 
 8. ✅ Easy to use and maintain
 
 **The application is ready for immediate use and can track book prices reliably while providing a professional user experience.**
+
+### ISBNdb Configuration
+```bash
+# Copy the template config file
+copy config_template.txt config.txt
+
+# Edit config.txt and add your ISBNdb API key
+# ISBNDB_API_KEY=your_api_key_here
+
+# The system works without ISBNdb but provides enhanced features with it:
+# - Book titles and metadata for better searching
+# - ISBN-13/ISBN-10 conversion and normalization
+# - Author and publication year information
+```

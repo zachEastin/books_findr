@@ -2,11 +2,13 @@
 Book Price Tracker - Async Web Scraping Module
 Handles scraping from BookScouter, Christianbook, RainbowResource, and CamelCamelCamel
 Uses asyncio for concurrent scraping to improve performance
+Integrates with ISBNdb API for enhanced search capabilities
 """
 
 import time
 import asyncio
 import concurrent.futures
+import urllib.parse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,9 +21,11 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import re  # for clean_price
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from .logger import scraper_logger, log_scrape_result, log_task_start, log_task_complete
+from .isbn_metadata import get_isbn_metadata
+import json
 
 
 # Configuration
@@ -69,7 +73,45 @@ def clean_price(price_text: str) -> Optional[float]:
         return None
 
 
-def _scrape_bookscouter_sync(isbn: str, url: str) -> Dict:
+def get_search_strategies(isbn_data: dict) -> list[tuple[str, str]]:
+    """
+    Get search strategies for an ISBN in order of preference
+
+    Args:
+        isbn: The original ISBN metadata dictionary
+
+    Returns:
+        List of (search_term, strategy_name) tuples in order of preference
+    """
+    strategies = []
+
+    try:
+        # Strategy 1: Use ISBN-13 if available
+        isbn_13 = isbn_data.get("isbn_13")
+        if isbn_13:
+            strategies.append((isbn_13, "ISBN-13 from metadata"))
+            scraper_logger.info(f"Found ISBN-13 {isbn_13}")
+
+        # Strategy 2: Use title if available
+        title = isbn_data.get("title")
+        if title:
+            # Clean title for search (remove subtitle after colon, etc.)
+            clean_title = title.split(":")[0].strip()
+            strategies.append((clean_title, "title from metadata"))
+            scraper_logger.info(f"Found title '{clean_title}' for {isbn_data.get('isbn_13', 'unknown')}")
+        else:
+            scraper_logger.warning(f"No title found in metadata for ISBN {isbn_data.get('isbn_13', 'unknown')}")
+
+    except Exception as e:
+        scraper_logger.warning(f"Error getting search strategies for {isbn_data.get('isbn_13', 'unknown')}: {e}")
+
+    # Strategy 4: Always include original ISBN as fallback
+    strategies.append((isbn_data.get("isbn", "unknown"), "original ISBN"))
+
+    return strategies
+
+
+def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
     """Synchronous helper function for BookScouter scraping"""
     result_update = {
         "price": None,
@@ -393,9 +435,9 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> Dict:
 
 
 # Async scraper functions
-async def scrape_bookscouter_async(isbn: str) -> Dict:
+async def scrape_bookscouter_async(isbn_data: dict) -> dict:
     """
-    Async scrape book price from BookScouter
+    Async scrape book price from BookScouter with enhanced search strategies
 
     Args:
         isbn: The ISBN to search for
@@ -404,7 +446,7 @@ async def scrape_bookscouter_async(isbn: str) -> Dict:
         Dictionary with scraping results
     """
     result = {
-        "isbn": isbn,
+        "isbn": isbn_data.get("isbn13"),
         "source": "BookScouter",
         "price": None,
         "title": None,
@@ -414,35 +456,70 @@ async def scrape_bookscouter_async(isbn: str) -> Dict:
     }
 
     try:
-        url = f"https://bookscouter.com/book/{isbn}?type=buy"
-        result["url"] = url
+        # Get search strategies in order of preference
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"BookScouter: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', isbn_data.get('isbn13', 'unknown'))}"
+        )
 
-        # Run the synchronous scraping operation in a thread
-        loop = asyncio.get_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraping_result = await loop.run_in_executor(executor, _scrape_bookscouter_sync, isbn, url)
-            result.update(scraping_result)
+        # Try each search strategy until we find results
+        for search_term, strategy_name in search_strategies:
+            try:
+                # BookScouter uses direct ISBN lookup in URL
+                url = f"https://bookscouter.com/book/{search_term}?type=buy"
+                result["url"] = url
+
+                scraper_logger.info(f"BookScouter: Trying {strategy_name} with term '{search_term}'")
+
+                # Run the synchronous scraping operation in a thread
+                loop = asyncio.get_event_loop()
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    scraping_result = await loop.run_in_executor(executor, _scrape_bookscouter_sync, search_term, url)
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"BookScouter: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(f"BookScouter: No results with {strategy_name}")
+
+            except Exception as e:
+                scraper_logger.warning(f"BookScouter: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
 
     except Exception as e:
         result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping BookScouter for ISBN {isbn}: {e}")
+        scraper_logger.error(
+            f"Unexpected error scraping BookScouter for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
 
-    log_scrape_result(scraper_logger, isbn, "BookScouter", result["success"], result["price"], result["notes"])
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "BookScouter",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
     return result
 
 
-async def scrape_christianbook_async(isbn: str) -> Dict:
+async def scrape_christianbook_async(isbn_data: dict) -> dict:
     """
-    Async scrape book price from Christianbook.com
+    Async scrape book price from Christianbook.com with enhanced search strategies
 
     Args:
-        isbn: The ISBN to search for
+        isbn: The ISBN metadata to search for
 
     Returns:
         Dictionary with scraping results
     """
     result = {
-        "isbn": isbn,
+        "isbn": isbn_data.get("isbn13", "unknown"),
         "source": "Christianbook",
         "price": None,
         "title": None,
@@ -452,36 +529,72 @@ async def scrape_christianbook_async(isbn: str) -> Dict:
     }
 
     try:
-        # Christianbook search URL
-        search_url = f"https://www.christianbook.com/apps/search?Ntt={isbn}&Ntk=keywords&action=Search&Ne=0&event=BRSRCG%7CPSEN&nav_search=1&cms=1&ps_exit=RETURN%7Clegacy&ps_domain=www"
-        result["url"] = search_url
+        # Get search strategies in order of preference
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"Christianbook: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
+        )
 
-        # Run the synchronous scraping operation in a thread
-        loop = asyncio.get_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraping_result = await loop.run_in_executor(executor, _scrape_christianbook_sync, isbn, search_url)
-            result.update(scraping_result)
+        # Try each search strategy until we find results
+        for search_term, strategy_name in search_strategies:
+            try:  # Christianbook search URL with URL encoding
+                encoded_term = urllib.parse.quote(search_term)
+                search_url = f"https://www.christianbook.com/apps/search?Ntt={encoded_term}&Ntk=keywords&action=Search&Ne=0&event=BRSRCG%7CPSEN&nav_search=1&cms=1&ps_exit=RETURN%7Clegacy&ps_domain=www"
+                result["url"] = search_url
+
+                scraper_logger.info(f"Christianbook: Trying {strategy_name} with term '{search_term}'")
+
+                # Run the synchronous scraping operation in a thread
+                loop = asyncio.get_event_loop()
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    scraping_result = await loop.run_in_executor(
+                        executor, _scrape_christianbook_sync, search_term, search_url
+                    )
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"Christianbook: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(f"Christianbook: No results with {strategy_name}")
+
+            except Exception as e:
+                scraper_logger.warning(f"Christianbook: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
 
     except Exception as e:
         result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping Christianbook for ISBN {isbn}: {e}")
+        scraper_logger.error(
+            f"Unexpected error scraping Christianbook for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
 
-    log_scrape_result(scraper_logger, isbn, "Christianbook", result["success"], result["price"], result["notes"])
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "Christianbook",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
     return result
 
 
-async def scrape_rainbowresource_async(isbn: str) -> Dict:
+async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
     """
-    Async scrape book price from RainbowResource.com
+    Async scrape book price from RainbowResource.com with enhanced search strategies
 
     Args:
-        isbn: The ISBN to search for
+        isbn: The ISBN metadata to search for
 
     Returns:
         Dictionary with scraping results
     """
     result = {
-        "isbn": isbn,
+        "isbn": isbn_data.get("isbn13", "unknown"),
         "source": "RainbowResource",
         "price": None,
         "title": None,
@@ -491,37 +604,73 @@ async def scrape_rainbowresource_async(isbn: str) -> Dict:
     }
 
     try:
-        # RainbowResource search URL
-        search_url = f"https://www.rainbowresource.com/catalogsearch/result?q={isbn}"
-        result["url"] = search_url
+        # Get search strategies in order of preference
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"RainbowResource: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
+        )
 
-        # Run the synchronous scraping operation in a thread
-        loop = asyncio.get_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraping_result = await loop.run_in_executor(executor, _scrape_rainbowresource_sync, isbn, search_url)
-            result.update(scraping_result)
+        # Try each search strategy until we find results
+        for search_term, strategy_name in search_strategies:
+            try:  # RainbowResource search URL with URL encoding
+                encoded_term = urllib.parse.quote(search_term)
+                search_url = f"https://www.rainbowresource.com/catalogsearch/result?q={encoded_term}"
+                result["url"] = search_url
+
+                scraper_logger.info(f"RainbowResource: Trying {strategy_name} with term '{search_term}'")
+
+                # Run the synchronous scraping operation in a thread
+                loop = asyncio.get_event_loop()
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    scraping_result = await loop.run_in_executor(
+                        executor, _scrape_rainbowresource_sync, search_term, search_url
+                    )
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"RainbowResource: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(f"RainbowResource: No results with {strategy_name}")
+
+            except Exception as e:
+                scraper_logger.warning(f"RainbowResource: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
 
     except Exception as e:
         result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping RainbowResource for ISBN {isbn}: {e}")
+        scraper_logger.error(
+            f"Unexpected error scraping RainbowResource for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
 
-    log_scrape_result(scraper_logger, isbn, "RainbowResource", result["success"], result["price"], result["notes"])
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "RainbowResource",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
     return result
 
 
-async def scrape_camelcamelcamel_async(isbn: str) -> Dict:
+async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
     """
-    Async scrape Amazon price history from CamelCamelCamel
+    Async scrape Amazon price history from CamelCamelCamel with enhanced search strategies
     Note: This gets the current Amazon price, not historical data
 
     Args:
-        isbn: The ISBN to search for
+        isbn: The ISBN metadata to search for
 
     Returns:
         Dictionary with scraping results
     """
     result = {
-        "isbn": isbn,
+        "isbn": isbn_data.get("isbn13", "unknown"),
         "source": "CamelCamelCamel",
         "price": None,
         "title": None,
@@ -531,25 +680,61 @@ async def scrape_camelcamelcamel_async(isbn: str) -> Dict:
     }
 
     try:
-        # CamelCamelCamel search URL
-        search_url = f"https://camelcamelcamel.com/search?sq={isbn}"
-        result["url"] = search_url
+        # Get search strategies in order of preference
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"CamelCamelCamel: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
+        )
 
-        # Run the synchronous scraping operation in a thread
-        loop = asyncio.get_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraping_result = await loop.run_in_executor(executor, _scrape_camelcamelcamel_sync, isbn, search_url)
-            result.update(scraping_result)
+        # Try each search strategy until we find results
+        for search_term, strategy_name in search_strategies:
+            try:  # CamelCamelCamel search URL with URL encoding
+                encoded_term = urllib.parse.quote(search_term)
+                search_url = f"https://camelcamelcamel.com/search?sq={encoded_term}"
+                result["url"] = search_url
+
+                scraper_logger.info(f"CamelCamelCamel: Trying {strategy_name} with term '{search_term}'")
+
+                # Run the synchronous scraping operation in a thread
+                loop = asyncio.get_event_loop()
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    scraping_result = await loop.run_in_executor(
+                        executor, _scrape_camelcamelcamel_sync, search_term, search_url
+                    )
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"CamelCamelCamel: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(f"CamelCamelCamel: No results with {strategy_name}")
+
+            except Exception as e:
+                scraper_logger.warning(f"CamelCamelCamel: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
 
     except Exception as e:
         result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping CamelCamelCamel for ISBN {isbn}: {e}")
+        scraper_logger.error(
+            f"Unexpected error scraping CamelCamelCamel for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
 
-    log_scrape_result(scraper_logger, isbn, "CamelCamelCamel", result["success"], result["price"], result["notes"])
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "CamelCamelCamel",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
     return result
 
 
-async def scrape_all_sources_async(isbn: str) -> List[Dict]:
+async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     """
     Async scrape an ISBN from all sources concurrently
 
@@ -610,7 +795,7 @@ async def scrape_all_sources_async(isbn: str) -> List[Dict]:
     return results
 
 
-async def scrape_multiple_isbns(isbns: List[str], batch_size: int = MAX_CONCURRENT_SCRAPERS) -> List[Dict]:
+async def scrape_multiple_isbns(isbns: list[str], batch_size: int = MAX_CONCURRENT_SCRAPERS) -> list[dict]:
     """
     Async scrape multiple ISBNs with controlled concurrency
 
@@ -628,7 +813,7 @@ async def scrape_multiple_isbns(isbns: List[str], batch_size: int = MAX_CONCURRE
 
     # Process ISBNs in batches to avoid overwhelming the sites
     for i in range(0, len(isbns), batch_size):
-        batch = isbns[i : i + batch_size]
+        batch = list(isbns.values())[i : i + batch_size]
         scraper_logger.info(f"Processing batch {i // batch_size + 1}: ISBNs {i + 1}-{min(i + batch_size, len(isbns))}")
 
         # Create tasks for this batch
@@ -661,7 +846,7 @@ async def scrape_multiple_isbns(isbns: List[str], batch_size: int = MAX_CONCURRE
     return all_results
 
 
-def save_results_to_csv(results: List[Dict]):
+def save_results_to_csv(results: list[dict]):
     """
     Save scraping results to CSV file
 
@@ -700,32 +885,32 @@ def save_results_to_csv(results: List[Dict]):
         scraper_logger.error(f"Error saving results to CSV: {e}")
 
 
-def load_isbns_from_file(filepath: str = None) -> List[str]:
+def load_isbns_from_file(filepath: str = None) -> dict[str, dict]:
     """
     Load ISBNs from a text file
 
     Args:
-        filepath: Path to the ISBNs file (default: isbns.txt in base directory)
+        filepath: Path to the ISBNs file (default: isbns.json in base directory)
 
     Returns:
         List of ISBNs
     """
     if filepath is None:
-        filepath = BASE_DIR / "isbns.txt"
+        filepath = BASE_DIR / "isbns.json"
 
     try:
         with open(filepath, "r") as f:
-            isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+            isbns = json.load(f)
 
-        scraper_logger.info(f"Loaded {len(isbns)} ISBNs from {filepath}")
+        scraper_logger.info(f"Loaded {len(list(isbns.keys()))} ISBNs from {filepath}")
         return isbns
 
     except FileNotFoundError:
         scraper_logger.warning(f"ISBNs file not found: {filepath}")
-        return []
+        return {}
     except Exception as e:
         scraper_logger.error(f"Error loading ISBNs from file: {e}")
-        return []
+        return {}
 
 
 async def scrape_all_isbns_async(isbn_file: str = None) -> None:
@@ -794,7 +979,7 @@ def scrape_camelcamelcamel_sync(isbn: str) -> Dict:
     return asyncio.run(scrape_camelcamelcamel_async(isbn))
 
 
-def scrape_all_sources_sync(isbn: str) -> List[Dict]:
+def scrape_all_sources_sync(isbn: str) -> list[dict]:
     """
     Sync wrapper for scrape_all_sources_async - maintains backward compatibility
 

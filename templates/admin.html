@@ -13,13 +13,11 @@
     <style>
         .admin-card {
             margin: 20px 0;
-        }
-
-        .isbn-item {
+        }        .isbn-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px;
+            align-items: flex-start;
+            padding: 15px 10px;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -27,9 +25,30 @@
             border-bottom: none;
         }
 
+        .isbn-info {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .isbn-number {
+            margin-bottom: 5px;
+        }
+
+        .book-title {
+            font-weight: 500;
+            color: #1976d2;
+            margin-bottom: 3px;
+        }
+
+        .book-meta {
+            font-size: 0.9em;
+            line-height: 1.3;
+        }
+
         .isbn-actions {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .status-indicator {
@@ -165,45 +184,7 @@
             M.AutoInit();
             loadISBNs();
             loadActivity();
-        });
-
-        // Load ISBNs
-        async function loadISBNs() {
-            try {
-                const response = await fetch('/api/isbns');
-                const data = await response.json();
-
-                const isbnList = document.getElementById('isbn-list');
-                const isbnCount = document.getElementById('isbn-count');
-
-                if (data.isbns && data.isbns.length > 0) {
-                    isbnList.innerHTML = data.isbns.map(isbn => `
-                        <div class="isbn-item">
-                            <div>
-                                <strong>${isbn}</strong>
-                                <span class="status-indicator status-pending"></span>
-                                <span class="grey-text">Ready for scraping</span>
-                            </div>
-                            <div class="isbn-actions">
-                                <button class="btn-small blue waves-effect waves-light" onclick="scrapeISBN('${isbn}')">
-                                    <i class="material-icons">sync</i>
-                                </button>
-                                <button class="btn-small red waves-effect waves-light" onclick="removeISBN('${isbn}')">
-                                    <i class="material-icons">delete</i>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    isbnList.innerHTML = '<div class="grey-text center-align">No ISBNs being tracked</div>';
-                }
-
-                isbnCount.textContent = data.count || 0;
-            } catch (error) {
-                console.error('Error loading ISBNs:', error);
-                M.toast({ html: 'Error loading ISBNs', classes: 'red' });
-            }
-        }
+        });        // Load ISBNs
 
         // Add new ISBN
         async function addISBN() {
@@ -285,40 +266,78 @@
                 console.error('Error scraping ISBN:', error);
                 M.toast({ html: 'Error scraping ISBN', classes: 'red' });
             }
-            }        // Scrape all ISBNs
+        }
+        
+        // Scrape all ISBNs
         async function scrapeAll() {
-            if (!confirm('Start scraping all tracked ISBNs? This may take several minutes.')) {
-                return;
-            }
-
-            M.toast({ html: 'Starting bulk scrape operation...', classes: 'blue' });
+            M.toast({ html: 'Starting scrape for all ISBNs...', classes: 'blue' });
 
             try {
-            const response = await f        crape/all', {
+                const response = await fetch('/api/scrape/all', {
                     method: 'POST'
                 });
 
-                       = await r        ();
-              if (response.ok) {
-                    M.toast({ html: data.message,         een' })                   loadActivity();
+                const data = await response.json();
+
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    loadActivity();
                 } else {
-                 .toast({ html: d            es: 're                    }
+                    M.toast({ html: data.error, classes: 'red' });
+                }
             } catch (error) {
-                console.error('Error during bulk scrape:', error);
-                M.toast({ html: 'Error during bulk scrape operation', classes: 'red' });
+                console.error('Error scraping all ISBNs:', error);
+                M.toast({ html: 'Error scraping all ISBNs', classes: 'red' });
             }
-        }        // Load recent activity
+        }
+
+        // Load ISBNs
+        async function loadISBNs() {
+            const isbnCount = document.getElementById('isbn-count');
+            isbnCount.textContent = '0'; // Reset count
+            const isbnList = document.getElementById('isbn-list');
+            isbnList.innerHTML = '<div class="grey-text">Loading ISBNs...</div>';
+
+            try {
+                const response = await fetch('/api/isbns');
+                if (response.ok) {
+                    const data = await response.json();
+                    isbnCount.textContent = data['count'] || '0'; // Update count
+                    if (data && Object.keys(data['isbns']).length > 0) {
+                        isbnList.innerHTML = data['isbns'].map(isbn_data => `
+                            <div class="isbn-item" data-isbn="${isbn_data.isbn}">
+                                <span class="title">${isbn_data.title}</span>
+                                <span class="isbn">${isbn_data.isbn}</span>
+                                <button class="btn red" onclick="removeISBN('${isbn_data.isbn}')">Remove</button>
+                                <button class="btn blue" onclick="scrapeISBN('${isbn_data.isbn}')">Scrape</button>
+                            </div>
+                        `).join('');
+                    } else {
+                        isbnList.innerHTML = '<div class="grey-text">No ISBNs found</div>';
+                    }
+                } else {
+                    // Handle non-200 responses
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    isbnList.innerHTML = '<div class="red-text">Error loading ISBNs</div>';
+                }
+            } catch (error) {
+                console.error('Error loading ISBNs:', error);
+                isbnList.innerHTML = '<div class="red-text">Failed to load ISBNs. Please check the console for details.</div>';
+            }
+        }
+
+        // Load recent activity
         async function loadActivity() {
             const activityLog = document.getElementById('activity-log');
             
             try {
                 const response = await fetch('/api/prices/recent');
-                
                 if (response.ok) {
                     const data = await response.json();
-
+                    true;
                     if (data && data.length > 0) {
-                   yLog.innerHTML = data.slice(0, 10).map(record => {
+                        activityLog.innerHTML = data.map(record => {
                             // Handle aN values safely
                             const isbn = record.isbn || 'Unknown ISBN';
                             const source = record.source || 'Unknown Source';
@@ -326,11 +345,12 @@
                                 ? record.price 
                                 : null;
                             const timestamp = record.timestamp ? new Date(record.timestamp).toLocaleString() : 'Unknown time';
-                            const title = record.title && record.itle !== 'NaN' ? ` - ${record.title}` : '';
+                            const title = record.title && record.title !== 'NaN' ? ` - ${record.title}` : '';
 
                             return `
                                 <div class="activity-item" style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
-                                    <div style="display: flex; justify-content: space-between; alig                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
                                             <strong>${isbn}</strong>${title} from ${source}
                                             ${price !== null ? `<span class="green-text"> - $${price}</span>` : '<span class="red-text"> - Failed</span>'}
                                         </div>

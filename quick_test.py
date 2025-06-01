@@ -8,6 +8,7 @@ from scripts.logger import setup_logger
 from app import load_prices_data
 import pandas as pd
 from pathlib import Path
+import json
 
 
 def main():
@@ -39,7 +40,7 @@ def main():
     print("4. Checking File Structure...")
     files_to_check = [
         "app.py",
-        "isbns.txt",
+        "isbns.json",
         "data/prices.csv",
         "templates/index.html",
         "scripts/scraper.py",
@@ -54,15 +55,15 @@ def main():
     print()
     # Test 5: ISBN File
     print("5. Testing ISBN File...")
-    isbn_file = Path("isbns.txt")
+    isbn_file = Path("isbns.json")
     if isbn_file.exists():
         with open(isbn_file, "r") as f:
-            isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
-        print(f"   ✓ Found {len(isbns)} ISBNs")
+            isbns = json.load(f)
+        print(f"   ✓ Found {len(isbns.keys())} ISBNs")
         if isbns:
-            print(f"   - Sample: {isbns[0]}")
+            print(f"   - Sample: {isbns[list(isbns.keys())[0]]}")
     else:
-        print("   ✗ isbns.txt not found")
+        print("   ✗ isbns.json not found")
     print()
 
     print("=== Test Complete ===")

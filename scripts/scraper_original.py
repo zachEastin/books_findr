@@ -572,32 +572,32 @@ def save_results_to_csv(results: List[Dict]):
         scraper_logger.error(f"Error saving results to CSV: {e}")
 
 
-def load_isbns_from_file(filepath: str = None) -> List[str]:
+def load_isbns_from_file(filepath: str = None) -> dict[str, dict]:
     """
     Load ISBNs from a text file
 
     Args:
-        filepath: Path to the ISBNs file (default: isbns.txt in base directory)
+        filepath: Path to the ISBNs file (default: isbns.json in base directory)
 
     Returns:
         List of ISBNs
     """
     if filepath is None:
-        filepath = BASE_DIR / "isbns.txt"
+        filepath = BASE_DIR / "isbns.json"
 
     try:
         with open(filepath, "r") as f:
-            isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+            isbns = json.load(f)
 
-        scraper_logger.info(f"Loaded {len(isbns)} ISBNs from {filepath}")
+        scraper_logger.info(f"Loaded {len(list(isbns.keys()))} ISBNs from {filepath}")
         return isbns
 
     except FileNotFoundError:
         scraper_logger.warning(f"ISBNs file not found: {filepath}")
-        return []
+        return {}
     except Exception as e:
         scraper_logger.error(f"Error loading ISBNs from file: {e}")
-        return []
+        return {}
 
 
 def scrape_all_isbns(isbn_file: str = None) -> None:

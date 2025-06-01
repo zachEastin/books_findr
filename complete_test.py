@@ -8,6 +8,7 @@ import time
 import requests
 from pathlib import Path
 import pandas as pd
+import json
 
 # Test configuration
 BASE_URL = "http://127.0.0.1:5000"
@@ -158,11 +159,11 @@ def test_data_files():
         print("✗ CSV file not found")
 
     # Check ISBN file
-    isbn_file = Path("isbns.txt")
+    isbn_file = Path("isbns.json")
     if isbn_file.exists():
         try:
             with open(isbn_file, "r") as f:
-                isbns = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+                isbns = json.load(f)
             print(f"✓ ISBN file readable: {len(isbns)} ISBNs")
         except Exception as e:
             print(f"✗ ISBN file error: {e}")

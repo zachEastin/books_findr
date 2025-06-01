@@ -7,7 +7,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import sys
-import os
+import json
 
 # Add the project root to the path
 sys.path.append(str(Path(__file__).parent))
@@ -113,25 +113,24 @@ def test_isbn_file_handling():
     """Test ISBN file operations"""
     print("Testing ISBN file handling...")
 
-    # Check if isbns.txt exists
-    isbn_file = Path("isbns.txt")
+    # Check if isbns.json exists
+    isbn_file = Path("isbns.json")
     if isbn_file.exists():
         with open(isbn_file, "r") as f:
-            isbns = [line.strip() for line in f if line.strip()]
-        print(f"✓ Found {len(isbns)} ISBNs in isbns.txt")
+            isbns = json.load(f)
+        print(f"✓ Found {len(list(isbns.keys()))} ISBNs in isbns.json")
         if isbns:
-            print(f"  - First ISBN: {isbns[0]}")
+            print(f"  - First ISBN: {isbns[list(isbns.keys())[0]]}")
     else:
-        print("! isbns.txt not found, creating sample...")
-        sample_isbns = [
-            "9780134685991",  # Effective Java
-            "9780596009205",  # Head First Design Patterns
-            "9781617294945",  # Spring Boot in Action
-        ]
+        print("! isbns.json not found, creating sample...")
+        sample_isbns = {
+            "9780134685991": "Effective Java",
+            "9780596009205": "Head First Design Patterns",
+            "9781617294945": "Spring Boot in Action",
+        }
         with open(isbn_file, "w") as f:
-            for isbn in sample_isbns:
-                f.write(f"{isbn}\n")
-        print(f"✓ Created isbns.txt with {len(sample_isbns)} sample ISBNs")
+            json.dump(sample_isbns, f, indent=4)
+        print(f"✓ Created isbns.json with {len(sample_isbns)} sample ISBNs")
 
     return True
 
