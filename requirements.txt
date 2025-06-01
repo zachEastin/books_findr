@@ -1,7 +1,7 @@
 # Book Price Tracker - Python Dependencies
 
 # Core dependencies
-flask
+flask[async]
 pandas
 requests
 selenium

@@ -9,6 +9,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import json
+import asyncio  # Add this import at the top if not present
 
 # Import visualization module
 try:
@@ -342,7 +343,7 @@ def trigger_scrape(isbn):
 
 
 @app.route("/api/scrape/all", methods=["POST"])
-def trigger_bulk_scrape():
+async def trigger_bulk_scrape():
     """Trigger bulk scraping for all tracked ISBNs"""
     try:
         from scripts.scraper import scrape_all_isbns, load_isbns_from_file
@@ -356,7 +357,7 @@ def trigger_bulk_scrape():
         logger.info(f"Bulk scrape triggered for {len(isbns)} ISBNs")
 
         # Start the bulk scraping process
-        scrape_all_isbns()
+        await scrape_all_isbns()
 
         return jsonify({"message": f"Bulk scraping completed for {len(isbns)} ISBNs", "isbn_count": len(isbns)})
 

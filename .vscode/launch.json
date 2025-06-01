@@ -16,7 +16,6 @@
             ],
             "jinja": true,
             "autoStartBrowser": true,
-            "justMyCode": true
         },
         {
             "type": "chrome",

@@ -7,7 +7,6 @@ Integrates with ISBNdb API for enhanced search capabilities
 
 import time
 import asyncio
-import concurrent.futures
 import urllib.parse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,7 +20,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import re  # for clean_price
-from typing import dict, Optional
+from typing import Optional
 
 from .logger import scraper_logger, log_scrape_result, log_task_start, log_task_complete
 import json
@@ -86,7 +85,7 @@ def get_search_strategies(isbn_data: dict) -> list[tuple[str, str]]:
 
     try:
         # Strategy 1: Use ISBN-13 if available
-        isbn_13 = isbn_data.get("isbn_13")
+        isbn_13 = isbn_data.get("isbn13")
         if isbn_13:
             strategies.append((isbn_13, "ISBN-13 from metadata"))
             scraper_logger.info(f"Found ISBN-13 {isbn_13}")
@@ -104,13 +103,10 @@ def get_search_strategies(isbn_data: dict) -> list[tuple[str, str]]:
     except Exception as e:
         scraper_logger.warning(f"Error getting search strategies for {isbn_data.get('isbn_13', 'unknown')}: {e}")
 
-    # Strategy 4: Always include original ISBN as fallback
-    strategies.append((isbn_data.get("isbn", "unknown"), "original ISBN"))
-
     return strategies
 
 
-def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
+def _scrape_bookscouter_sync(search_term: str, url: str) -> dict:
     """Synchronous helper function for BookScouter scraping"""
     result_update = {
         "price": None,
@@ -122,7 +118,7 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
     driver = None
     try:
         driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping BookScouter for ISBN: {isbn}")
+        scraper_logger.info(f"Scraping BookScouter for term: {search_term}")
 
         driver.get(url)
 
@@ -137,7 +133,7 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
             title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
             result_update["title"] = title_element.text.strip()
         except NoSuchElementException:
-            scraper_logger.warning(f"Could not find title for ISBN {isbn} on BookScouter")
+            scraper_logger.warning(f"Could not find title for term `{search_term}` on BookScouter")
 
         # Try to find the lowest price
         try:
@@ -166,13 +162,13 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
-        scraper_logger.error(f"Timeout scraping BookScouter for ISBN {isbn}")
+        scraper_logger.error(f"Timeout scraping BookScouter for term {search_term}")
     except WebDriverException as e:
         result_update["notes"] = f"WebDriver error: {str(e)}"
-        scraper_logger.error(f"WebDriver error scraping BookScouter for ISBN {isbn}: {e}")
+        scraper_logger.error(f"WebDriver error scraping BookScouter for term {search_term}: {e}")
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping BookScouter for ISBN {isbn}: {e}")
+        scraper_logger.error(f"Unexpected error scraping BookScouter for term {search_term}: {e}")
     finally:
         if driver:
             driver.quit()
@@ -180,7 +176,7 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
     return result_update
 
 
-def _scrape_christianbook_sync(isbn: str, search_url: str) -> dict:
+def _scrape_christianbook_sync(search_term: str, search_url: str) -> dict:
     """Synchronous helper function for Christianbook scraping"""
     result_update = {
         "price": None,
@@ -193,7 +189,7 @@ def _scrape_christianbook_sync(isbn: str, search_url: str) -> dict:
     driver = None
     try:
         driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping Christianbook for ISBN: {isbn}")
+        scraper_logger.info(f"Scraping Christianbook for term: {search_term}")
 
         driver.get(search_url)
 
@@ -259,13 +255,13 @@ def _scrape_christianbook_sync(isbn: str, search_url: str) -> dict:
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
-        scraper_logger.error(f"Timeout scraping Christianbook for ISBN {isbn}")
+        scraper_logger.error(f"Timeout scraping Christianbook for term {search_term}")
     except WebDriverException as e:
         result_update["notes"] = f"WebDriver error: {str(e)}"
-        scraper_logger.error(f"WebDriver error scraping Christianbook for ISBN {isbn}: {e}")
+        scraper_logger.error(f"WebDriver error scraping Christianbook for term {search_term}: {e}")
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping Christianbook for ISBN {isbn}: {e}")
+        scraper_logger.error(f"Unexpected error scraping Christianbook for term {search_term}: {e}")
     finally:
         if driver:
             driver.quit()
@@ -273,7 +269,7 @@ def _scrape_christianbook_sync(isbn: str, search_url: str) -> dict:
     return result_update
 
 
-def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> dict:
+def _scrape_rainbowresource_sync(search_term: str, search_url: str) -> dict:
     """Synchronous helper function for RainbowResource scraping"""
     result_update = {
         "price": None,
@@ -286,7 +282,7 @@ def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> dict:
     driver = None
     try:
         driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping RainbowResource for ISBN: {isbn}")
+        scraper_logger.info(f"Scraping RainbowResource for term: {search_term}")
 
         driver.get(search_url)
 
@@ -344,13 +340,13 @@ def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> dict:
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
-        scraper_logger.error(f"Timeout scraping RainbowResource for ISBN {isbn}")
+        scraper_logger.error(f"Timeout scraping RainbowResource for term {search_term}")
     except WebDriverException as e:
         result_update["notes"] = f"WebDriver error: {str(e)}"
-        scraper_logger.error(f"WebDriver error scraping RainbowResource for ISBN {isbn}: {e}")
+        scraper_logger.error(f"WebDriver error scraping RainbowResource for term {search_term}: {e}")
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping RainbowResource for ISBN {isbn}: {e}")
+        scraper_logger.error(f"Unexpected error scraping RainbowResource for term {search_term}: {e}")
     finally:
         if driver:
             driver.quit()
@@ -470,10 +466,7 @@ async def scrape_bookscouter_async(isbn_data: dict) -> dict:
 
                 scraper_logger.info(f"BookScouter: Trying {strategy_name} with term '{search_term}'")
 
-                # Run the synchronous scraping operation in a thread
-                loop = asyncio.get_event_loop()
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    scraping_result = await loop.run_in_executor(executor, _scrape_bookscouter_sync, search_term, url)
+                scraping_result = _scrape_bookscouter_sync(search_term, url)
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -481,7 +474,9 @@ async def scrape_bookscouter_async(isbn_data: dict) -> dict:
                     scraper_logger.info(f"BookScouter: Success with {strategy_name}")
                     break
                 else:
-                    scraper_logger.info(f"BookScouter: No results with {strategy_name}")
+                    scraper_logger.info(
+                        f"BookScouter: No results with {strategy_name} for term {search_term} and url {url}"
+                    )
 
             except Exception as e:
                 scraper_logger.warning(f"BookScouter: Error with {strategy_name}: {e}")
@@ -543,12 +538,7 @@ async def scrape_christianbook_async(isbn_data: dict) -> dict:
 
                 scraper_logger.info(f"Christianbook: Trying {strategy_name} with term '{search_term}'")
 
-                # Run the synchronous scraping operation in a thread
-                loop = asyncio.get_event_loop()
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    scraping_result = await loop.run_in_executor(
-                        executor, _scrape_christianbook_sync, search_term, search_url
-                    )
+                scraping_result = _scrape_christianbook_sync(search_term, search_url)
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -556,7 +546,9 @@ async def scrape_christianbook_async(isbn_data: dict) -> dict:
                     scraper_logger.info(f"Christianbook: Success with {strategy_name}")
                     break
                 else:
-                    scraper_logger.info(f"Christianbook: No results with {strategy_name}")
+                    scraper_logger.info(
+                        f"Christianbook: No results with {strategy_name} for term {search_term} and url {search_url}"
+                    )
 
             except Exception as e:
                 scraper_logger.warning(f"Christianbook: Error with {strategy_name}: {e}")
@@ -618,12 +610,7 @@ async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
 
                 scraper_logger.info(f"RainbowResource: Trying {strategy_name} with term '{search_term}'")
 
-                # Run the synchronous scraping operation in a thread
-                loop = asyncio.get_event_loop()
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    scraping_result = await loop.run_in_executor(
-                        executor, _scrape_rainbowresource_sync, search_term, search_url
-                    )
+                scraping_result = _scrape_rainbowresource_sync(search_term, search_url)
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -631,7 +618,9 @@ async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
                     scraper_logger.info(f"RainbowResource: Success with {strategy_name}")
                     break
                 else:
-                    scraper_logger.info(f"RainbowResource: No results with {strategy_name}")
+                    scraper_logger.info(
+                        f"RainbowResource: No results with {strategy_name} for term {search_term} and url {search_url}"
+                    )
 
             except Exception as e:
                 scraper_logger.warning(f"RainbowResource: Error with {strategy_name}: {e}")
@@ -694,12 +683,7 @@ async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
 
                 scraper_logger.info(f"CamelCamelCamel: Trying {strategy_name} with term '{search_term}'")
 
-                # Run the synchronous scraping operation in a thread
-                loop = asyncio.get_event_loop()
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    scraping_result = await loop.run_in_executor(
-                        executor, _scrape_camelcamelcamel_sync, search_term, search_url
-                    )
+                scraping_result = _scrape_camelcamelcamel_sync(search_term, search_url)
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -707,7 +691,9 @@ async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
                     scraper_logger.info(f"CamelCamelCamel: Success with {strategy_name}")
                     break
                 else:
-                    scraper_logger.info(f"CamelCamelCamel: No results with {strategy_name}")
+                    scraper_logger.info(
+                        f"CamelCamelCamel: No results with {strategy_name} for term {search_term} and url {search_url}"
+                    )
 
             except Exception as e:
                 scraper_logger.warning(f"CamelCamelCamel: Error with {strategy_name}: {e}")
@@ -791,7 +777,9 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     log_task_complete(
         scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13') or 'unknown'}", duration
     )
-    scraper_logger.info(f"Completed async scraping ISBN {isbn}: {successful_scrapes}/{len(tasks)} sources successful")
+    scraper_logger.info(
+        f"Completed async scraping ISBN {isbn.get('isbn13')}: {successful_scrapes}/{len(tasks)} sources successful"
+    )
 
     return results
 
@@ -839,10 +827,8 @@ async def scrape_multiple_isbns(isbns: list[str], batch_size: int = MAX_CONCURRE
     duration = end_time - start_time
 
     successful_results = len([r for r in all_results if r.get("success", False)])
-    total_attempts = len(all_results)
-
     log_task_complete(scraper_logger, f"Async bulk scraping for {len(isbns)} ISBNs", duration)
-    scraper_logger.info(f"Async bulk scraping completed: {successful_results}/{total_attempts} successful scrapes")
+    scraper_logger.info(f"Async bulk scraping completed: {successful_results}/{len(all_results)} successful scrapes")
 
     return all_results
 
@@ -948,15 +934,8 @@ async def scrape_all_isbns_async(isbn_file: str = None) -> None:
     scraper_logger.info(f"Async scraping completed: {successful_results}/{total_attempts} successful scrapes")
 
 
-# Backwards compatibility - keep original sync function available
-def scrape_all_isbns(isbn_file: str = None) -> None:
-    """
-    Legacy sync function - now runs the async version
-
-    Args:
-        isbn_file: Path to ISBNs file (optional)
-    """
-    asyncio.run(scrape_all_isbns_async(isbn_file))
+# Remove the sync wrapper and make scrape_all_isbns async
+scrape_all_isbns = scrape_all_isbns_async
 
 
 # Sync wrapper functions for backward compatibility
