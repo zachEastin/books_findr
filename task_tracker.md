@@ -26,8 +26,6 @@
 - ✅ Core error handling and graceful fallbacks
 - ✅ Management script for easy task execution
 - ✅ Test suite for validating core functionality
-- ✅ ISBNdb API integration module (scripts/isbndb_api.py)
-- ✅ ISBN metadata storage system (scripts/isbn_metadata.py)
 - ✅ Enhanced scraper with smart search strategies
 - ✅ Admin interface displaying book titles from metadata
 - ✅ Dashboard showing titles from ISBNdb instead of scraper data

@@ -171,8 +171,6 @@ def admin():
 def get_isbns():
     """Get list of ISBNs being tracked with metadata"""
     try:
-        from scripts.isbn_metadata import get_all_isbn_metadata
-
         isbn_file = BASE_DIR / "isbns.json"
         isbn_dict = json.loads(isbn_file.read_bytes()) if isbn_file.exists() else {}
         isbns_data = []
@@ -205,7 +203,6 @@ def add_isbn():
     """Add a new ISBN to track with metadata fetching"""
     try:
         from scripts.google_books_api import GoogleBooksAPI
-        from scripts.isbn_metadata import save_isbn_metadata
         import asyncio
 
         data = request.json
@@ -242,7 +239,6 @@ def add_isbn():
                 metadata_result["source"] = "manual"
             if metadata_result.get("success") or metadata_result.get("isbn13"):
                 metadata_result["isbn_input"] = isbn
-                save_isbn_metadata(metadata_result)
                 logger.info(f"Saved metadata for ISBN {isbn}")
                 isbn_dict[isbn] = {
                     "title": metadata_result.get("title", ""),
@@ -294,8 +290,6 @@ def add_isbn():
 def remove_isbn(isbn):
     """Remove an ISBN from tracking and its metadata"""
     try:
-        from scripts.isbn_metadata import delete_isbn_metadata
-
         isbn_file = BASE_DIR / "isbns.json"
 
         if not isbn_file.exists():
@@ -326,8 +320,13 @@ def trigger_scrape(isbn):
     try:
         from scripts.scraper import scrape_all_sources, save_results_to_csv
 
-        logger.info(f"Manual scrape triggered for ISBN: {isbn}")
-        results = scrape_all_sources(isbn)
+        # Get the ISBN json
+        isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
+
+        isbn_item = isbn_data.get(isbn)
+
+        logger.info(f"Manual scrape triggered for '{isbn_item.get('title', 'unknown')}' ISBN: {isbn}")
+        results = scrape_all_sources(isbn_item)
 
         if results:
             save_results_to_csv(results)
@@ -461,7 +460,6 @@ def api_summary():
 def api_prices_by_isbn_grouped():
     """API endpoint to get prices grouped by ISBN with statistics"""
     try:
-        from scripts.isbn_metadata import get_isbn_metadata
 
         df = load_prices_data()
 
@@ -484,7 +482,8 @@ def api_prices_by_isbn_grouped():
             title = "Unknown Title"
             try:
                 # First try to get title from ISBNdb metadata
-                metadata = get_isbn_metadata(str(isbn))
+                isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
+                metadata = isbn_data.get(str(isbn))
                 if metadata and metadata.get("title"):
                     title = str(metadata["title"])
                     logger.info(f"Using ISBNdb title for {isbn}: {title}")

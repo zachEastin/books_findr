@@ -551,7 +551,7 @@ async def scrape_all_sources(isbn: str) -> List[Dict]:
     Returns:
         List of result dictionaries from all sources
     """
-    log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn}")
+    log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13')}")
     start_time = time.time()
 
     # Create async tasks for all scrapers
@@ -598,7 +598,7 @@ async def scrape_all_sources(isbn: str) -> List[Dict]:
     duration = end_time - start_time
 
     successful_scrapes = len([r for r in results if r.get("success", False)])
-    log_task_complete(scraper_logger, f"Async scraping all sources for ISBN {isbn}", duration)
+    log_task_complete(scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13')}", duration)
     scraper_logger.info(f"Completed async scraping ISBN {isbn}: {successful_scrapes}/{len(tasks)} sources successful")
 
     return results

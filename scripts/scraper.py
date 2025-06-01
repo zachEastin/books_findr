@@ -21,10 +21,9 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import re  # for clean_price
-from typing import Dict, List, Optional, Tuple
+from typing import dict, Optional
 
 from .logger import scraper_logger, log_scrape_result, log_task_start, log_task_complete
-from .isbn_metadata import get_isbn_metadata
 import json
 
 
@@ -181,7 +180,7 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> dict:
     return result_update
 
 
-def _scrape_christianbook_sync(isbn: str, search_url: str) -> Dict:
+def _scrape_christianbook_sync(isbn: str, search_url: str) -> dict:
     """Synchronous helper function for Christianbook scraping"""
     result_update = {
         "price": None,
@@ -274,7 +273,7 @@ def _scrape_christianbook_sync(isbn: str, search_url: str) -> Dict:
     return result_update
 
 
-def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> Dict:
+def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> dict:
     """Synchronous helper function for RainbowResource scraping"""
     result_update = {
         "price": None,
@@ -359,7 +358,7 @@ def _scrape_rainbowresource_sync(isbn: str, search_url: str) -> Dict:
     return result_update
 
 
-def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> Dict:
+def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
     """Synchronous helper function for CamelCamelCamel scraping"""
     result_update = {
         "price": None,
@@ -443,7 +442,7 @@ async def scrape_bookscouter_async(isbn_data: dict) -> dict:
         isbn: The ISBN to search for
 
     Returns:
-        Dictionary with scraping results
+        dictionary with scraping results
     """
     result = {
         "isbn": isbn_data.get("isbn13"),
@@ -516,7 +515,7 @@ async def scrape_christianbook_async(isbn_data: dict) -> dict:
         isbn: The ISBN metadata to search for
 
     Returns:
-        Dictionary with scraping results
+        dictionary with scraping results
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
@@ -591,7 +590,7 @@ async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
         isbn: The ISBN metadata to search for
 
     Returns:
-        Dictionary with scraping results
+        dictionary with scraping results
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
@@ -667,7 +666,7 @@ async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
         isbn: The ISBN metadata to search for
 
     Returns:
-        Dictionary with scraping results
+        dictionary with scraping results
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
@@ -744,7 +743,7 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     Returns:
         List of result dictionaries from all sources
     """
-    log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn}")
+    log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13') or 'unknown'}")
     start_time = time.time()  # Create async tasks for all scrapers
     tasks = [
         scrape_bookscouter_async(isbn),
@@ -789,7 +788,9 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     duration = end_time - start_time
 
     successful_scrapes = len([r for r in results if r.get("success", False)])
-    log_task_complete(scraper_logger, f"Async scraping all sources for ISBN {isbn}", duration)
+    log_task_complete(
+        scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13') or 'unknown'}", duration
+    )
     scraper_logger.info(f"Completed async scraping ISBN {isbn}: {successful_scrapes}/{len(tasks)} sources successful")
 
     return results
@@ -959,27 +960,27 @@ def scrape_all_isbns(isbn_file: str = None) -> None:
 
 
 # Sync wrapper functions for backward compatibility
-def scrape_bookscouter_sync(isbn: str) -> Dict:
+def scrape_bookscouter_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_bookscouter_async"""
     return asyncio.run(scrape_bookscouter_async(isbn))
 
 
-def scrape_christianbook_sync(isbn: str) -> Dict:
+def scrape_christianbook_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_christianbook_async"""
     return asyncio.run(scrape_christianbook_async(isbn))
 
 
-def scrape_rainbowresource_sync(isbn: str) -> Dict:
+def scrape_rainbowresource_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_rainbowresource_async"""
     return asyncio.run(scrape_rainbowresource_async(isbn))
 
 
-def scrape_camelcamelcamel_sync(isbn: str) -> Dict:
+def scrape_camelcamelcamel_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_camelcamelcamel_async"""
     return asyncio.run(scrape_camelcamelcamel_async(isbn))
 
 
-def scrape_all_sources_sync(isbn: str) -> list[dict]:
+def scrape_all_sources_sync(isbn: dict) -> list[dict]:
     """
     Sync wrapper for scrape_all_sources_async - maintains backward compatibility
 
