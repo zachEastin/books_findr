@@ -307,7 +307,7 @@
                         isbnList.innerHTML = data['isbns'].map(isbn_data => `
                             <div class="isbn-item" data-isbn="${isbn_data.isbn}">
                                 <span class="title">${isbn_data.title}</span>
-                                <span class="isbn">${isbn_data.isbn}</span>
+                                <span class="isbn">${isbn_data.isbn13}</span>
                                 <button class="btn red" onclick="removeISBN('${isbn_data.isbn}')">Remove</button>
                                 <button class="btn blue" onclick="scrapeISBN('${isbn_data.isbn}')">Scrape</button>
                             </div>
