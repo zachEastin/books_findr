@@ -3,18 +3,19 @@ Book Price Tracker - Flask Web Application
 Main entry point for the web interface
 """
 
-from flask import Flask, render_template, jsonify, request, make_response
+from flask import Flask, render_template, jsonify, request
 import pandas as pd
 from datetime import datetime
 import logging
 from pathlib import Path
 import json
-import html
-import io
+import html  # Add this for HTML escaping
+import io  # Used in CSV export
 
 # Import visualization module
 try:
     from visualization import generate_dashboard_charts
+
     CHARTS_AVAILABLE = True
 except ImportError:
     CHARTS_AVAILABLE = False
@@ -138,6 +139,18 @@ def api_prices():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/prices/<isbn>")
+def api_prices_by_isbn(isbn):
+    """API endpoint to get prices for a specific ISBN"""
+    try:
+        df = load_prices_data()
+        isbn_data = df[df["isbn"] == isbn]
+        return jsonify(isbn_data.to_dict("records"))
+    except Exception as e:
+        logger.error(f"Error getting prices for ISBN {isbn}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/health")
 def health():
     """Health check endpoint"""
@@ -151,11 +164,239 @@ def health():
     )
 
 
+@app.route("/admin")
+def admin():
+    """Admin interface for managing ISBNs"""
+    return render_template("admin.html")
+
+
+@app.route("/api/isbns")
+def get_isbns():
+    """Get list of ISBNs being tracked with metadata"""
+    try:
+        isbn_file = BASE_DIR / "isbns.json"
+        isbn_dict = json.loads(isbn_file.read_bytes()) if isbn_file.exists() else {}
+        isbns_data = []
+
+        # Load ISBNs
+        if isbn_file.exists():
+            for isbn, meta in isbn_dict.items():
+                isbns_data.append(
+                    {
+                        "isbn": isbn,
+                        "isbn13": meta.get("isbn13", isbn),
+                        "title": meta.get("title", ""),
+                        "authors": meta.get("authors", []),
+                        "year": meta.get("year", ""),
+                        "source": meta.get("source", "manual"),
+                        "notes": meta.get("notes", ""),
+                    }
+                )
+
+            return jsonify({"isbns": isbns_data, "count": len(isbns_data)})
+
+        return jsonify({"isbns": [], "count": 0})
+    except Exception as e:
+        logger.error(f"Error loading ISBNs: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/isbns", methods=["POST"])
+def add_isbn():
+    """Add a new ISBN to track with metadata fetching"""
+    try:
+        from scripts.google_books_api import GoogleBooksAPI
+        import asyncio
+
+        data = request.json
+        isbn_input = data.get("isbn", "").strip()
+
+        if not isbn_input:
+            return jsonify({"error": "ISBN is required"}), 400
+
+        isbn_file = BASE_DIR / "isbns.json"
+        if isbn_file.exists():
+            isbn_dict = json.loads(isbn_file.read_bytes())
+        else:
+            isbn_dict = {}
+
+        # Helper function to process a single ISBN
+        async def process_isbn(isbn):
+            result = {"isbn": isbn, "success": False, "error": None, "metadata": None}
+            clean_isbn = isbn.replace("-", "").replace(" ", "")
+            if len(clean_isbn) not in [10, 13]:
+                result["error"] = "Invalid ISBN format"
+                return result
+            if isbn in isbn_dict:
+                result["error"] = "ISBN already being tracked"
+                return result
+            google_books_api = GoogleBooksAPI()
+            metadata_result = {"success": False, "source": "manual"}
+            if google_books_api.is_available():
+                logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
+                metadata_result = google_books_api.fetch_book_metadata(isbn)
+                metadata_result["source"] = "google_books"
+            else:
+                logger.warning("Google Books API not available, adding ISBN without metadata")
+                metadata_result = google_books_api.normalize_isbn(isbn)
+                metadata_result["source"] = "manual"
+            if metadata_result.get("success") or metadata_result.get("isbn13"):
+                metadata_result["isbn_input"] = isbn
+                logger.info(f"Saved metadata for ISBN {isbn}")
+                isbn_dict[isbn] = {
+                    "title": metadata_result.get("title", ""),
+                    "isbn13": metadata_result.get("isbn13", ""),
+                    "isbn10": metadata_result.get("isbn10", ""),
+                    "authors": metadata_result.get("authors", []),
+                    "year": metadata_result.get("year", ""),
+                    "source": metadata_result.get("source", "manual"),
+                    "notes": metadata_result.get("notes", ""),
+                }
+                result["success"] = True
+                result["metadata"] = metadata_result
+            else:
+                result["error"] = metadata_result.get("error", "Unknown error")
+            return result
+
+        # Check for multiple ISBNs
+        if "," in isbn_input:
+            isbn_list = [i.strip() for i in isbn_input.split(",") if i.strip()]
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            results = loop.run_until_complete(asyncio.gather(*(process_isbn(isbn) for isbn in isbn_list)))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            summary = {
+                "added": [r["isbn"] for r in results if r["success"]],
+                "failed": [{"isbn": r["isbn"], "error": r["error"]} for r in results if not r["success"]],
+                "count_added": sum(1 for r in results if r["success"]),
+                "count_failed": sum(1 for r in results if not r["success"]),
+            }
+            return jsonify({"message": f"Processed {len(isbn_list)} ISBNs", **summary})
+        else:
+            # Single ISBN logic (as before, but using helper)
+            result = asyncio.run(process_isbn(isbn_input))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            if result["success"]:
+                response_data = {"message": f"ISBN {isbn_input} added successfully", "metadata": result["metadata"]}
+                logger.info(f"Added new ISBN with metadata: {isbn_input} - {result['metadata'].get('title')}")
+            else:
+                response_data = {"error": result["error"]}
+                logger.warning(f"Failed to add ISBN {isbn_input}: {result['error']}")
+            return jsonify(response_data)
+
+    except Exception as e:
+        logger.error(f"Error adding ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/isbns/<isbn>", methods=["DELETE"])
+def remove_isbn(isbn):
+    """Remove an ISBN from tracking and its metadata"""
+    try:
+        isbn_file = BASE_DIR / "isbns.json"
+
+        if not isbn_file.exists():
+            return jsonify({"error": "No ISBNs file found"}), 404
+
+        # Read all ISBNs
+        isbn_dict = json.loads(isbn_file.read_bytes())
+
+        # Filter out the ISBN to remove
+        if isbn in isbn_dict:
+            del isbn_dict[isbn]
+        else:
+            return jsonify({"error": "ISBN not found"}), 404
+
+        # Write back to file
+        isbn_file.write_text(json.dumps(isbn_dict, indent=4))
+
+        return jsonify({"message": f"ISBN {isbn} removed successfully"})
+
+    except Exception as e:
+        logger.error(f"Error removing ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/scrape/<isbn>", methods=["POST"])
+def trigger_scrape(isbn):
+    """Trigger scraping for a specific ISBN"""
+    try:
+        from scripts.scraper import scrape_all_sources, save_results_to_csv
+
+        # Get the ISBN json
+        isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
+
+        isbn_item = isbn_data.get(isbn)
+
+        logger.info(f"Manual scrape triggered for '{isbn_item.get('title', 'unknown')}' ISBN: {isbn}")
+        results = scrape_all_sources(isbn_item)
+
+        if results:
+            save_results_to_csv(results)
+            return jsonify(
+                {"message": f"Scraping completed for {isbn}", "results_count": len(results), "results": results}
+            )
+        else:
+            return jsonify({"message": f"No results found for {isbn}", "results_count": 0})
+
+    except Exception as e:
+        logger.error(f"Error during manual scrape: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/scrape/all", methods=["POST"])
+async def trigger_bulk_scrape():
+    """Trigger bulk scraping for all tracked ISBNs"""
+    try:
+        from scripts.scraper import scrape_all_isbns, load_isbns_from_file
+
+        # Get list of ISBNs first
+        isbns = load_isbns_from_file()
+
+        if not isbns:
+            return jsonify({"error": "No ISBNs found to scrape"}), 400
+
+        logger.info(f"Bulk scrape triggered for {len(isbns)} ISBNs")
+
+        # Start the bulk scraping process
+        await scrape_all_isbns()
+
+        return jsonify({"message": f"Bulk scraping completed for {len(isbns)} ISBNs", "isbn_count": len(isbns)})
+
+    except Exception as e:
+        logger.error(f"Error during bulk scrape: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prices/recent")
+def get_recent_prices():
+    """Get recent price records for activity log"""
+    try:
+        df = load_prices_data()
+        if df.empty:
+            return jsonify([])
+
+        # Sort by timestamp and get latest 20 records
+        df_recent = df.sort_values("timestamp", ascending=False).head(20)
+
+        # Convert to list of dictionaries
+        records = df_recent.to_dict("records")
+        return jsonify(records)
+
+    except Exception as e:
+        logger.error(f"Error loading recent prices: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/export/csv")
 def export_csv():
     """Export prices data as CSV file"""
     try:
         df = load_prices_data()
+
+        # Create CSV response
+        from flask import make_response
+        import io
 
         output = io.StringIO()
         df.to_csv(output, index=False)
@@ -454,7 +695,7 @@ def generate_html_price_report(data):
     
     for isbn_data in data.values():
         for price_record in isbn_data['prices']:
-            if price_record.get('success') == 'True' and price_record.get('price'):
+            if price_record['success'] == 'True' and price_record['price']:
                 total_sources.add(price_record['source'])
                 all_prices.append(price_record['price'])
     
@@ -493,7 +734,7 @@ def generate_html_price_report(data):
         # Get latest prices from each source (successful ones only)
         latest_prices = []
         for price_record in book_data['prices']:
-            if price_record.get('success') == 'True' and price_record.get('price') is not None:
+            if price_record['success'] == 'True' and price_record['price'] is not None:
                 latest_prices.append(price_record)
         
         # Sort by timestamp to get the most recent from each source
@@ -519,7 +760,7 @@ def generate_html_price_report(data):
                 </div>"""
         
         if best_price:
-            best_url = html.escape(best_price['url']) if best_price.get('url') else '#'
+            best_url = html.escape(best_price['url']) if best_price['url'] else '#'
             best_source = html.escape(best_price['source'])
             
             html_content += f"""
@@ -527,8 +768,7 @@ def generate_html_price_report(data):
                     <h3>🏆 Best Price Found</h3>
                     <div class="price">${best_price['price']:.2f}</div>
                     <div class="source">from {best_source}</div>
-                    <a href="{best_url}" target="_blank">🛒 View Deal</a>
-                </div>"""
+                    <a href="{best_url}" target="_blank">🛒 View Deal</a>                </div>"""
         
         if current_prices:
             html_content += """
@@ -542,7 +782,7 @@ def generate_html_price_report(data):
             for price in sorted_prices:
                 source = html.escape(price['source'])
                 price_val = price['price']
-                url = html.escape(price.get('url', '')) if price.get('url') else '#'
+                url = html.escape(price['url']) if price['url'] else '#'
                 
                 # Highlight if this is the best price
                 extra_class = ' style="border-color: #667eea; border-width: 2px;"' if price == best_price else ''
@@ -569,7 +809,7 @@ def generate_html_price_report(data):
             </div>"""
     
     # Close HTML
-    html_content += """
+    html_content += f"""
         </div>
         
         <div class="footer">
@@ -592,10 +832,9 @@ def export_html():
         if df.empty:
             return jsonify({"error": "No data available for report"}), 400
         
-        # Process data for the report
+        # Use the same data processing logic as the API endpoint
         result = {}
-        
-        for isbn in df["isbn"].unique():
+          for isbn in df["isbn"].unique():
             isbn_data = df[df["isbn"] == isbn]
             
             # Get book title - prioritize metadata over price data
@@ -626,7 +865,9 @@ def export_html():
             for _, row in isbn_data.iterrows():
                 price_record = {
                     "source": str(row["source"]) if pd.notna(row["source"]) else "",
-                    "price": float(row["price"]) if row["price"] and str(row["price"]).replace(".", "").isdigit() else None,
+                    "price": float(row["price"])
+                    if row["price"] and str(row["price"]).replace(".", "").isdigit()
+                    else None,
                     "url": str(row["url"]) if pd.notna(row["url"]) else "",
                     "timestamp": str(row["timestamp"]) if pd.notna(row["timestamp"]) else "",
                     "success": str(row["success"]) if pd.notna(row["success"]) else "False",
@@ -639,6 +880,8 @@ def export_html():
         html_content = generate_html_price_report(result)
         
         # Create response
+        from flask import make_response
+        
         response = make_response(html_content)
         response.headers["Content-Type"] = "text/html; charset=utf-8"
         response.headers["Content-Disposition"] = (
