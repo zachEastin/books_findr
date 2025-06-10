@@ -27,10 +27,12 @@
                 "source": "google_books",
                 "notes": ""
             }
-        },
+        }
+    ],
+    "History for Little Pilgrims (Coloring Book)": [
         {
             "1930092865": {
-                "title": "History for Little Pilgrims",
+                "title": "History for Little Pilgrims (Coloring Book)",
                 "isbn13": "9781930092860",
                 "isbn10": "1930092865",
                 "authors": [
