@@ -9,7 +9,8 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import json
-import asyncio  # Add this import at the top if not present
+import asyncio
+import io  # Add this import at the top if not present
 
 # Import visualization module
 try:
@@ -466,21 +467,26 @@ def api_prices_by_isbn_grouped():
         df = load_prices_data()
 
         if df.empty:
-            return jsonify({"message": "No data available", "data": {}})
-
-        # Group by ISBN and calculate statistics
+            return jsonify({"message": "No data available", "data": {}})        # Group by ISBN and calculate statistics
         result = {}
 
         for isbn in df["isbn"].unique():
             isbn_data = df[df["isbn"] == isbn]
 
-            # Get valid prices (non-null, non-empty)
-            valid_prices = isbn_data[isbn_data["price"].notna() & (isbn_data["price"] != "")]
-            if not valid_prices.empty:
-                valid_prices_numeric = pd.to_numeric(valid_prices["price"], errors="coerce")
+            # Get the most recent record for each source to calculate current min/max/avg prices
+            isbn_data_sorted = isbn_data.sort_values("timestamp", ascending=False)
+            latest_by_source = isbn_data_sorted.groupby("source").first().reset_index()            # Get valid prices from most recent records only (non-null, non-empty, successful)
+            valid_latest_prices = latest_by_source[
+                (latest_by_source["price"].notna()) & 
+                (latest_by_source["price"] != "") &
+                (latest_by_source["success"])
+            ]
+            
+            if not valid_latest_prices.empty:
+                valid_prices_numeric = pd.to_numeric(valid_latest_prices["price"], errors="coerce")
                 valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
             else:
-                valid_prices_numeric = pd.Series([])  # Get book title - prioritize ISBNdb metadata over price data
+                valid_prices_numeric = pd.Series([])# Get book title - prioritize ISBNdb metadata over price data
             title = "Unknown Title"
             try:
                 # First try to get title from ISBNdb metadata

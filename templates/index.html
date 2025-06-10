@@ -441,7 +441,26 @@
             let html = '';            Object.values(result.data).forEach(isbnData => {
                 const bestPrice = isbnData.min_price;
                 const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
-                
+
+                // Calculate lowest and highest prices for each ISBN
+                const isbn_stats = {};
+                let lowest_price = Infinity;
+                let lowest_price_date = '';
+                let highest_price = -Infinity;
+                let highest_price_date = '';
+
+                // Calculate stats for each unique ISBN
+                isbnData.prices.forEach(priceData => {
+                    if (priceData["price"] < lowest_price) {
+                        lowest_price = priceData["price"];
+                        lowest_price_date = priceData["timestamp"];
+                    }
+                    if (priceData["price"] > highest_price) {
+                        highest_price = priceData["price"];
+                        highest_price_date = priceData["timestamp"];
+                    }
+                });
+
                 // Find the URL for the best price
                 let bestPriceUrl = '';
                 if (bestPrice && isbnData.prices) {
@@ -508,6 +527,18 @@
                                                     <strong class="grey-text">N/A</strong>
                                                     <br><small>Avg Price</small>
                                                 `}
+                                            </div>
+                                        </div>
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                <strong class="red-text">${lowest_price}</strong>
+                                                <br><small>Lowest Price (${new Date(lowest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
+                                            </div>
+                                        </div>
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                <strong class="teal-text">${highest_price}</strong>
+                                                <br><small>Highest Price (${new Date(highest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
                                             </div>
                                         </div>
                                     </div>
