@@ -101,7 +101,7 @@ def _scrape_bookscouter_sync(isbn: str, url: str) -> Dict:
             # Look for price elements (BookScouter typically shows prices in a table)
             price_elements = driver.find_elements(
                 By.CSS_SELECTOR,
-                "[class^='CellSectionValue'], [class*='CellSectionValue']",
+                "[class^='BestVendorPrice'], [class*='BestVendorPrice']",
             )
 
             prices = []
