@@ -483,8 +483,8 @@ def api_prices_by_isbn_grouped():
             title = "Unknown Title"
             try:
                 # First try to get title from ISBNdb metadata
-                isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
-                metadata = isbn_data.get(str(isbn))
+                isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
+                metadata = isbn_metadata.get(str(isbn))
                 if metadata and metadata.get("title"):
                     title = str(metadata["title"])
                     logger.info(f"Using ISBNdb title for {isbn}: {title}")
