@@ -377,14 +377,70 @@
                 console.error('Error loading activity:', error);
                 activityLog.innerHTML = '<div class="red-text">Failed to load recent activity. Please check the console for details.</div>';
             }
-        }
-
-        // Enter key support for ISBN input
+        }        // Enter key support for ISBN input
         document.getElementById('new-isbn').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 addISBN();
             }
         });
+
+        // Load image for specific ISBN
+        async function loadImageForISBN(isbn) {
+            const imageId = `image-${isbn.replace(/[^a-zA-Z0-9]/g, '')}`;
+            const imageElement = document.getElementById(imageId);
+            
+            if (!imageElement) return;
+            
+            try {
+                const response = await fetch(`/api/images/${isbn}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Find the first available image
+                    let imageFound = false;
+                    for (const [source, imageInfo] of Object.entries(data.images)) {
+                        if (imageInfo.exists) {
+                            imageElement.innerHTML = `<img src="${imageInfo.url}" alt="Book cover" class="book-image">`;
+                            imageFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!imageFound) {
+                        imageElement.innerHTML = 'No Image';
+                    }
+                } else {
+                    imageElement.innerHTML = 'No Image';
+                }
+            } catch (error) {
+                console.error('Error loading image for ISBN:', isbn, error);
+                imageElement.innerHTML = 'No Image';
+            }
+        }
+
+        // Download image for specific ISBN and source
+        async function downloadImage(isbn, source) {
+            M.toast({ html: `Downloading image for ${isbn} from ${source}...`, classes: 'blue' });
+            
+            try {
+                const response = await fetch(`/api/images/${isbn}/${source}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    // Reload the image for this ISBN
+                    loadImageForISBN(isbn);
+                } else {
+                    M.toast({ html: data.error || 'Failed to download image', classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error downloading image:', error);
+                M.toast({ html: 'Error downloading image', classes: 'red' });
+            }
+        }
     </script>
 </body>
 

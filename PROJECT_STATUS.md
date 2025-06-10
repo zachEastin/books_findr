@@ -52,6 +52,17 @@ A complete local Python application that tracks book prices from multiple source
 - ✅ **Dashboard Enhancement**: Show titles from ISBNdb metadata instead of price data in "Prices by ISBN" section
 - ✅ **Configuration Template**: Template file for ISBNdb API key setup
 
+### Book Cover Image System
+- ✅ **Image Display**: Book cover images in ISBN cards (80x120px)
+- ✅ **Smart Download Buttons**: Appear when no image exists but price data is available
+- ✅ **Multi-Source Support**: BookScouter, ChristianBook, and RainbowResource image extraction
+- ✅ **Intelligent Scraping**: Source-specific CSS selectors with fallback strategies
+- ✅ **Image Storage**: Local storage in `static/images/books/` with unique naming
+- ✅ **Format Support**: JPEG, PNG, GIF, and WebP validation and handling
+- ✅ **API Integration**: REST endpoints for image checking and downloading
+- ✅ **Admin Interface**: Image management and download controls
+- ✅ **Real-time Updates**: Dynamic image loading without page refresh
+
 ## 🚀 CURRENT STATUS
 
 ### ✅ FULLY FUNCTIONAL
@@ -66,6 +77,7 @@ A complete local Python application that tracks book prices from multiple source
 9. **HTTP Scrapers**: Alternative scrapers working with real price data
 10. **Charts**: Live data visualization in web interface
 11. **Book Metadata**: Titles displayed from ISBNdb instead of scraper data
+12. **Image System**: Complete book cover image downloading and display functionality
 
 ### 📊 TEST RESULTS
 - **Health API**: ✅ Working (`/health`)
@@ -107,12 +119,15 @@ python manage.py schedule --start 09:00
 - `app.py` - Flask web application
 - `manage.py` - CLI management tool
 - `scripts/scraper.py` - Web scraping engine
+- `scripts/image_downloader.py` - Book cover image downloading system
 - `scripts/scheduler.py` - Automation system
 - `scripts/logger.py` - Logging infrastructure
-- `templates/index.html` - Dashboard UI
-- `templates/admin.html` - Admin interface
+- `templates/index.html` - Dashboard UI with image display
+- `templates/admin.html` - Admin interface with image management
 - `data/prices.csv` - Price data storage
 - `isbns.json` - ISBN tracking list and metadata
+- `static/images/books/` - Book cover image storage
+- `IMAGE_FUNCTIONALITY.md` - Complete image system documentation
 
 ## 🎯 NEXT STEPS (OPTIONAL ENHANCEMENTS)
 

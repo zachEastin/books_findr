@@ -47,7 +47,8 @@ def load_prices_data():
     """Load prices data from CSV file"""
     try:
         if PRICES_CSV.exists():
-            df = pd.read_csv(PRICES_CSV)
+            # Load with ISBN as string to avoid integer conversion
+            df = pd.read_csv(PRICES_CSV, dtype={'isbn': str})
             logger.info(f"Loaded {len(df)} price records from CSV")
             return df
         else:
@@ -544,6 +545,87 @@ def api_prices_by_isbn_grouped():
 
     except Exception as e:
         logger.error(f"Error generating grouped ISBN data: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# Image Management Routes
+@app.route("/api/images/<isbn>")
+def get_isbn_images(isbn):
+    """Get existing images for an ISBN"""
+    try:
+        from scripts.image_downloader import get_existing_image_info
+        images = get_existing_image_info(isbn)
+        return jsonify({"isbn": isbn, "images": images})
+    except Exception as e:
+        logger.error(f"Error getting images for ISBN {isbn}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/<isbn>/<source>", methods=["POST"])
+def download_image_for_isbn(isbn, source):
+    """Download image for ISBN from specific source"""
+    try:
+        from scripts.image_downloader import download_image_for_isbn_source
+        
+        # Get the URL for this ISBN and source from price data
+        df = load_prices_data()
+        if df.empty:
+            return jsonify({"error": "No price data available"}), 404
+            
+        # Find the most recent successful record for this ISBN and source
+        isbn_source_data = df[(df["isbn"] == isbn) & (df["source"].str.lower() == source.lower())]
+        if isbn_source_data.empty:
+            return jsonify({"error": f"No data found for ISBN {isbn} and source {source}"}), 404
+            
+        # Get the most recent record with a URL
+        recent_data = isbn_source_data[isbn_source_data["url"].notna() & (isbn_source_data["url"] != "")]
+        if recent_data.empty:
+            return jsonify({"error": f"No URL found for ISBN {isbn} and source {source}"}), 404
+            
+        latest_record = recent_data.sort_values("timestamp", ascending=False).iloc[0]
+        url = latest_record["url"]
+        
+        # Download the image
+        result = download_image_for_isbn_source(isbn, source, url)
+        
+        if result["success"]:
+            return jsonify({
+                "message": f"Image downloaded successfully for {isbn} from {source}",
+                "result": result
+            })
+        else:
+            return jsonify({
+                "error": f"Failed to download image: {result.get('error', 'Unknown error')}",
+                "result": result
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Error downloading image for ISBN {isbn} from {source}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/cleanup", methods=["POST"])
+def cleanup_images():
+    """Clean up old image files"""
+    try:
+        from scripts.image_downloader import cleanup_old_images
+        
+        days_old = request.json.get("days_old", 30) if request.json else 30
+        result = cleanup_old_images(days_old)
+        
+        if result["success"]:
+            return jsonify({
+                "message": f"Cleanup completed. Deleted {result['deleted_count']} files.",
+                "result": result
+            })
+        else:
+            return jsonify({
+                "error": f"Cleanup failed: {result.get('error', 'Unknown error')}",
+                "result": result
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"Error during image cleanup: {e}")
         return jsonify({"error": str(e)}), 500
 
 

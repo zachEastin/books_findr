@@ -130,10 +130,33 @@
 
         .source-badge.source-christianbook {
             background-color: #d53f8c;
+        }        .source-badge.source-rainbowresource {
+            background-color: #38a169;
         }
 
-        .source-badge.source-rainbowresource {
-            background-color: #38a169;
+        .btn-large.green {
+            background-color: #4caf50 !important;
+        }
+
+        .btn-large.orange {
+            background-color: #ff9800 !important;
+        }
+
+        .btn-large.red {
+            background-color: #f44336 !important;
+        }
+
+        .book-image-container img {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .isbn-card {
+            transition: all 0.3s ease;
+        }
+
+        .isbn-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -415,73 +438,114 @@
             }
 
             // Create HTML for each ISBN
-            let html = '';
-
-            Object.values(result.data).forEach(isbnData => {
+            let html = '';            Object.values(result.data).forEach(isbnData => {
                 const bestPrice = isbnData.min_price;
                 const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
-
+                
+                // Find the URL for the best price
+                let bestPriceUrl = '';
+                if (bestPrice && isbnData.prices) {
+                    const bestPriceRecord = isbnData.prices.find(price => 
+                        price.price && Math.abs(price.price - bestPrice) < 0.01
+                    );
+                    if (bestPriceRecord && bestPriceRecord.url) {
+                        bestPriceUrl = bestPriceRecord.url;
+                    }
+                }
+                
                 html += `
-                        <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem;">
-                            <div class="row" style="margin-bottom: 0.5rem;">
-                                <div class="col s12 m8">
-                                    <h6 class="book-title" style="margin: 0; font-weight: 600; color: #2d3748;">
-                                        ${isbnData.title}
-                                    </h6>
-                                    <p style="margin: 0.25rem 0; color: #666;">
-                                        <span class="isbn-code">${isbnData.isbn}</span>
-                                    </p>
+                        <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; min-height: 280px;">
+                            <div class="row" style="margin-bottom: 0.5rem; min-height: 250px;">
+                                <div class="col s12 m3" style="display: flex; flex-direction: column; align-items: center;">
+                                    <div id="book-image-${isbnData.isbn.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container" style="width: 180px; height: 200px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; text-align: center; margin-bottom: 0.5rem;">
+                                        Loading...
+                                    </div>
+                                    <div id="image-actions-${isbnData.isbn.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions" style="display: none;">
+                                        <div class="dropdown-trigger btn-small orange" data-target="image-dropdown-${isbnData.isbn.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; padding: 0 0.5rem; font-size: 0.7rem;">
+                                            <i class="material-icons tiny">image</i> Get Image
+                                        </div>
+                                        <ul id="image-dropdown-${isbnData.isbn.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
+                                            <li><a href="#!" onclick="downloadBookImage('${isbnData.isbn}', 'bookscouter')">BookScouter</a></li>
+                                            <li><a href="#!" onclick="downloadBookImage('${isbnData.isbn}', 'christianbook')">ChristianBook</a></li>
+                                            <li><a href="#!" onclick="downloadBookImage('${isbnData.isbn}', 'rainbowresource')">RainbowResource</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="col s12 m4 right-align">
+                                <div class="col s12 m6" style="display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <h6 class="book-title" style="margin: 0 0 0.5rem 0; font-weight: 600; color: #2d3748; font-size: 1.3rem;">
+                                            ${isbnData.title}
+                                        </h6>
+                                        <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
+                                            <span class="isbn-code">${isbnData.isbn}</span>
+                                        </p>
+                                    </div>
+                                    <div class="row" style="margin-top: 1rem;">
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                <strong class="blue-text">${isbnData.sources.length}</strong>
+                                                <br><small>Sources</small>
+                                            </div>
+                                        </div>
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                <strong class="green-text">${isbnData.successful_records}/${isbnData.total_records}</strong>
+                                                <br><small>Success Rate</small>
+                                            </div>
+                                        </div>
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                <strong class="orange-text">${isbnData.price_count}</strong>
+                                                <br><small>Valid Prices</small>
+                                            </div>
+                                        </div>
+                                        <div class="col s6">
+                                            <div class="center-align">
+                                                ${isbnData.avg_price ? `
+                                                    <strong class="purple-text">$${isbnData.avg_price.toFixed(2)}</strong>
+                                                    <br><small>Avg Price</small>
+                                                ` : `
+                                                    <strong class="grey-text">N/A</strong>
+                                                    <br><small>Avg Price</small>
+                                                `}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                     ${bestPrice ? `
-                                        <h5 class="${priceClass}" style="margin: 0; font-weight: 600;">
-                                            $${bestPrice.toFixed(2)}
-                                        </h5>
-                                        <small class="grey-text">Best Price</small>
+                                        ${bestPriceUrl ? `
+                                            <a href="${bestPriceUrl}" target="_blank" class="btn-large ${priceClass.replace('-text', '')}" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; align-items: center;">
+                                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
+                                                    $${bestPrice.toFixed(2)}
+                                                </div>
+                                            </a>
+                                        ` : `
+                                            <div class="btn-large ${priceClass.replace('-text', '')} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; align-items: center;">
+                                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
+                                                    $${bestPrice.toFixed(2)}
+                                                </div>
+                                            </div>
+                                        `}
                                     ` : `
-                                        <h5 class="grey-text" style="margin: 0;">
-                                            N/A
-                                        </h5>
-                                        <small class="grey-text">No Price Data</small>
+                                        <div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center;">
+                                            <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem;">
+                                                N/A
+                                            </div>
+                                            <div style="font-size: 0.9rem;">No Price Data</div>
+                                        </div>
                                     `}
                                 </div>
-                            </div>
-                            
-                            <div class="row" style="margin-bottom: 1rem;">
-                                <div class="col s6 m3">
-                                    <div class="center-align">
-                                        <strong class="blue-text">${isbnData.sources.length}</strong>
-                                        <br><small>Sources</small>
+                            </div>                            
+                            <!-- Collapsible Price Breakdown -->
+                            <ul class="collapsible" style="margin-top: 1rem;">
+                                <li>
+                                    <div class="collapsible-header" style="padding: 0.5rem 1rem;">
+                                        <i class="material-icons">expand_more</i>
+                                        <span style="font-weight: 600;">Price Breakdown (${isbnData.prices.length} sources)</span>
                                     </div>
-                                </div>
-                                <div class="col s6 m3">
-                                    <div class="center-align">
-                                        <strong class="green-text">${isbnData.successful_records}/${isbnData.total_records}</strong>
-                                        <br><small>Success Rate</small>
-                                    </div>
-                                </div>
-                                <div class="col s6 m3">
-                                    <div class="center-align">
-                                        <strong class="orange-text">${isbnData.price_count}</strong>
-                                        <br><small>Valid Prices</small>
-                                    </div>
-                                </div>
-                                <div class="col s6 m3">
-                                    <div class="center-align">
-                                        ${isbnData.avg_price ? `
-                                            <strong class="purple-text">$${isbnData.avg_price.toFixed(2)}</strong>
-                                            <br><small>Avg Price</small>
-                                        ` : `
-                                            <strong class="grey-text">N/A</strong>
-                                            <br><small>Avg Price</small>
-                                        `}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="prices-breakdown">
-                                <h6 style="margin-bottom: 0.5rem; color: #555;">Price Breakdown:</h6>
-                                <div class="row">
+                                    <div class="collapsible-body" style="padding: 1rem;">
+                                        <div class="row" style="margin-bottom: 0;">
                     `;
 
                 // Add individual price entries
@@ -516,13 +580,24 @@
                 });
 
                 html += `
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     `;
-            });
+            });            container.innerHTML = html;
 
-            container.innerHTML = html;
+            // Initialize dropdowns after adding HTML
+            M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
+            
+            // Initialize collapsibles after adding HTML  
+            M.Collapsible.init(document.querySelectorAll('.collapsible'));
+
+            // Load images for each ISBN
+            Object.values(result.data).forEach(isbnData => {
+                loadBookImage(isbnData.isbn, isbnData.prices);
+            });
 
         } catch (error) {
             console.error('Error loading ISBN data:', error);
@@ -537,7 +612,94 @@
                     </div>
                 `;
         } finally {
-            loadingIcon.style.display = 'none';
+            loadingIcon.style.display = 'none';        }
+    }
+
+    // Load book image for specific ISBN
+    async function loadBookImage(isbn, pricesData) {
+        const imageId = `book-image-${isbn.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const imageElement = document.getElementById(imageId);
+        const imageActionsId = `image-actions-${isbn.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const imageActions = document.getElementById(imageActionsId);
+        
+        if (!imageElement) return;
+        
+        try {
+            const response = await fetch(`/api/images/${isbn}`);
+            if (response.ok) {
+                const data = await response.json();
+                  // Find the first available image
+                let imageFound = false;
+                for (const [source, imageInfo] of Object.entries(data.images)) {
+                    if (imageInfo.exists) {
+                        imageElement.innerHTML = `<img src="${imageInfo.url}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+                        imageFound = true;
+                        break;
+                    }
+                }
+                  // If no image found, check if we have successful price data with URLs
+                if (!imageFound) {
+                    const hasSuccessfulPrices = pricesData && pricesData.some(price => 
+                        price.success === 'True' && price.url && price.url.trim() !== ''
+                    );
+                    
+                    imageElement.innerHTML = '<i class="material-icons" style="font-size: 2rem; color: #ccc;">image</i><br><small>No Image</small>';
+                    
+                    if (hasSuccessfulPrices) {
+                        imageActions.style.display = 'block';
+                    } else {
+                        // Still show button even without price data - user might want to try downloading
+                        imageActions.style.display = 'block';
+                    }
+                }
+            } else {
+                // No API response - show download button anyway
+                imageElement.innerHTML = '<i class="material-icons" style="font-size: 2rem; color: #ccc;">image</i><br><small>No Image</small>';
+                if (imageActions) {
+                    imageActions.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading image for ISBN:', isbn, error);
+            imageElement.innerHTML = '<i class="material-icons" style="font-size: 2rem; color: #ccc;">error</i><br><small>Error</small>';
+        }
+    }
+
+    // Download book image for specific ISBN and source
+    async function downloadBookImage(isbn, source) {
+        // Show toast notification
+        if (typeof M !== 'undefined' && M.toast) {
+            M.toast({ html: `Downloading image for ${isbn} from ${source}...`, classes: 'blue' });
+        }
+        
+        try {
+            const response = await fetch(`/api/images/${isbn}/${source}`, {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                if (typeof M !== 'undefined' && M.toast) {
+                    M.toast({ html: data.message, classes: 'green' });
+                }
+                // Reload the image for this ISBN - get the prices data by finding the ISBN in the current data
+                const container = document.getElementById('isbn-prices-container');
+                const cardElement = document.querySelector(`[id*="${isbn.replace(/[^a-zA-Z0-9]/g, '')}"]`);
+                if (cardElement) {
+                    // Reload just this image
+                    loadBookImage(isbn, []); // We'll pass empty array as we just need to check if image exists now
+                }
+            } else {
+                if (typeof M !== 'undefined' && M.toast) {
+                    M.toast({ html: data.error || 'Failed to download image', classes: 'red' });
+                }
+            }
+        } catch (error) {
+            console.error('Error downloading image:', error);
+            if (typeof M !== 'undefined' && M.toast) {
+                M.toast({ html: 'Error downloading image', classes: 'red' });
+            }
         }
     }
 
