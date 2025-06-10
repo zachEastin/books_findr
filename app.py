@@ -138,6 +138,18 @@ def api_prices():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/prices/<isbn>")
+def api_prices_by_isbn(isbn):
+    """API endpoint to get prices for a specific ISBN"""
+    try:
+        df = load_prices_data()
+        isbn_data = df[df["isbn"] == isbn]
+        return jsonify(isbn_data.to_dict("records"))
+    except Exception as e:
+        logger.error(f"Error getting prices for ISBN {isbn}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/health")
 def health():
     """Health check endpoint"""
@@ -149,6 +161,230 @@ def health():
             "total_records": len(load_prices_data()) if PRICES_CSV.exists() else 0,
         }
     )
+
+
+@app.route("/admin")
+def admin():
+    """Admin interface for managing ISBNs"""
+    return render_template("admin.html")
+
+
+@app.route("/api/isbns")
+def get_isbns():
+    """Get list of ISBNs being tracked with metadata"""
+    try:
+        isbn_file = BASE_DIR / "isbns.json"
+        isbn_dict = json.loads(isbn_file.read_bytes()) if isbn_file.exists() else {}
+        isbns_data = []
+
+        # Load ISBNs
+        if isbn_file.exists():
+            for isbn, meta in isbn_dict.items():
+                isbns_data.append(
+                    {
+                        "isbn": isbn,
+                        "isbn13": meta.get("isbn13", isbn),
+                        "title": meta.get("title", ""),
+                        "authors": meta.get("authors", []),
+                        "year": meta.get("year", ""),
+                        "source": meta.get("source", "manual"),
+                        "notes": meta.get("notes", ""),
+                    }
+                )
+
+            return jsonify({"isbns": isbns_data, "count": len(isbns_data)})
+
+        return jsonify({"isbns": [], "count": 0})
+    except Exception as e:
+        logger.error(f"Error loading ISBNs: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/isbns", methods=["POST"])
+def add_isbn():
+    """Add a new ISBN to track with metadata fetching"""
+    try:
+        from scripts.google_books_api import GoogleBooksAPI
+        import asyncio
+
+        data = request.json
+        isbn_input = data.get("isbn", "").strip()
+
+        if not isbn_input:
+            return jsonify({"error": "ISBN is required"}), 400
+
+        isbn_file = BASE_DIR / "isbns.json"
+        if isbn_file.exists():
+            isbn_dict = json.loads(isbn_file.read_bytes())
+        else:
+            isbn_dict = {}
+
+        # Helper function to process a single ISBN
+        async def process_isbn(isbn):
+            result = {"isbn": isbn, "success": False, "error": None, "metadata": None}
+            clean_isbn = isbn.replace("-", "").replace(" ", "")
+            if len(clean_isbn) not in [10, 13]:
+                result["error"] = "Invalid ISBN format"
+                return result
+            if isbn in isbn_dict:
+                result["error"] = "ISBN already being tracked"
+                return result
+            google_books_api = GoogleBooksAPI()
+            metadata_result = {"success": False, "source": "manual"}
+            if google_books_api.is_available():
+                logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
+                metadata_result = google_books_api.fetch_book_metadata(isbn)
+                metadata_result["source"] = "google_books"
+            else:
+                logger.warning("Google Books API not available, adding ISBN without metadata")
+                metadata_result = google_books_api.normalize_isbn(isbn)
+                metadata_result["source"] = "manual"
+            if metadata_result.get("success") or metadata_result.get("isbn13"):
+                metadata_result["isbn_input"] = isbn
+                logger.info(f"Saved metadata for ISBN {isbn}")
+                isbn_dict[isbn] = {
+                    "title": metadata_result.get("title", ""),
+                    "isbn13": metadata_result.get("isbn13", ""),
+                    "isbn10": metadata_result.get("isbn10", ""),
+                    "authors": metadata_result.get("authors", []),
+                    "year": metadata_result.get("year", ""),
+                    "source": metadata_result.get("source", "manual"),
+                    "notes": metadata_result.get("notes", ""),
+                }
+                result["success"] = True
+                result["metadata"] = metadata_result
+            else:
+                result["error"] = metadata_result.get("error", "Unknown error")
+            return result
+
+        # Check for multiple ISBNs
+        if "," in isbn_input:
+            isbn_list = [i.strip() for i in isbn_input.split(",") if i.strip()]
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            results = loop.run_until_complete(asyncio.gather(*(process_isbn(isbn) for isbn in isbn_list)))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            summary = {
+                "added": [r["isbn"] for r in results if r["success"]],
+                "failed": [{"isbn": r["isbn"], "error": r["error"]} for r in results if not r["success"]],
+                "count_added": sum(1 for r in results if r["success"]),
+                "count_failed": sum(1 for r in results if not r["success"]),
+            }
+            return jsonify({"message": f"Processed {len(isbn_list)} ISBNs", **summary})
+        else:
+            # Single ISBN logic (as before, but using helper)
+            result = asyncio.run(process_isbn(isbn_input))
+            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
+            if result["success"]:
+                response_data = {"message": f"ISBN {isbn_input} added successfully", "metadata": result["metadata"]}
+                logger.info(f"Added new ISBN with metadata: {isbn_input} - {result['metadata'].get('title')}")
+            else:
+                response_data = {"error": result["error"]}
+                logger.warning(f"Failed to add ISBN {isbn_input}: {result['error']}")
+            return jsonify(response_data)
+
+    except Exception as e:
+        logger.error(f"Error adding ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/isbns/<isbn>", methods=["DELETE"])
+def remove_isbn(isbn):
+    """Remove an ISBN from tracking and its metadata"""
+    try:
+        isbn_file = BASE_DIR / "isbns.json"
+
+        if not isbn_file.exists():
+            return jsonify({"error": "No ISBNs file found"}), 404
+
+        # Read all ISBNs
+        isbn_dict = json.loads(isbn_file.read_bytes())
+
+        # Filter out the ISBN to remove
+        if isbn in isbn_dict:
+            del isbn_dict[isbn]
+        else:
+            return jsonify({"error": "ISBN not found"}), 404
+
+        # Write back to file
+        isbn_file.write_text(json.dumps(isbn_dict, indent=4))
+
+        return jsonify({"message": f"ISBN {isbn} removed successfully"})
+
+    except Exception as e:
+        logger.error(f"Error removing ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/scrape/<isbn>", methods=["POST"])
+def trigger_scrape(isbn):
+    """Trigger scraping for a specific ISBN"""
+    try:
+        from scripts.scraper import scrape_all_sources, save_results_to_csv
+
+        # Get the ISBN json
+        isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
+
+        isbn_item = isbn_data.get(isbn)
+
+        logger.info(f"Manual scrape triggered for '{isbn_item.get('title', 'unknown')}' ISBN: {isbn}")
+        results = scrape_all_sources(isbn_item)
+
+        if results:
+            save_results_to_csv(results)
+            return jsonify(
+                {"message": f"Scraping completed for {isbn}", "results_count": len(results), "results": results}
+            )
+        else:
+            return jsonify({"message": f"No results found for {isbn}", "results_count": 0})
+
+    except Exception as e:
+        logger.error(f"Error during manual scrape: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/scrape/all", methods=["POST"])
+async def trigger_bulk_scrape():
+    """Trigger bulk scraping for all tracked ISBNs"""
+    try:
+        from scripts.scraper import scrape_all_isbns, load_isbns_from_file
+
+        # Get list of ISBNs first
+        isbns = load_isbns_from_file()
+
+        if not isbns:
+            return jsonify({"error": "No ISBNs found to scrape"}), 400
+
+        logger.info(f"Bulk scrape triggered for {len(isbns)} ISBNs")
+
+        # Start the bulk scraping process
+        await scrape_all_isbns()
+
+        return jsonify({"message": f"Bulk scraping completed for {len(isbns)} ISBNs", "isbn_count": len(isbns)})
+
+    except Exception as e:
+        logger.error(f"Error during bulk scrape: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prices/recent")
+def get_recent_prices():
+    """Get recent price records for activity log"""
+    try:
+        df = load_prices_data()
+        if df.empty:
+            return jsonify([])
+
+        # Sort by timestamp and get latest 20 records
+        df_recent = df.sort_values("timestamp", ascending=False).head(20)
+
+        # Convert to list of dictionaries
+        records = df_recent.to_dict("records")
+        return jsonify(records)
+
+    except Exception as e:
+        logger.error(f"Error loading recent prices: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/export/csv")
@@ -649,6 +885,227 @@ def export_html():
         
     except Exception as e:
         logger.error(f"Error generating HTML report: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/summary")
+def api_summary():
+    """API endpoint to get summary statistics"""
+    try:
+        df = load_prices_data()
+
+        if df.empty:
+            return jsonify({"message": "No data available"})
+
+        # Calculate statistics
+        price_data = df[df["price"].notna() & (df["price"] != "")]
+
+        if not price_data.empty:
+            price_data["price"] = pd.to_numeric(price_data["price"], errors="coerce")
+            price_data = price_data[price_data["price"].notna()]
+
+            summary = {
+                "total_records": len(df),
+                "unique_books": df["isbn"].nunique(),
+                "unique_sources": df["source"].nunique(),
+                "price_stats": {
+                    "min": float(price_data["price"].min()) if not price_data.empty else 0,
+                    "max": float(price_data["price"].max()) if not price_data.empty else 0,
+                    "mean": float(price_data["price"].mean()) if not price_data.empty else 0,
+                    "median": float(price_data["price"].median()) if not price_data.empty else 0,
+                },
+                "success_rate": len(df[df["success"] == "True"]) / len(df) * 100 if len(df) > 0 else 0,
+                "last_updated": df["timestamp"].max() if "timestamp" in df.columns else None,
+            }
+        else:
+            summary = {
+                "total_records": len(df),
+                "unique_books": df["isbn"].nunique(),
+                "unique_sources": df["source"].nunique(),
+                "price_stats": {"min": 0, "max": 0, "mean": 0, "median": 0},
+                "success_rate": 0,
+                "last_updated": None,
+            }
+
+        return jsonify(summary)
+    except Exception as e:
+        logger.error(f"Error generating summary: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prices-by-isbn")
+def api_prices_by_isbn_grouped():
+    """API endpoint to get prices grouped by ISBN with statistics"""
+    try:
+
+        df = load_prices_data()
+
+        if df.empty:
+            return jsonify({"message": "No data available", "data": {}})        # Group by ISBN and calculate statistics
+        result = {}
+
+        for isbn in df["isbn"].unique():
+            isbn_data = df[df["isbn"] == isbn]
+
+            # Get the most recent record for each source to calculate current min/max/avg prices
+            isbn_data_sorted = isbn_data.sort_values("timestamp", ascending=False)
+            latest_by_source = isbn_data_sorted.groupby("source").first().reset_index()            # Get valid prices from most recent records only (non-null, non-empty, successful)
+            valid_latest_prices = latest_by_source[
+                (latest_by_source["price"].notna()) & 
+                (latest_by_source["price"] != "") &
+                (latest_by_source["success"])
+            ]
+            
+            if not valid_latest_prices.empty:
+                valid_prices_numeric = pd.to_numeric(valid_latest_prices["price"], errors="coerce")
+                valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
+            else:
+                valid_prices_numeric = pd.Series([])# Get book title - prioritize ISBNdb metadata over price data
+            title = "Unknown Title"
+            try:
+                # First try to get title from ISBNdb metadata
+                isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
+                metadata = isbn_metadata.get(str(isbn))
+                if metadata and metadata.get("title"):
+                    title = str(metadata["title"])
+                    logger.info(f"Using ISBNdb title for {isbn}: {title}")
+                else:
+                    # Fallback to title from price data
+                    price_title_data = isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]
+                    if len(price_title_data) > 0:
+                        title = str(price_title_data["title"].iloc[0])
+                        logger.info(f"Using price data title for {isbn}: {title}")
+                    else:
+                        logger.warning(f"No title found for {isbn}")
+            except Exception as e:
+                logger.warning(f"Error getting title for {isbn}: {e}")
+                # Fallback to title from price data
+                price_title_data = isbn_data[isbn_data["title"].notna() & (isbn_data["title"] != "")]
+                if len(price_title_data) > 0:
+                    title = str(price_title_data["title"].iloc[0])  # Calculate statistics
+            isbn_stats = {
+                "isbn": str(isbn),
+                "title": str(title),
+                "total_records": int(len(isbn_data)),
+                "successful_records": int(len(isbn_data[isbn_data["success"] == "True"])),
+                "sources": [str(source) for source in isbn_data["source"].unique().tolist()],
+                "latest_update": str(isbn_data["timestamp"].max()) if not isbn_data["timestamp"].isna().all() else None,
+                "prices": [],
+            }
+
+            if not valid_prices_numeric.empty:
+                isbn_stats.update(
+                    {
+                        "min_price": float(valid_prices_numeric.min()),
+                        "max_price": float(valid_prices_numeric.max()),
+                        "avg_price": float(valid_prices_numeric.mean()),
+                        "price_count": int(len(valid_prices_numeric)),
+                    }
+                )
+            else:
+                isbn_stats.update({"min_price": None, "max_price": None, "avg_price": None, "price_count": 0})
+
+            # Add individual price records
+            for _, row in isbn_data.iterrows():
+                price_record = {
+                    "source": str(row["source"]) if pd.notna(row["source"]) else "",
+                    "price": float(row["price"])
+                    if row["price"] and str(row["price"]).replace(".", "").isdigit()
+                    else None,
+                    "url": str(row["url"]) if pd.notna(row["url"]) else "",
+                    "timestamp": str(row["timestamp"]) if pd.notna(row["timestamp"]) else "",
+                    "success": str(row["success"]) if pd.notna(row["success"]) else "False",
+                    "notes": str(row["notes"]) if pd.notna(row["notes"]) else "",
+                }
+                isbn_stats["prices"].append(price_record)
+
+            result[str(isbn)] = isbn_stats
+
+        return jsonify({"data": result, "total_isbns": len(result)})
+
+    except Exception as e:
+        logger.error(f"Error generating grouped ISBN data: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# Image Management Routes
+@app.route("/api/images/<isbn>")
+def get_isbn_images(isbn):
+    """Get existing images for an ISBN"""
+    try:
+        from scripts.image_downloader import get_existing_image_info
+        images = get_existing_image_info(isbn)
+        return jsonify({"isbn": isbn, "images": images})
+    except Exception as e:
+        logger.error(f"Error getting images for ISBN {isbn}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/<isbn>/<source>", methods=["POST"])
+def download_image_for_isbn(isbn, source):
+    """Download image for ISBN from specific source"""
+    try:
+        from scripts.image_downloader import download_image_for_isbn_source
+        
+        # Get the URL for this ISBN and source from price data
+        df = load_prices_data()
+        if df.empty:
+            return jsonify({"error": "No price data available"}), 404
+            
+        # Find the most recent successful record for this ISBN and source
+        isbn_source_data = df[(df["isbn"] == isbn) & (df["source"].str.lower() == source.lower())]
+        if isbn_source_data.empty:
+            return jsonify({"error": f"No data found for ISBN {isbn} and source {source}"}), 404
+            
+        # Get the most recent record with a URL
+        recent_data = isbn_source_data[isbn_source_data["url"].notna() & (isbn_source_data["url"] != "")]
+        if recent_data.empty:
+            return jsonify({"error": f"No URL found for ISBN {isbn} and source {source}"}), 404
+            
+        latest_record = recent_data.sort_values("timestamp", ascending=False).iloc[0]
+        url = latest_record["url"]
+        
+        # Download the image
+        result = download_image_for_isbn_source(isbn, source, url)
+        
+        if result["success"]:
+            return jsonify({
+                "message": f"Image downloaded successfully for {isbn} from {source}",
+                "result": result
+            })
+        else:
+            return jsonify({
+                "error": f"Failed to download image: {result.get('error', 'Unknown error')}",
+                "result": result
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Error downloading image for ISBN {isbn} from {source}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/cleanup", methods=["POST"])
+def cleanup_images():
+    """Clean up old image files"""
+    try:
+        from scripts.image_downloader import cleanup_old_images
+        
+        days_old = request.json.get("days_old", 30) if request.json else 30
+        result = cleanup_old_images(days_old)
+        
+        if result["success"]:
+            return jsonify({
+                "message": f"Cleanup completed. Deleted {result['deleted_count']} files.",
+                "result": result
+            })
+        else:
+            return jsonify({
+                "error": f"Cleanup failed: {result.get('error', 'Unknown error')}",
+                "result": result
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"Error during image cleanup: {e}")
         return jsonify({"error": str(e)}), 500
 
 
