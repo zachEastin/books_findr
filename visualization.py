@@ -14,8 +14,18 @@ from pathlib import Path
 import seaborn as sns
 
 # Set style for better looking charts
-plt.style.use("seaborn-v0_8")
-sns.set_palette("husl")
+try:
+    plt.style.use("seaborn-v0_8")
+except OSError:
+    try:
+        plt.style.use("seaborn")
+    except OSError:
+        plt.style.use("default")
+
+try:
+    sns.set_palette("husl")
+except:
+    pass  # Fallback if seaborn is not available
 
 
 def create_price_comparison_chart(df: pd.DataFrame, isbn: str = None) -> str:
@@ -40,6 +50,16 @@ def create_price_comparison_chart(df: pd.DataFrame, isbn: str = None) -> str:
     else:
         filtered_df = df
 
+    # Filter out unsuccessful records and NaN prices
+    filtered_df = filtered_df[
+        (filtered_df["success"] == True) & 
+        (filtered_df["price"].notna()) & 
+        (filtered_df["price"] > 0)
+    ]
+    
+    if filtered_df.empty:
+        return create_no_data_chart("No valid price data available")
+
     # Get latest price for each source
     latest_prices = filtered_df.groupby("source")["price"].last().reset_index()
 
@@ -60,15 +80,21 @@ def create_price_comparison_chart(df: pd.DataFrame, isbn: str = None) -> str:
     # Add value labels on bars
     for bar in bars:
         height = bar.get_height()
-        if pd.notna(height):
+        if pd.notna(height) and height > 0:
             ax.text(
                 bar.get_x() + bar.get_width() / 2.0,
-                height + 0.5,
+                height + max(height * 0.01, 0.5),  # Dynamic offset based on height
                 f"${height:.2f}",
                 ha="center",
                 va="bottom",
                 fontweight="bold",
             )
+
+    # Rotate x-axis labels if needed
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+
+    return fig_to_base64(fig)
 
     # Rotate x-axis labels if needed
     plt.xticks(rotation=45, ha="right")
@@ -99,8 +125,18 @@ def create_price_trend_chart(df: pd.DataFrame, isbn: str = None) -> str:
     else:
         filtered_df = df
 
-    # Convert timestamp to datetime
+    # Filter out unsuccessful records and NaN prices
     filtered_df = filtered_df.copy()
+    filtered_df = filtered_df[
+        (filtered_df["success"] == True) & 
+        (filtered_df["price"].notna()) & 
+        (filtered_df["price"] > 0)
+    ]
+    
+    if filtered_df.empty:
+        return create_no_data_chart("No valid price data available for trends")
+
+    # Convert timestamp to datetime
     filtered_df["timestamp"] = pd.to_datetime(filtered_df["timestamp"])
 
     # Create the chart
@@ -112,7 +148,7 @@ def create_price_trend_chart(df: pd.DataFrame, isbn: str = None) -> str:
 
     for i, source in enumerate(sources):
         source_data = filtered_df[filtered_df["source"] == source].sort_values("timestamp")
-        if not source_data.empty:
+        if not source_data.empty and len(source_data) > 0:
             ax.plot(
                 source_data["timestamp"],
                 source_data["price"],
@@ -120,6 +156,7 @@ def create_price_trend_chart(df: pd.DataFrame, isbn: str = None) -> str:
                 label=source,
                 color=colors[i % len(colors)],
                 linewidth=2,
+                markersize=6,
             )
 
     # Customize the chart
@@ -127,7 +164,10 @@ def create_price_trend_chart(df: pd.DataFrame, isbn: str = None) -> str:
     ax.set_xlabel("Date", fontsize=12)
     ax.set_ylabel("Price ($)", fontsize=12)
     ax.grid(True, alpha=0.3)
-    ax.legend()
+    
+    # Only show legend if we have data to plot
+    if sources.size > 0:
+        ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
     # Format dates on x-axis
     plt.xticks(rotation=45)
@@ -138,7 +178,7 @@ def create_price_trend_chart(df: pd.DataFrame, isbn: str = None) -> str:
 
 def create_source_summary_chart(df: pd.DataFrame) -> str:
     """
-    Create a summary chart showing data availability by source
+    Create a summary chart showing successful data by source
 
     Args:
         df: DataFrame with price data
@@ -149,19 +189,31 @@ def create_source_summary_chart(df: pd.DataFrame) -> str:
     if df.empty:
         return create_no_data_chart("No data available")
 
-    # Count records by source
-    source_counts = df["source"].value_counts()
+    # Count successful records by source only
+    successful_df = df[df["success"] == True]
+    
+    if successful_df.empty:
+        return create_no_data_chart("No successful records available")
+    
+    source_counts = successful_df["source"].value_counts()
+
+    if source_counts.empty:
+        return create_no_data_chart("No valid source data available")
 
     # Create pie chart
     fig, ax = plt.subplots(figsize=(8, 8))
 
     colors = ["#3498db", "#e74c3c", "#2ecc71", "#f39c12", "#9b59b6"]
     wedges, texts, autotexts = ax.pie(
-        source_counts.values, labels=source_counts.index, autopct="%1.1f%%", colors=colors, startangle=90
+        source_counts.values, 
+        labels=source_counts.index, 
+        autopct="%1.1f%%", 
+        colors=colors[:len(source_counts)], 
+        startangle=90
     )
 
     # Customize the chart
-    ax.set_title("Data Records by Source", fontsize=16, fontweight="bold")
+    ax.set_title("Successful Price Records by Source", fontsize=16, fontweight="bold")
 
     # Make percentage text bold
     for autotext in autotexts:
@@ -253,21 +305,26 @@ if __name__ == "__main__":
     # Test the visualization with sample data
     print("Testing data visualization module...")
 
-    # Load sample data
-    from app import load_prices_data
+    try:
+        # Load sample data
+        from app import load_prices_data
 
-    df = load_prices_data()
-    print(f"Loaded {len(df)} records for testing")
+        df = load_prices_data()
+        print(f"Loaded {len(df)} records for testing")
 
-    if not df.empty:
-        charts = generate_dashboard_charts(df)
-        print(f"Generated {len(charts)} charts successfully")
+        if not df.empty:
+            charts = generate_dashboard_charts(df)
+            print(f"Generated {len(charts)} charts successfully")
 
-        # Save a sample chart to file for testing
-        if "price_comparison" in charts:
-            chart_data = charts["price_comparison"]
-            print(f"Price comparison chart generated (length: {len(chart_data)} characters)")
-    else:
-        print("No data available for testing charts")
+            # Save a sample chart to file for testing
+            if "price_comparison" in charts:
+                chart_data = charts["price_comparison"]
+                print(f"Price comparison chart generated (length: {len(chart_data)} characters)")
+        else:
+            print("No data available for testing charts")
 
-    print("Visualization module test complete!")
+        print("Visualization module test complete!")
+    except ImportError as e:
+        print(f"Could not import app module for testing: {e}")
+    except Exception as e:
+        print(f"Error during testing: {e}")
