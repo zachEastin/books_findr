@@ -11,6 +11,7 @@ from pathlib import Path
 import json
 import html
 import io
+import asyncio
 
 # Import visualization module
 try:
@@ -200,6 +201,7 @@ def add_book_isbn():
         data = request.json or {}
         title = data.get("title", "").strip()
         isbn_input = data.get("isbn", "").strip()
+        author = data.get("author", "").strip()
 
         if not title:
             return jsonify({"error": "Title is required"}), 400
@@ -264,10 +266,13 @@ def add_book_isbn():
             else:
                 return jsonify({"error": result["error"]}), 400
         else:
+            # Require author if adding by title only
+            if not author:
+                return jsonify({"error": "Author is required when adding by title"}), 400
             google_books_api = GoogleBooksAPI()
-            search_results = google_books_api.search_by_title(title, max_results=5)
+            search_results = google_books_api.search_by_title_and_author(title, author=author, max_results=5)
             if not search_results:
-                return jsonify({"error": "No ISBNs found for title"}), 404
+                return jsonify({"error": "No ISBNs found for title and author"}), 404
             seen = set()
             for item in search_results:
                 isbn_candidate = item.get("isbn13") or item.get("isbn10")

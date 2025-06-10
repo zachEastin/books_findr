@@ -207,33 +207,31 @@ class GoogleBooksAPI:
 
         return result
 
-    def search_by_title(self, title: str, max_results: int = 5) -> List[Dict]:
+    def search_by_title_and_author(self, title: str, author: str = None, max_results: int = 5) -> List[Dict]:
         """
-        Search for books by title
+        Search for books by title and (optionally) author
 
         Args:
             title: Book title to search for
+            author: Author name to search for (optional, but recommended)
             max_results: Maximum number of results to return
 
         Returns:
             List of dictionaries with book metadata
         """
         results = []
-
         try:
-            # Encode title for URL
-            encoded_title = urllib.parse.quote(title)
+            # Build query string
+            query = f"intitle:{title}"
+            if author:
+                query += f"+inauthor:{author}"
             url = f"{self.base_url}/volumes"
-            params = {"q": f"intitle:{encoded_title}", "maxResults": max_results}
-
+            params = {"q": query, "maxResults": max_results}
             response = self.session.get(url, params=params, timeout=10)
-
             if response.status_code == 200:
                 data = response.json()
-
                 for item in data.get("items", []):
                     book = item["volumeInfo"]
-
                     # Extract ISBNs
                     isbn13 = None
                     isbn10 = None
@@ -243,7 +241,6 @@ class GoogleBooksAPI:
                             isbn13 = identifier.get("identifier")
                         elif identifier.get("type") == "ISBN_10":
                             isbn10 = identifier.get("identifier")
-
                     result = {
                         "title": book.get("title"),
                         "authors": book.get("authors", []),
@@ -252,13 +249,14 @@ class GoogleBooksAPI:
                         "isbn13": isbn13,
                         "isbn10": isbn10,
                     }
-
                     results.append(result)
-
         except Exception as e:
-            logger.error(f"Error searching by title '{title}': {e}")
-
+            logger.error(f"Error searching by title and author '{title}' '{author}': {e}")
         return results
+
+    # For backward compatibility, keep the old name as an alias
+    def search_by_title(self, title: str, max_results: int = 5) -> List[Dict]:
+        return self.search_by_title_and_author(title, None, max_results)
 
 
 def get_book_metadata(isbn: str) -> Dict:

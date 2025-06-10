@@ -118,5 +118,90 @@
                 "notes": ""
             }
         }
+    ],
+    "Lentil": [
+        {
+            "9780451481795": {
+                "isbn_input": "9780451481795",
+                "isbn13": "9780451481795",
+                "isbn10": "0451481798",
+                "title": "Lentil",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Penguin",
+                "year": "1978",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780670059010": {
+                "isbn_input": "9780670059010",
+                "isbn13": "9780670059010",
+                "isbn10": "0670059013",
+                "title": "A Robert McCloskey Collection",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Viking Juvenile",
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780760711514": {
+                "isbn_input": "9780760711514",
+                "isbn13": "9780760711514",
+                "isbn10": "0760711518",
+                "title": "Make Way for Ducklings",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": null,
+                "year": "1998",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "The Story About Ping": [
+        {
+            "9780448482330": {
+                "isbn_input": "9780448482330",
+                "isbn13": "9780448482330",
+                "isbn10": "0448482339",
+                "title": "The Story About Ping",
+                "authors": [
+                    "Marjorie Flack"
+                ],
+                "publisher": "Penguin",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780758737106": {
+                "isbn_input": "9780758737106",
+                "isbn13": "9780758737106",
+                "isbn10": "0758737106",
+                "title": "The Story about Ping",
+                "authors": [
+                    "Marjorie Flack",
+                    "Kurt Wiese"
+                ],
+                "publisher": "Follettbound",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
     ]
 }

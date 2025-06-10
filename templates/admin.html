@@ -106,20 +106,40 @@
                             <i class="material-icons left">add</i>Add New ISBN
                         </span>
                         <div class="row">
-                            <div class="input-field col s12">
-                                <input id="new-title" type="text" placeholder="Book Title">
-                                <label for="new-title">Title</label>
+                            <div class="col s12">
+                                <ul class="tabs">
+                                    <li class="tab col s6"><a class="active" href="#add-by-isbn">ISBN</a></li>
+                                    <li class="tab col s6"><a href="#add-by-title">Title</a></li>
+                                </ul>
                             </div>
-                            <div class="input-field col s12">
-                                <input id="new-isbn" type="text" placeholder="9780134685991">
-                                <label for="new-isbn">ISBN (10 or 13 digits)</label>
+                            <div id="add-by-isbn" class="col s12" style="margin-top: 20px;">
+                                <div class="input-field">
+                                    <input id="new-title-isbn" type="text" required>
+                                    <label for="new-title-isbn">Book Title <span class="red-text">*</span></label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="new-isbn" type="text" required>
+                                    <label for="new-isbn">ISBN <span class="red-text">*</span></label>
+                                </div>
+                                <button class="btn blue waves-effect waves-light" onclick="addISBN('isbn')">
+                                    <i class="material-icons left">add</i>Add by ISBN
+                                </button>
+                            </div>
+                            <div id="add-by-title" class="col s12" style="margin-top: 20px;">
+                                <div class="input-field">
+                                    <input id="new-title-title" type="text" required>
+                                    <label for="new-title-title">Book Title <span class="red-text">*</span></label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="new-author" type="text" required>
+                                    <label for="new-author">Author <span class="red-text">*</span></label>
+                                </div>
+                                <button class="btn blue waves-effect waves-light" onclick="addISBN('title')">
+                                    <i class="material-icons left">add</i>Add by Title & Author
+                                </button>
+                                <div class="grey-text" style="margin-top:10px;">Both title and author are required to add by title.</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-action">
-                        <button class="btn blue waves-effect waves-light" onclick="addISBN()">
-                            <i class="material-icons left">add</i>Add ISBN
-                        </button>
                     </div>
                 </div>
             </div>
@@ -186,41 +206,62 @@
         // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
             M.AutoInit();
+            var el = document.querySelectorAll('.tabs');
+            M.Tabs.init(el);
             loadISBNs();
             loadActivity();
         });        // Load ISBNs
 
-        // Add new ISBN
-        async function addISBN() {
-            const isbnInput = document.getElementById('new-isbn');
-            const titleInput = document.getElementById('new-title');
-            const isbn = isbnInput.value.trim();
-            const title = titleInput.value.trim();
-
-            if (!title) {
-                M.toast({ html: 'Please enter a title', classes: 'orange' });
-                return;
+        // Add new ISBN or by title/author
+        async function addISBN(mode) {
+            let title = "";
+            let isbn = "";
+            let author = "";
+            if (mode === 'isbn') {
+                title = document.getElementById('new-title-isbn').value.trim();
+                isbn = document.getElementById('new-isbn').value.trim();
+                if (!title) {
+                    M.toast({ html: 'Please enter a title', classes: 'orange' });
+                    return;
+                }
+                if (!isbn) {
+                    M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
+                    return;
+                }
+            } else {
+                title = document.getElementById('new-title-title').value.trim();
+                author = document.getElementById('new-author').value.trim();
+                if (!title) {
+                    M.toast({ html: 'Please enter a title', classes: 'orange' });
+                    return;
+                }
+                if (!author) {
+                    M.toast({ html: 'Please enter an author', classes: 'orange' });
+                    return;
+                }
             }
-
-            if (isbn.includes(',')) {
-                const isbns = isbn.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                M.toast({ html: `Processing ${isbns.length} ISBNs`, classes: 'blue' });
-            }
-
             try {
                 const response = await fetch('/api/books', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ title: title, isbn: isbn })
+                    body: JSON.stringify({
+                        title: title,
+                        isbn: mode === 'isbn' ? isbn : '',
+                        author: mode === 'title' ? author : ''
+                    })
                 });
-
                 const data = await response.json();
-
                 if (response.ok) {
                     M.toast({ html: data.message, classes: 'green' });
-                    isbnInput.value = '';
+                    if (mode === 'isbn') {
+                        document.getElementById('new-title-isbn').value = '';
+                        document.getElementById('new-isbn').value = '';
+                    } else {
+                        document.getElementById('new-title-title').value = '';
+                        document.getElementById('new-author').value = '';
+                    }
                     loadISBNs();
                 } else {
                     M.toast({ html: data.error, classes: 'red' });
@@ -319,13 +360,25 @@
                         Object.entries(data).forEach(([title, items]) => {
                             items.forEach(item => {
                                 const isbn = Object.keys(item)[0];
+                                const meta = item[isbn] || {};
+                                const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
                                 html += `
-                                    <div class="isbn-item" data-isbn="${isbn}" data-title="${title}">
-                                        <span class="title">${title}</span>
-                                        <span class="isbn">${isbn}</span>
-                                        <button class="btn red" onclick="removeISBN('${title}','${isbn}')">Remove</button>
-                                        <button class="btn blue" onclick="scrapeISBN('${isbn}')">Scrape</button>
+                                <div class="isbn-item">
+                                    <div class="isbn-info">
+                                        <div class="book-title">${title}</div>
+                                        <div class="isbn-number">
+                                            <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
+                                        </div>
+                                        <div class="book-meta">
+                                            ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
+                                            ${meta.year ? ' • ' + meta.year : ''}
+                                        </div>
                                     </div>
+                                    <div class="isbn-actions">
+                                        <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
+                                        <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
+                                    </div>
+                                </div>
                                 `;
                             });
                         });
