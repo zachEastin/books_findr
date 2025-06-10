@@ -107,6 +107,10 @@
                         </span>
                         <div class="row">
                             <div class="input-field col s12">
+                                <input id="new-title" type="text" placeholder="Book Title">
+                                <label for="new-title">Title</label>
+                            </div>
+                            <div class="input-field col s12">
                                 <input id="new-isbn" type="text" placeholder="9780134685991">
                                 <label for="new-isbn">ISBN (10 or 13 digits)</label>
                             </div>
@@ -189,7 +193,9 @@
         // Add new ISBN
         async function addISBN() {
             const isbnInput = document.getElementById('new-isbn');
+            const titleInput = document.getElementById('new-title');
             const isbn = isbnInput.value.trim();
+            const title = titleInput.value.trim();
 
             if (!isbn) {
                 M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
@@ -202,12 +208,12 @@
             }
 
             try {
-                const response = await fetch('/api/isbns', {
+                const response = await fetch('/api/books', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ isbn: isbn })
+                    body: JSON.stringify({ title: title, isbn: isbn })
                 });
 
                 const data = await response.json();
@@ -226,13 +232,13 @@
         }
 
         // Remove ISBN
-        async function removeISBN(isbn) {
-            if (!confirm(`Remove ISBN ${isbn} from tracking?`)) {
+        async function removeISBN(title, isbn) {
+            if (!confirm(`Remove ISBN ${isbn} from ${title}?`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`/api/isbns/${isbn}`, {
+                const response = await fetch(`/api/books/${encodeURIComponent(title)}/${isbn}`, {
                     method: 'DELETE'
                 });
 
@@ -304,19 +310,26 @@
             isbnList.innerHTML = '<div class="grey-text">Loading ISBNs...</div>';
 
             try {
-                const response = await fetch('/api/isbns');
+                const response = await fetch('/api/books');
                 if (response.ok) {
                     const data = await response.json();
-                    isbnCount.textContent = data['count'] || '0'; // Update count
-                    if (data && Object.keys(data['isbns']).length > 0) {
-                        isbnList.innerHTML = data['isbns'].map(isbn_data => `
-                            <div class="isbn-item" data-isbn="${isbn_data.isbn}">
-                                <span class="title">${isbn_data.title}</span>
-                                <span class="isbn">${isbn_data.isbn13}</span>
-                                <button class="btn red" onclick="removeISBN('${isbn_data.isbn}')">Remove</button>
-                                <button class="btn blue" onclick="scrapeISBN('${isbn_data.isbn}')">Scrape</button>
-                            </div>
-                        `).join('');
+                    isbnCount.textContent = Object.keys(data).length.toString();
+                    if (data && Object.keys(data).length > 0) {
+                        let html = '';
+                        Object.entries(data).forEach(([title, items]) => {
+                            items.forEach(item => {
+                                const isbn = Object.keys(item)[0];
+                                html += `
+                                    <div class="isbn-item" data-isbn="${isbn}" data-title="${title}">
+                                        <span class="title">${title}</span>
+                                        <span class="isbn">${isbn}</span>
+                                        <button class="btn red" onclick="removeISBN('${title}','${isbn}')">Remove</button>
+                                        <button class="btn blue" onclick="scrapeISBN('${isbn}')">Scrape</button>
+                                    </div>
+                                `;
+                            });
+                        });
+                        isbnList.innerHTML = html;
                     } else {
                         isbnList.innerHTML = '<div class="grey-text">No ISBNs found</div>';
                     }
@@ -379,6 +392,11 @@
             }
         }        // Enter key support for ISBN input
         document.getElementById('new-isbn').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addISBN();
+            }
+        });
+        document.getElementById('new-title').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 addISBN();
             }
