@@ -170,55 +170,42 @@ def admin():
     return render_template("admin.html")
 
 
-@app.route("/api/isbns")
-def get_isbns():
-    """Get list of ISBNs being tracked with metadata"""
+@app.route("/api/books")
+def get_books():
+    """Return all tracked books with their ISBN metadata"""
     try:
-        isbn_file = BASE_DIR / "isbns.json"
-        isbn_dict = json.loads(isbn_file.read_bytes()) if isbn_file.exists() else {}
-        isbns_data = []
-
-        # Load ISBNs
-        if isbn_file.exists():
-            for isbn, meta in isbn_dict.items():
-                isbns_data.append(
-                    {
-                        "isbn": isbn,
-                        "isbn13": meta.get("isbn13", isbn),
-                        "title": meta.get("title", ""),
-                        "authors": meta.get("authors", []),
-                        "year": meta.get("year", ""),
-                        "source": meta.get("source", "manual"),
-                        "notes": meta.get("notes", ""),
-                    }
-                )
-
-            return jsonify({"isbns": isbns_data, "count": len(isbns_data)})
-
-        return jsonify({"isbns": [], "count": 0})
+        books_file = BASE_DIR / "books.json"
+        books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
+        return jsonify(books)
     except Exception as e:
-        logger.error(f"Error loading ISBNs: {e}")
+        logger.error(f"Error loading books: {e}")
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/isbns", methods=["POST"])
-def add_isbn():
-    """Add a new ISBN to track with metadata fetching"""
+@app.route("/api/books", methods=["POST"])
+def add_book_isbn():
+    """Add a new ISBN under a book title"""
     try:
         from scripts.google_books_api import GoogleBooksAPI
         import asyncio
 
-        data = request.json
+        data = request.json or {}
+        title = data.get("title", "").strip()
         isbn_input = data.get("isbn", "").strip()
 
-        if not isbn_input:
-            return jsonify({"error": "ISBN is required"}), 400
+        if not title:
+            return jsonify({"error": "Title is required"}), 400
 
-        isbn_file = BASE_DIR / "isbns.json"
-        if isbn_file.exists():
-            isbn_dict = json.loads(isbn_file.read_bytes())
-        else:
-            isbn_dict = {}
+        books_file = BASE_DIR / "books.json"
+        books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
+
+        isbn_list = books.setdefault(title, [])
+
+        for item in isbn_list:
+            if isbn_input in item:
+                return jsonify({"error": "ISBN already tracked"}), 400
+
+        isbn_dict = {}
 
         # Helper function to process a single ISBN
         async def process_isbn(isbn):
@@ -258,59 +245,66 @@ def add_isbn():
                 result["error"] = metadata_result.get("error", "Unknown error")
             return result
 
-        # Check for multiple ISBNs
-        if "," in isbn_input:
-            isbn_list = [i.strip() for i in isbn_input.split(",") if i.strip()]
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            results = loop.run_until_complete(asyncio.gather(*(process_isbn(isbn) for isbn in isbn_list)))
-            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
-            summary = {
-                "added": [r["isbn"] for r in results if r["success"]],
-                "failed": [{"isbn": r["isbn"], "error": r["error"]} for r in results if not r["success"]],
-                "count_added": sum(1 for r in results if r["success"]),
-                "count_failed": sum(1 for r in results if not r["success"]),
-            }
-            return jsonify({"message": f"Processed {len(isbn_list)} ISBNs", **summary})
-        else:
-            # Single ISBN logic (as before, but using helper)
+        added = 0
+        if isbn_input:
             result = asyncio.run(process_isbn(isbn_input))
-            (BASE_DIR / "isbns.json").write_text(json.dumps(isbn_dict, indent=4))
             if result["success"]:
-                response_data = {"message": f"ISBN {isbn_input} added successfully", "metadata": result["metadata"]}
-                logger.info(f"Added new ISBN with metadata: {isbn_input} - {result['metadata'].get('title')}")
+                isbn_list.append({isbn_input: result["metadata"]})
+                added = 1
             else:
-                response_data = {"error": result["error"]}
-                logger.warning(f"Failed to add ISBN {isbn_input}: {result['error']}")
-            return jsonify(response_data)
+                return jsonify({"error": result["error"]}), 400
+        else:
+            google_books_api = GoogleBooksAPI()
+            search_results = google_books_api.search_by_title(title, max_results=5)
+            if not search_results:
+                return jsonify({"error": "No ISBNs found for title"}), 404
+            seen = set()
+            for item in search_results:
+                isbn_candidate = item.get("isbn13") or item.get("isbn10")
+                if not isbn_candidate or isbn_candidate in seen:
+                    continue
+                if any(isbn_candidate in x for x in isbn_list):
+                    continue
+                result = asyncio.run(process_isbn(isbn_candidate))
+                if result["success"]:
+                    isbn_list.append({isbn_candidate: result["metadata"]})
+                    added += 1
+                seen.add(isbn_candidate)
+        if added:
+            books_file.write_text(json.dumps(books, indent=4))
+            logger.info(f"Added {added} ISBNs under {title}")
+            return jsonify({"message": f"Added {added} ISBN(s)"})
+        else:
+            return jsonify({"error": "No ISBNs added"}), 400
 
     except Exception as e:
         logger.error(f"Error adding ISBN: {e}")
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/isbns/<isbn>", methods=["DELETE"])
-def remove_isbn(isbn):
-    """Remove an ISBN from tracking and its metadata"""
+@app.route("/api/books/<title>/<isbn>", methods=["DELETE"])
+def remove_isbn(title, isbn):
+    """Remove an ISBN from a specific book"""
     try:
-        isbn_file = BASE_DIR / "isbns.json"
+        books_file = BASE_DIR / "books.json"
 
-        if not isbn_file.exists():
-            return jsonify({"error": "No ISBNs file found"}), 404
+        if not books_file.exists():
+            return jsonify({"error": "No books file found"}), 404
 
-        # Read all ISBNs
-        isbn_dict = json.loads(isbn_file.read_bytes())
+        books = json.loads(books_file.read_bytes())
 
-        # Filter out the ISBN to remove
-        if isbn in isbn_dict:
-            del isbn_dict[isbn]
-        else:
+        if title not in books:
+            return jsonify({"error": "Book title not found"}), 404
+
+        items = books[title]
+        new_items = [it for it in items if isbn not in it]
+        if len(new_items) == len(items):
             return jsonify({"error": "ISBN not found"}), 404
 
-        # Write back to file
-        isbn_file.write_text(json.dumps(isbn_dict, indent=4))
+        books[title] = new_items
+        books_file.write_text(json.dumps(books, indent=4))
 
-        return jsonify({"message": f"ISBN {isbn} removed successfully"})
+        return jsonify({"message": f"ISBN {isbn} removed from {title}"})
 
     except Exception as e:
         logger.error(f"Error removing ISBN: {e}")
@@ -323,13 +317,25 @@ def trigger_scrape(isbn):
     try:
         from scripts.scraper import scrape_all_sources, save_results_to_csv
 
-        # Get the ISBN json
-        isbn_data = json.loads((BASE_DIR / "isbns.json").read_bytes())
+        # Load books file and locate ISBN metadata
+        books = json.loads((BASE_DIR / "books.json").read_bytes())
 
-        isbn_item = isbn_data.get(isbn)
+        isbn_item = None
+        book_title = None
+        for title, items in books.items():
+            for entry in items:
+                if isbn in entry:
+                    isbn_item = entry[isbn]
+                    book_title = title
+                    break
+            if isbn_item:
+                break
 
-        logger.info(f"Manual scrape triggered for '{isbn_item.get('title', 'unknown')}' ISBN: {isbn}")
-        results = scrape_all_sources(isbn_item)
+        if not isbn_item:
+            return jsonify({"error": "ISBN not found"}), 404
+
+        logger.info(f"Manual scrape triggered for '{book_title}' ISBN: {isbn}")
+        results = scrape_all_sources(isbn_item, book_title)
 
         if results:
             save_results_to_csv(results)
@@ -840,8 +846,16 @@ def export_html():
             # Get book title - prioritize metadata over price data
             title = "Unknown Title"
             try:
-                isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
-                metadata = isbn_metadata.get(str(isbn))
+                books_metadata = json.loads((BASE_DIR / "books.json").read_bytes())
+                metadata = None
+                for t, items in books_metadata.items():
+                    for it in items:
+                        if str(isbn) in it:
+                            metadata = it[str(isbn)]
+                            title = t
+                            break
+                    if metadata:
+                        break
                 if metadata and metadata.get("title"):
                     title = str(metadata["title"])
                 else:

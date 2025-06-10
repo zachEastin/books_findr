@@ -184,7 +184,7 @@
             <div class="col s12 m4">
                 <div class="card-panel center-align white">
                     <i class="material-icons large blue-text">library_books</i>
-                    <h5 class="blue-text">{{ isbns|length }}</h5>
+                    <h5 class="blue-text">{{ books|length }}</h5>
                     <p>Books Tracked</p>
                 </div>
             </div>
@@ -309,7 +309,7 @@
         {% endif %}
 
         <!-- ISBNs Being Tracked -->
-        {% if isbns %}
+        {% if books %}
         <div class="card">
             <div class="card-content">
                 <span class="card-title">
@@ -317,11 +317,17 @@
                     Tracked ISBNs
                 </span>
                 <div class="row">
-                    {% for isbn in isbns %}
+                    {% for title, isbn_list in books.items() %}
                     <div class="col s12 m6 l4">
-                        <div class="chip">
-                            {{ isbn }}
-                            <i class="close material-icons">close</i>
+                        <div class="chip" style="display:block;">
+                            <strong>{{ title }}</strong>
+                            <ul>
+                            {% for item in isbn_list %}
+                                {% for isbn, meta in item.items() %}
+                                <li>{{ isbn }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            </ul>
                         </div>
                     </div>
                     {% endfor %}
