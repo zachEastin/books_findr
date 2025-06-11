@@ -114,23 +114,23 @@ def test_isbn_file_handling():
     print("Testing ISBN file handling...")
 
     # Check if isbns.json exists
-    isbn_file = Path("isbns.json")
-    if isbn_file.exists():
-        with open(isbn_file, "r") as f:
+    books_file = Path("books.json")
+    if books_file.exists():
+        with open(books_file, "r") as f:
             isbns = json.load(f)
-        print(f"✓ Found {len(list(isbns.keys()))} ISBNs in isbns.json")
+        print(f"✓ Found {len(list(isbns.keys()))} ISBNs in books.json")
         if isbns:
             print(f"  - First ISBN: {isbns[list(isbns.keys())[0]]}")
     else:
-        print("! isbns.json not found, creating sample...")
+        print("! books.json not found, creating sample...")
         sample_isbns = {
             "9780134685991": "Effective Java",
             "9780596009205": "Head First Design Patterns",
             "9781617294945": "Spring Boot in Action",
         }
-        with open(isbn_file, "w") as f:
+        with open(books_file, "w") as f:
             json.dump(sample_isbns, f, indent=4)
-        print(f"✓ Created isbns.json with {len(sample_isbns)} sample ISBNs")
+        print(f"✓ Created books.json with {len(sample_isbns)} sample ISBNs")
 
     return True
 

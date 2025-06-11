@@ -104,9 +104,6 @@ def index():
             df["timestamp"] = pd.to_datetime(df["timestamp"])
             latest_prices = df.sort_values("timestamp").groupby(["isbn", "source"]).tail(1)
 
-            # Get unique ISBNs
-            unique_isbns = df["isbn"].unique().tolist()
-
             # Convert to dict for template
             prices_data = latest_prices.to_dict("records")
 
@@ -119,7 +116,6 @@ def index():
                     logger.error(f"Error generating charts: {e}")
         else:
             prices_data = []
-            unique_isbns = []
             charts = {}
 
         books_file = BASE_DIR / "books.json"
@@ -129,7 +125,7 @@ def index():
             "index.html",
             prices=prices_data,
             books=books,
-            total_records=len(df),
+            total_records=len(df) if not df.empty else 0,
             charts=charts,
         )
 
@@ -922,7 +918,7 @@ def export_html():
             # Get book title - prioritize ISBNdb metadata over price data
             title = "Unknown Title"
             try:
-                isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
+                isbn_metadata = json.loads((BASE_DIR / "books.json").read_bytes())
                 metadata = isbn_metadata.get(str(isbn))
                 if metadata and metadata.get("title"):
                     title = str(metadata["title"])
@@ -942,15 +938,14 @@ def export_html():
                 "latest_update": str(isbn_data["timestamp"].max()) if not isbn_data["timestamp"].isna().all() else None,
                 "prices": [],
             }
-            
-            # Add individual price records
+              # Add individual price records
             for _, row in isbn_data.iterrows():
                 price_record = {
                     "source": str(row["source"]) if pd.notna(row["source"]) else "",
                     "price": float(row["price"]) if row["price"] and str(row["price"]).replace(".", "").isdigit() else None,
                     "url": str(row["url"]) if pd.notna(row["url"]) else "",
                     "timestamp": str(row["timestamp"]) if pd.notna(row["timestamp"]) else "",
-                    "success": str(row["success"]) if pd.notna(row["success"]) else "False",
+                    "success": "True" if row["success"] else "False",
                 }
                 isbn_stats["prices"].append(price_record)
             
@@ -1049,7 +1044,7 @@ def api_prices_by_isbn_grouped():
             title = "Unknown Title"
             try:
                 # First try to get title from ISBNdb metadata
-                isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
+                isbn_metadata = json.loads((BASE_DIR / "books.json").read_bytes())
                 metadata = isbn_metadata.get(str(isbn))
                 if metadata and metadata.get("title"):
                     title = str(metadata["title"])
@@ -1110,6 +1105,214 @@ def api_prices_by_isbn_grouped():
 
     except Exception as e:
         logger.error(f"Error generating grouped ISBN data: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prices-by-book")
+def api_prices_by_book_grouped():
+    """API endpoint to get prices grouped by book title with ISBN breakdown"""
+    try:
+        df = load_prices_data()
+        
+        if df.empty:
+            return jsonify({"message": "No data available", "data": {}})
+        
+        # Load books configuration to map ISBNs to book titles
+        books_file = BASE_DIR / "books.json"
+        if not books_file.exists():
+            return jsonify({"error": "Books configuration not found"}, 500)
+        
+        books_config = json.loads(books_file.read_bytes())
+        
+        # Create ISBN to book title mapping
+        isbn_to_book = {}
+        for book_title, isbn_list in books_config.items():
+            for isbn_item in isbn_list:
+                for isbn_key, metadata in isbn_item.items():
+                    # Map both the key ISBN and the ISBN13/ISBN10 from metadata
+                    isbn_to_book[isbn_key] = book_title
+                    if metadata.get('isbn13'):
+                        isbn_to_book[metadata['isbn13']] = book_title
+                    if metadata.get('isbn10'):
+                        isbn_to_book[metadata['isbn10']] = book_title
+        
+        result = {}
+        
+        # Group by book title
+        for book_title, isbn_list in books_config.items():
+            # Get all ISBNs for this book
+            book_isbns = []
+            for isbn_item in isbn_list:
+                for isbn_key, metadata in isbn_item.items():
+                    book_isbns.extend([isbn_key, metadata.get('isbn13'), metadata.get('isbn10')])
+            
+            # Remove None values and duplicates
+            book_isbns = list(set([isbn for isbn in book_isbns if isbn]))
+            
+            # Get data for all ISBNs belonging to this book
+            book_data = df[df["isbn"].isin(book_isbns)]
+            
+            if book_data.empty:
+                continue
+            
+            # Get the most recent record for each source across all ISBNs
+            book_data_sorted = book_data.sort_values("timestamp", ascending=False)
+            latest_by_source_isbn = book_data_sorted.groupby(["source", "isbn"]).first().reset_index()            # Get valid prices from most recent records
+            valid_latest_prices = latest_by_source_isbn[
+                (latest_by_source_isbn["price"].notna()) & 
+                (latest_by_source_isbn["price"] != "") &
+                (latest_by_source_isbn["success"])
+            ]
+            
+            if not valid_latest_prices.empty:
+                valid_prices_numeric = pd.to_numeric(valid_latest_prices["price"], errors="coerce")
+                valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
+            else:
+                valid_prices_numeric = pd.Series([])
+              # Calculate overall book statistics
+            all_prices_data = book_data[
+                (book_data["price"].notna()) & 
+                (book_data["price"] != "") &
+                (book_data["success"])
+            ]
+            
+            if not all_prices_data.empty:
+                all_prices_numeric = pd.to_numeric(all_prices_data["price"], errors="coerce")
+                all_prices_numeric = all_prices_numeric[all_prices_numeric.notna()]
+            else:
+                all_prices_numeric = pd.Series([])
+            
+            # Find historical lowest and highest prices
+            lowest_price = None
+            lowest_price_date = None
+            highest_price = None
+            highest_price_date = None
+            
+            if not all_prices_numeric.empty:
+                lowest_idx = all_prices_data.loc[all_prices_numeric.idxmin()]
+                highest_idx = all_prices_data.loc[all_prices_numeric.idxmax()]
+                
+                lowest_price = float(all_prices_numeric.min())
+                lowest_price_date = str(lowest_idx["timestamp"])
+                highest_price = float(all_prices_numeric.max())
+                highest_price_date = str(highest_idx["timestamp"])
+            
+            # Get book icon URL from the first ISBN that has one
+            icon_url = None
+            for isbn_item in isbn_list:
+                for isbn_key, metadata in isbn_item.items():
+                    if metadata.get('icon_url'):
+                        icon_url = metadata['icon_url']
+                        break
+                if icon_url:
+                    break
+            
+            # Calculate book-level statistics
+            book_stats = {
+                "title": book_title,
+                "isbns": book_isbns,
+                "total_records": int(len(book_data)),
+                "successful_records": int(len(book_data[book_data["success"]])),
+                "sources": [str(source) for source in book_data["source"].unique().tolist()],
+                "latest_update": str(book_data["timestamp"].max()) if not book_data["timestamp"].isna().all() else None,
+                "icon_url": icon_url,
+                "isbn_details": {},
+                "lowest_price_ever": lowest_price,
+                "lowest_price_date": lowest_price_date,
+                "highest_price_ever": highest_price,
+                "highest_price_date": highest_price_date,
+            }
+            
+            # Current best price from most recent scrapes
+            if not valid_prices_numeric.empty:
+                book_stats.update({
+                    "best_current_price": float(valid_prices_numeric.min()),
+                    "worst_current_price": float(valid_prices_numeric.max()),
+                    "avg_current_price": float(valid_prices_numeric.mean()),
+                    "current_price_count": int(len(valid_prices_numeric)),
+                })
+                
+                # Find the URL for the best current price
+                best_price_record = valid_latest_prices[
+                    pd.to_numeric(valid_latest_prices["price"], errors="coerce") == valid_prices_numeric.min()
+                ].iloc[0]
+                book_stats["best_price_url"] = str(best_price_record["url"]) if pd.notna(best_price_record["url"]) else ""
+            else:
+                book_stats.update({
+                    "best_current_price": None,
+                    "worst_current_price": None,
+                    "avg_current_price": None,
+                    "current_price_count": 0,
+                    "best_price_url": ""
+                })
+            
+            # Add individual ISBN details
+            for isbn in book_isbns:
+                isbn_data = book_data[book_data["isbn"] == isbn]
+                if isbn_data.empty:
+                    continue
+                  # Get most recent prices for this ISBN
+                isbn_sorted = isbn_data.sort_values("timestamp", ascending=False)
+                isbn_latest_by_source = isbn_sorted.groupby("source").first().reset_index()
+                
+                isbn_valid_prices = isbn_latest_by_source[
+                    (isbn_latest_by_source["price"].notna()) & 
+                    (isbn_latest_by_source["price"] != "") &
+                    (isbn_latest_by_source["success"])
+                ]
+                
+                if not isbn_valid_prices.empty:
+                    isbn_prices_numeric = pd.to_numeric(isbn_valid_prices["price"], errors="coerce")
+                    isbn_prices_numeric = isbn_prices_numeric[isbn_prices_numeric.notna()]
+                else:
+                    isbn_prices_numeric = pd.Series([])
+                
+                # Calculate ISBN statistics
+                isbn_stats = {
+                    "isbn": str(isbn),
+                    "total_records": int(len(isbn_data)),
+                    "successful_records": int(len(isbn_data[isbn_data["success"]])),
+                    "sources": [str(source) for source in isbn_data["source"].unique().tolist()],
+                    "latest_update": str(isbn_data["timestamp"].max()) if not isbn_data["timestamp"].isna().all() else None,
+                    "prices": [],
+                }
+                
+                if not isbn_prices_numeric.empty:
+                    isbn_stats.update({
+                        "min_price": float(isbn_prices_numeric.min()),
+                        "max_price": float(isbn_prices_numeric.max()),
+                        "avg_price": float(isbn_prices_numeric.mean()),
+                        "price_count": int(len(isbn_prices_numeric)),
+                    })
+                else:
+                    isbn_stats.update({
+                        "min_price": None,
+                        "max_price": None,
+                        "avg_price": None,
+                        "price_count": 0
+                    })
+                  # Add price records for this ISBN
+                for _, row in isbn_data.iterrows():
+                    price_record = {
+                        "source": str(row["source"]) if pd.notna(row["source"]) else "",
+                        "price": float(row["price"])
+                        if row["price"] and str(row["price"]).replace(".", "").isdigit()
+                        else None,
+                        "url": str(row["url"]) if pd.notna(row["url"]) else "",
+                        "timestamp": str(row["timestamp"]) if pd.notna(row["timestamp"]) else "",
+                        "success": bool(row["success"]) if pd.notna(row["success"]) else False,
+                        "notes": str(row["notes"]) if pd.notna(row["notes"]) else "",
+                    }
+                    isbn_stats["prices"].append(price_record)
+                
+                book_stats["isbn_details"][str(isbn)] = isbn_stats
+            
+            result[book_title] = book_stats
+        
+        return jsonify({"data": result, "total_books": len(result)})
+    
+    except Exception as e:
+        logger.error(f"Error generating grouped book data: {e}")
         return jsonify({"error": str(e)}), 500
 
 

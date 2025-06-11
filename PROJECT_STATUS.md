@@ -20,7 +20,7 @@ A complete local Python application that tracks book prices from multiple source
 - ✅ **Anti-Bot Protection**: Headless browser configuration with proper user agents
 
 ### Data Management
-- ✅ **ISBN File Management**: Comment-aware parsing of `isbns.json`
+- ✅ **ISBN File Management**: Comment-aware parsing of `books.json`
 - ✅ **CSV Schema**: timestamp, isbn, title, source, price, url, notes, success columns
 - ✅ **Data Validation**: Price cleaning and format validation
 - ✅ **Duplicate Prevention**: Intelligent data merging and deduplication

@@ -14,7 +14,7 @@ $requiredFiles = @(
     "scheduled_scraper.py",
     "run_scheduled_scraper.bat",
     "setup_task_scheduler.ps1",
-    "isbns.json",
+    "books.json",
     "scripts\scraper.py"
 )
 
@@ -66,8 +66,8 @@ try {
 # Check ISBNs
 Write-Host "`n4. Checking ISBN data..." -ForegroundColor Cyan
 try {
-    if (Test-Path "isbns.json") {
-        $isbnData = Get-Content "isbns.json" | ConvertFrom-Json
+    if (Test-Path "books.json") {
+        $isbnData = Get-Content "books.json" | ConvertFrom-Json
         $isbnCount = ($isbnData.PSObject.Properties | Measure-Object).Count
         Write-Host "   SUCCESS: Found $isbnCount ISBNs to track" -ForegroundColor Green
         
@@ -85,10 +85,10 @@ try {
             Write-Host "     ... and $($isbnCount - 3) more" -ForegroundColor Gray
         }
     } else {
-        Write-Host "   WARNING: No isbns.json file found" -ForegroundColor Yellow
+        Write-Host "   WARNING: No books.json file found" -ForegroundColor Yellow
     }
 } catch {
-    Write-Host "   ERROR: Failed to read isbns.json: $_" -ForegroundColor Red
+    Write-Host "   ERROR: Failed to read books.json: $_" -ForegroundColor Red
 }
 
 # Check data directory

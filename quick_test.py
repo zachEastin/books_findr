@@ -40,7 +40,7 @@ def main():
     print("4. Checking File Structure...")
     files_to_check = [
         "app.py",
-        "isbns.json",
+        "books.json",
         "data/prices.csv",
         "templates/index.html",
         "scripts/scraper.py",
@@ -53,17 +53,17 @@ def main():
         status = "✓" if exists else "✗"
         print(f"   {status} {file_path}")
     print()
-    # Test 5: ISBN File
-    print("5. Testing ISBN File...")
-    isbn_file = Path("isbns.json")
-    if isbn_file.exists():
-        with open(isbn_file, "r") as f:
-            isbns = json.load(f)
-        print(f"   ✓ Found {len(isbns.keys())} ISBNs")
-        if isbns:
-            print(f"   - Sample: {isbns[list(isbns.keys())[0]]}")
+    # Test 5: Books File
+    print("5. Testing Books File...")
+    books_file = Path("books.json")
+    if books_file.exists():
+        with open(books_file, "r") as f:
+            books = json.load(f)
+        print(f"   ✓ Found {len(books.keys())} books")
+        if books:
+            print(f"   - Sample: {books[list(books.keys())[0]]}")
     else:
-        print("   ✗ isbns.json not found")
+        print("   ✗ books.json not found")
     print()
 
     print("=== Test Complete ===")

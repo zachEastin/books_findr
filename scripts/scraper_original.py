@@ -577,13 +577,13 @@ def load_isbns_from_file(filepath: str = None) -> dict[str, dict]:
     Load ISBNs from a text file
 
     Args:
-        filepath: Path to the ISBNs file (default: isbns.json in base directory)
+        filepath: Path to the ISBNs file (default: books.json in base directory)
 
     Returns:
         List of ISBNs
     """
     if filepath is None:
-        filepath = BASE_DIR / "isbns.json"
+        filepath = BASE_DIR / "books.json"
 
     try:
         with open(filepath, "r") as f:

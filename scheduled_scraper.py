@@ -40,7 +40,7 @@ async def main():
         # Load ISBNs to scrape
         isbns = load_isbns_from_file()
         if not isbns:
-            logger.warning("No ISBNs found to scrape - check isbns.json file")
+            logger.warning("No ISBNs found to scrape - check books.json file")
             return
             
         logger.info(f"Found {len(isbns)} ISBNs to scrape")

@@ -12,7 +12,7 @@ The bulk scrape functionality has been successfully implemented for the Book Pri
 - **Location**: `app.py` lines 278-296
 
 **Features:**
-- Loads all ISBNs from `isbns.json`
+- Loads all books from `books.json`
 - Triggers `scrape_all_isbns()` function
 - Returns success message with ISBN count
 - Proper error handling and logging
@@ -47,7 +47,7 @@ The bulk scrape functionality has been successfully implemented for the Book Pri
 
 2. **API Processing**:
    - POST request sent to `/api/scrape/all`
-   - Backend loads ISBNs from `isbns.json`
+   - Backend loads books from `books.json`
    - Calls `scrape_all_isbns()` function
    - Each ISBN is scraped from all 4 sources (BookScouter, Christianbook, RainbowResource, CamelCamelCamel)
 
@@ -67,7 +67,7 @@ The bulk scrape functionality has been successfully implemented for the Book Pri
 ## Current Behavior
 
 When bulk scrape is triggered:
-- 6 ISBNs processed from `isbns.json`
+- 6 ISBNs processed from `books.json`
 - Each ISBN scraped from 4 sources = 24 total scraping attempts
 - Book titles successfully extracted from BookScouter
 - All results saved with timestamps to CSV

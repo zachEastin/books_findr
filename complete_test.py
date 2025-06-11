@@ -158,17 +158,17 @@ def test_data_files():
     else:
         print("✗ CSV file not found")
 
-    # Check ISBN file
-    isbn_file = Path("isbns.json")
-    if isbn_file.exists():
+    # Check books file
+    books_file = Path("books.json")
+    if books_file.exists():
         try:
-            with open(isbn_file, "r") as f:
-                isbns = json.load(f)
-            print(f"✓ ISBN file readable: {len(isbns)} ISBNs")
+            with open(books_file, "r") as f:
+                books = json.load(f)
+            print(f"✓ Books file readable: {len(books)} books")
         except Exception as e:
-            print(f"✗ ISBN file error: {e}")
+            print(f"✗ Books file error: {e}")
     else:
-        print("✗ ISBN file not found")
+        print("✗ Books file not found")
 
 
 def test_manual_scrape():

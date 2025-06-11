@@ -31,7 +31,7 @@ Successfully implemented a self-contained HTML report generator for the BooksFin
 ```python
 # Gets latest price from each source per ISBN
 # Finds best (lowest) price across all sources
-# Processes metadata from isbns.json for book titles
+# Processes metadata from books.json for book titles
 # Handles missing data gracefully
 ```
 
