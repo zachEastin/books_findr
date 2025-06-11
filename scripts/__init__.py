@@ -15,11 +15,13 @@ from .scraper import (
     scrape_bookscouter_async,
     scrape_christianbook_async,
     scrape_rainbowresource_async,
+    scrape_abebooks_async,
     scrape_camelcamelcamel_async,
     # Sync versions (for backward compatibility)
     scrape_bookscouter,
     scrape_christianbook,
     scrape_rainbowresource,
+    scrape_abebooks,
     scrape_camelcamelcamel,
 )
 from .scheduler import start_price_tracking, stop_price_tracking, price_scheduler
@@ -40,11 +42,13 @@ __all__ = [
     "scrape_bookscouter_async",
     "scrape_christianbook_async",
     "scrape_rainbowresource_async",
+    "scrape_abebooks_async",
     "scrape_camelcamelcamel_async",
     # Sync versions (for backward compatibility)
     "scrape_bookscouter",
     "scrape_christianbook",
     "scrape_rainbowresource",
+    "scrape_abebooks",
     "scrape_camelcamelcamel",
     "start_price_tracking",
     "stop_price_tracking",
