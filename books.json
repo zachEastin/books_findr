@@ -856,5 +856,301 @@
                 "icon_url": "http://books.google.com/books/content?id=27HbmRfR0PoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         }
+    ],
+    "Another Celebrated Dancing Bear": [
+        {
+            "9780684191645": {
+                "isbn_input": "9780684191645",
+                "isbn13": "9780684191645",
+                "isbn10": "0684191644",
+                "title": "Another Celebrated Dancing Bear",
+                "authors": [
+                    "Gladys Scheffrin-Falk"
+                ],
+                "publisher": "Atheneum",
+                "year": "1991",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=-nbhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9781930900356": {
+                "isbn_input": "9781930900356",
+                "isbn13": "9781930900356",
+                "isbn10": "193090035X",
+                "title": "Another Celebrated Dancing Bear",
+                "authors": [
+                    "Gladys Scheffrin-Falk"
+                ],
+                "publisher": null,
+                "year": "2007",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=abkaGQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9781930900509": {
+                "isbn_input": "9781930900509",
+                "isbn13": "9781930900509",
+                "isbn10": "1930900503",
+                "title": "Another Celebrated Dancing Bear",
+                "authors": [
+                    "Gladys Scheffrin-Falk"
+                ],
+                "publisher": null,
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=v21CYgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Katy and the Big Snow": [
+        {
+            "9780395181553": {
+                "isbn_input": "9780395181553",
+                "isbn13": "9780395181553",
+                "isbn10": "0395181550",
+                "title": "Katy and the Big Snow",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1943",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=KEmuXFgPB2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780544317178": {
+                "isbn_input": "9780544317178",
+                "isbn13": "9780544317178",
+                "isbn10": "0544317173",
+                "title": "Katy and the Big Snow Lap Board Book",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Clarion Books",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=cylPngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780758729255": {
+                "isbn_input": "9780758729255",
+                "isbn13": "9780758729255",
+                "isbn10": "0758729251",
+                "title": "Katy and the Big Snow",
+                "authors": [],
+                "publisher": null,
+                "year": "1971",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Night of the Moonjellies": [
+        {
+            "9780382286254": {
+                "isbn_input": "9780382286254",
+                "isbn13": "9780382286254",
+                "isbn10": "0382286251",
+                "title": "Night of the Moonjellies",
+                "authors": [
+                    "Mark Shasha"
+                ],
+                "publisher": null,
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781930900349": {
+                "isbn_input": "9781930900349",
+                "isbn13": "9781930900349",
+                "isbn10": "1930900341",
+                "title": "Night of the Moonjellies",
+                "authors": [
+                    "Mark Shasha"
+                ],
+                "publisher": null,
+                "year": "2007",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=LVohPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Stopping by Woods on a Snowy Evening": [
+        {
+            "9781641706063": {
+                "isbn_input": "9781641706063",
+                "isbn13": "9781641706063",
+                "isbn10": "1641706066",
+                "title": "Stopping By Woods on a Snowy Evening",
+                "authors": [
+                    "Robert Frost"
+                ],
+                "publisher": "Abrams",
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=9472EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781795654715": {
+                "isbn_input": "9781795654715",
+                "isbn13": "9781795654715",
+                "isbn10": "1795654716",
+                "title": "Poetry of Robert Frost",
+                "authors": [
+                    "Robert Frost"
+                ],
+                "publisher": "Independently Published",
+                "year": "2019",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ZovHwQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Winnie the Pooh": [
+        {
+            "9781101158937": {
+                "isbn_input": "9781101158937",
+                "isbn13": "9781101158937",
+                "isbn10": "110115893X",
+                "title": "Winnie the Pooh",
+                "authors": [
+                    "A. A. Milne"
+                ],
+                "publisher": "Penguin",
+                "year": "2009",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ZFPXNNtVYF0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780525457237": {
+                "isbn_input": "9780525457237",
+                "isbn13": "9780525457237",
+                "isbn10": "0525457232",
+                "title": "The Complete Tales of Winnie-The-Pooh",
+                "authors": [
+                    "A. A. Milne"
+                ],
+                "publisher": "Penguin",
+                "year": "1996",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=zyFhDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781719883016": {
+                "isbn_input": "9781719883016",
+                "isbn13": "9781719883016",
+                "isbn10": "1719883017",
+                "title": "Winnie the Pooh",
+                "authors": [
+                    "A. A. Milne"
+                ],
+                "publisher": "Independently Published",
+                "year": "2018",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=qlYcuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9798985688740": {
+                "isbn_input": "9798985688740",
+                "isbn13": "9798985688740",
+                "isbn10": null,
+                "title": "Winnie-The-Pooh (Classics Made Easy)",
+                "authors": [
+                    "A. A. Milne"
+                ],
+                "publisher": null,
+                "year": "2022",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781400336142": {
+                "isbn_input": "9781400336142",
+                "isbn13": "9781400336142",
+                "isbn10": "1400336147",
+                "title": "Winnie-the-Pooh and Other Delightful Stories (Painted Editions)",
+                "authors": [
+                    "A. A. Milne"
+                ],
+                "publisher": "Harper Muse",
+                "year": "2023",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=eSCdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "A Pair of Red Clogs": [
+        {
+            "9781948959827": {
+                "isbn_input": "9781948959827",
+                "isbn13": "9781948959827",
+                "isbn10": "1948959828",
+                "title": "A Pair of Red Clogs",
+                "authors": [
+                    "Masako Matsuno"
+                ],
+                "publisher": null,
+                "year": "2022",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=tv9yzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780529036360": {
+                "isbn_input": "9780529036360",
+                "isbn13": "9780529036360",
+                "isbn10": "0529036363",
+                "title": "A Pair of Red Clogs",
+                "authors": [
+                    "Masako Matsuno"
+                ],
+                "publisher": "World Publishing",
+                "year": "1960",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=dRnhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
     ]
 }
