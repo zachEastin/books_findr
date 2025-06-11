@@ -241,6 +241,8 @@ class GoogleBooksAPI:
                             isbn13 = identifier.get("identifier")
                         elif identifier.get("type") == "ISBN_10":
                             isbn10 = identifier.get("identifier")
+                        else:
+                            print(f"Unknown identifier type: {identifier.get('type')}: {identifier.get('identifier')}")
                     result = {
                         "title": book.get("title"),
                         "authors": book.get("authors", []),
