@@ -110,6 +110,15 @@
             background: #e3e6ee !important;
             box-shadow: 0 2px 6px #d0d3db;
         }
+
+        /* Rotating animation for sync icon */
+        .rotating {
+            animation: rotating 1s linear infinite;
+        }
+        @keyframes rotating {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
     </style>
 </head>
 
@@ -339,6 +348,15 @@
 
         // Scrape specific ISBN
         async function scrapeISBN(isbn) {
+            // Find the button for this ISBN and set it to rotating
+            const buttons = document.querySelectorAll(`button[onclick*="scrapeISBN('${isbn}')"]`);
+            buttons.forEach(btn => {
+                const icon = btn.querySelector('i.material-icons');
+                if (icon) {
+                    icon.classList.add('rotating');
+                }
+                btn.disabled = true;
+            });
             M.toast({ html: `Starting scrape for ${isbn}...`, classes: 'blue' });
 
             try {
@@ -357,6 +375,15 @@
             } catch (error) {
                 console.error('Error scraping ISBN:', error);
                 M.toast({ html: 'Error scraping ISBN', classes: 'red' });
+            } finally {
+                // Remove rotating and re-enable button
+                buttons.forEach(btn => {
+                    const icon = btn.querySelector('i.material-icons');
+                    if (icon) {
+                        icon.classList.remove('rotating');
+                    }
+                    btn.disabled = false;
+                });
             }
         }
         

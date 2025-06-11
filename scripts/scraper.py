@@ -849,7 +849,8 @@ async def scrape_multiple_isbns(
 
 def save_results_to_csv(results: list[dict]):
     """
-    Save scraping results to CSV file
+    Save scraping results to CSV file, ensuring only one scrape per day is saved.
+    If a scrape is manually initiated, it overwrites the past data of the same day.
 
     Args:
         results: List of scraping result dictionaries
@@ -864,22 +865,28 @@ def save_results_to_csv(results: list[dict]):
 
         # Add timestamp to results
         timestamp = datetime.now().isoformat()
+        today_str = datetime.now().date().isoformat()
         for result in results:
             result["timestamp"] = timestamp
 
         # Convert to DataFrame
         new_df = pd.DataFrame(results)
 
-        # Load existing data if it exists
+        # Remove any existing records for today
         if PRICES_CSV.exists():
             existing_df = pd.read_csv(PRICES_CSV)
-            combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+            if "timestamp" in existing_df.columns:
+                # Keep only records not from today
+                existing_df["date"] = pd.to_datetime(existing_df["timestamp"]).dt.date.astype(str)
+                filtered_df = existing_df[existing_df["date"] != today_str].drop(columns=["date"])
+            else:
+                filtered_df = existing_df
+            combined_df = pd.concat([filtered_df, new_df], ignore_index=True)
         else:
             combined_df = new_df
 
         # Save to CSV
         combined_df.to_csv(PRICES_CSV, index=False)
-
         scraper_logger.info(f"Saved {len(results)} new price records to {PRICES_CSV}")
 
     except Exception as e:
