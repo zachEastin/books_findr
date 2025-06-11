@@ -232,9 +232,13 @@ def add_book_isbn():
         isbn_list = books.setdefault(title, [])
 
         # Check if ISBN already present
+        already_tracked = False
         for item in isbn_list:
             if isbn_input in item:
-                return jsonify({"error": "ISBN already tracked"}), 400
+                already_tracked = True
+                break
+        if already_tracked:
+            return jsonify({"error": "ISBN already tracked"}), 400
 
         isbn_dict = {}
         

@@ -729,5 +729,132 @@
                 "source": "google_books"
             }
         }
+    ],
+    "Papa Piccolo": [
+        {
+            "9781559420280": {
+                "isbn_input": "9781559420280",
+                "isbn13": "9781559420280",
+                "isbn10": "1559420286",
+                "title": "Papa Piccolo",
+                "authors": [
+                    "Carol Talley"
+                ],
+                "publisher": "RSM Press",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Jjp8lHkos0UC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Very Last First Time": [
+        {
+            "9780888990433": {
+                "isbn_input": "9780888990433",
+                "isbn13": "9780888990433",
+                "isbn10": "088899043X",
+                "title": "Very Last First Time",
+                "authors": [
+                    "Jan Andrews"
+                ],
+                "publisher": "Groundwood Books",
+                "year": "1985",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=8HTOAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780689503887": {
+                "isbn_input": "9780689503887",
+                "isbn13": "9780689503887",
+                "isbn10": "0689503881",
+                "title": "Very Last First Time",
+                "authors": [
+                    "Jan Andrews"
+                ],
+                "publisher": "Margaret K. McElderry Books",
+                "year": "1986",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=jG_hAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Clown of God": [
+        {
+            "9781534414280": {
+                "isbn_input": "9781534414280",
+                "isbn13": "9781534414280",
+                "isbn10": "1534414282",
+                "title": "The Clown of God",
+                "authors": [
+                    "Tomie dePaola"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "2018",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=2_YxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781534466562": {
+                "isbn_input": "9781534466562",
+                "isbn13": "9781534466562",
+                "isbn10": "1534466568",
+                "title": "Jingle the Christmas Clown",
+                "authors": [
+                    "Tomie dePaola"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=lp1BEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Storm in the Night": [
+        {
+            "9780373106608": {
+                "isbn_input": "9780373106608",
+                "isbn13": "9780373106608",
+                "isbn10": "0373106602",
+                "title": "Storm in the Night",
+                "authors": [
+                    "Mary Stolz"
+                ],
+                "publisher": "Harlequin Books",
+                "year": "1988",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=tKbIuPQsOwwC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780064432566": {
+                "isbn_input": "9780064432566",
+                "isbn13": "9780064432566",
+                "isbn10": "0064432564",
+                "title": "Storm in the Night",
+                "authors": [
+                    "Mary Stolz"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1990",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=27HbmRfR0PoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
     ]
 }

@@ -144,7 +144,7 @@ class GoogleBooksAPI:
             check_digit = (10 - (check_sum % 10)) % 10
 
             return isbn13_prefix + str(check_digit)
-        except:
+        except Exception:
             return None
 
     def _convert_isbn13_to_isbn10(self, isbn13: str) -> Optional[str]:
@@ -162,7 +162,7 @@ class GoogleBooksAPI:
             check_digit = "X" if check_digit == 10 else str(check_digit)
 
             return isbn10_digits + check_digit
-        except:
+        except Exception:
             return None
 
     def normalize_isbn(self, isbn: str) -> Dict:
