@@ -56,6 +56,7 @@ def load_prices_data():
             logger.warning("prices.csv not found, creating empty DataFrame")
             # Create empty DataFrame with expected columns
             df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
+            df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
             return df
     except Exception as e:
         logger.error(f"Error loading prices data: {e}")
