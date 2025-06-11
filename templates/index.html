@@ -58,6 +58,10 @@
             background-color: #ed8936;
         }
 
+        .source-abebooks {
+            background-color: #a0a0a0;
+        }
+
         .status-success {
             color: #38a169;
         }
@@ -694,45 +698,44 @@
                                 (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
                                 'grey-text';
 
-                            html += `
-                                <div style="margin-bottom: 0.3rem; padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem;">
-                                    <div style="display: flex; align-items: center; flex: 1;">
-                                        <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
-                                        <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                            // Make the whole row clickable if url exists
+                            if (priceData.url) {
+                                html += `
+                                    <a href="${priceData.url}" target="_blank" style="text-decoration: none; color: inherit; display: block; margin-bottom: 0.3rem;">
+                                        <div style="padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem; cursor: pointer;">
+                                            <div style="display: flex; align-items: center; flex: 1;">
+                                                <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
+                                                <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                                            </div>
+                                            <div style="display: flex; align-items: center;">
+                                                ${priceData.success === true ?
+                                                    '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
+                                                    '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
+                                                }
+                                                <i class="material-icons tiny" style="font-size: 14px; margin-left: 0.3rem; color: #1976d2;">open_in_new</i>
+                                            </div>
+                                        </div>
+                                    </a>
+                                `;
+                            } else {
+                                html += `
+                                    <div style="margin-bottom: 0.3rem; padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem;">
+                                        <div style="display: flex; align-items: center; flex: 1;">
+                                            <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
+                                            <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            ${priceData.success === true ?
+                                                '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
+                                                '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
+                                            }
+                                        </div>
                                     </div>
-                                    <div style="display: flex; align-items: center;">
-                                        ${priceData.success === true ?
-                                            '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
-                                            '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
-                                        }
-                                        ${priceData.url ? `
-                                            <a href="${priceData.url}" target="_blank" style="margin-left: 0.3rem; color: #1976d2; text-decoration: none;">
-                                                <i class="material-icons tiny" style="font-size: 14px;">open_in_new</i>
-                                            </a>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            `;
+                                `;
+                            }
                         });
 
                         html += `
-                                    </div>
-                                </li>
-                            </ul>
-                        `;
-                    });
-
-                    html += `
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        `;
-                });
-
-                html += `
-                                        </div>
                                     </div>
                                 </li>
                             </ul>
