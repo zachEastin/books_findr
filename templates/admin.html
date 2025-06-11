@@ -266,9 +266,11 @@
             let title = "";
             let isbn = "";
             let author = "";
+            let btn;
             if (mode === 'isbn') {
                 title = document.getElementById('new-title-isbn').value.trim();
                 isbn = document.getElementById('new-isbn').value.trim();
+                btn = document.querySelector("#add-by-isbn button");
                 if (!isbn) {
                     M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
                     return;
@@ -276,6 +278,7 @@
             } else {
                 title = document.getElementById('new-title-title').value.trim();
                 author = document.getElementById('new-author').value.trim();
+                btn = document.querySelector("#add-by-title button");
                 if (!title) {
                     M.toast({ html: 'Please enter a title', classes: 'orange' });
                     return;
@@ -284,6 +287,12 @@
                     M.toast({ html: 'Please enter an author', classes: 'orange' });
                     return;
                 }
+            }
+            // Show spinner and disable button
+            if (btn) {
+                btn.disabled = true;
+                btn._originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="material-icons rotating">autorenew</i>Adding...';
             }
             try {
                 const response = await fetch('/api/books', {
@@ -314,6 +323,12 @@
             } catch (error) {
                 console.error('Error adding ISBN:', error);
                 M.toast({ html: 'Error adding ISBN', classes: 'red' });
+            } finally {
+                // Restore button state
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn._originalHTML || '<i class="material-icons left">add</i>Add';
+                }
             }
         }
 
