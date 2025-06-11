@@ -8,6 +8,7 @@ Integrates with ISBNdb API for enhanced search capabilities
 import time
 import asyncio
 import urllib.parse
+import concurrent.futures
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,6 +33,9 @@ DATA_DIR = BASE_DIR / "data"
 PRICES_CSV = DATA_DIR / "prices.csv"
 TIMEOUT = 15  # seconds
 MAX_CONCURRENT_SCRAPERS = 3  # Limit concurrent scrapers to be respectful
+
+# Shared thread pool for running blocking Selenium calls
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_SCRAPERS)
 
 
 def get_chrome_driver() -> webdriver.Chrome:
@@ -554,7 +558,10 @@ async def scrape_bookscouter_async(isbn_data: dict, book_title: str = "") -> dic
 
                 scraper_logger.info(f"BookScouter: Trying {strategy_name} with term '{search_term}'")
 
-                scraping_result = _scrape_bookscouter_sync(search_term, url)
+                loop = asyncio.get_running_loop()
+                scraping_result = await loop.run_in_executor(
+                    executor, _scrape_bookscouter_sync, search_term, url
+                )
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -627,7 +634,10 @@ async def scrape_christianbook_async(isbn_data: dict, book_title: str = "") -> d
 
                 scraper_logger.info(f"Christianbook: Trying {strategy_name} with term '{search_term}'")
 
-                scraping_result = _scrape_christianbook_sync(search_term, search_url)
+                loop = asyncio.get_running_loop()
+                scraping_result = await loop.run_in_executor(
+                    executor, _scrape_christianbook_sync, search_term, search_url
+                )
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -700,7 +710,10 @@ async def scrape_rainbowresource_async(isbn_data: dict, book_title: str = "") ->
 
                 scraper_logger.info(f"RainbowResource: Trying {strategy_name} with term '{search_term}'")
 
-                scraping_result = _scrape_rainbowresource_sync(search_term, search_url)
+                loop = asyncio.get_running_loop()
+                scraping_result = await loop.run_in_executor(
+                    executor, _scrape_rainbowresource_sync, search_term, search_url
+                )
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -736,68 +749,6 @@ async def scrape_rainbowresource_async(isbn_data: dict, book_title: str = "") ->
     return result
 
 
-async def scrape_abebooks_async(isbn_data: dict) -> dict:
-    """Async scrape book price from AbeBooks with enhanced search strategies"""
-    result = {
-        "isbn": isbn_data.get("isbn13", "unknown"),
-        "source": "AbeBooks",
-        "price": None,
-        "title": None,
-        "url": None,
-        "notes": "",
-        "success": False,
-    }
-
-    try:
-        search_strategies = get_search_strategies(isbn_data)
-        scraper_logger.info(
-            f"AbeBooks: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
-        )
-
-        for search_term, strategy_name in search_strategies:
-            try:
-                encoded_term = urllib.parse.quote(search_term)
-                search_url = f"https://www.abebooks.com/servlet/SearchResults?kn={encoded_term}"
-                result["url"] = search_url
-
-                scraper_logger.info(f"AbeBooks: Trying {strategy_name} with term '{search_term}'")
-
-                scraping_result = _scrape_abebooks_sync(search_term, search_url)
-
-                if scraping_result.get("success"):
-                    result.update(scraping_result)
-                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
-                    scraper_logger.info(f"AbeBooks: Success with {strategy_name}")
-                    break
-                else:
-                    scraper_logger.info(
-                        f"AbeBooks: No results with {strategy_name} for term {search_term} and url {search_url}"
-                    )
-
-            except Exception as e:
-                scraper_logger.warning(f"AbeBooks: Error with {strategy_name}: {e}")
-                continue
-
-        if not result["success"]:
-            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
-
-    except Exception as e:
-        result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(
-            f"Unexpected error scraping AbeBooks for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
-        )
-
-    log_scrape_result(
-        scraper_logger,
-        isbn_data.get("isbn13", "unknown"),
-        "AbeBooks",
-        result["success"],
-        result["price"],
-        result["notes"],
-    )
-    return result
-
-
 async def scrape_abebooks_async(isbn_data: dict, book_title: str = "") -> dict:
     """Async scrape book price from AbeBooks with enhanced search strategies"""
     result = {
@@ -824,7 +775,10 @@ async def scrape_abebooks_async(isbn_data: dict, book_title: str = "") -> dict:
 
                 scraper_logger.info(f"AbeBooks: Trying {strategy_name} with term '{search_term}'")
 
-                scraping_result = _scrape_abebooks_sync(search_term, search_url)
+                loop = asyncio.get_running_loop()
+                scraping_result = await loop.run_in_executor(
+                    executor, _scrape_abebooks_sync, search_term, search_url
+                )
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -898,7 +852,10 @@ async def scrape_camelcamelcamel_async(isbn_data: dict, book_title: str = "") ->
 
                 scraper_logger.info(f"CamelCamelCamel: Trying {strategy_name} with term '{search_term}'")
 
-                scraping_result = _scrape_camelcamelcamel_sync(search_term, search_url)
+                loop = asyncio.get_running_loop()
+                scraping_result = await loop.run_in_executor(
+                    executor, _scrape_camelcamelcamel_sync, search_term, search_url
+                )
 
                 if scraping_result.get("success"):
                     result.update(scraping_result)
@@ -1186,8 +1143,9 @@ def scrape_rainbowresource_sync(isbn: dict, book_title: str = "") -> dict:
     return asyncio.run(scrape_rainbowresource_async(isbn, book_title))
 
 
+def scrape_abebooks_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_abebooks_async"""
-    return asyncio.run(scrape_abebooks_async(isbn))
+    return asyncio.run(scrape_abebooks_async(isbn, book_title))
 
 
 def scrape_camelcamelcamel_sync(isbn: dict, book_title: str = "") -> dict:
