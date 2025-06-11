@@ -46,7 +46,7 @@ async def main():
         logger.info(f"Found {len(isbns)} ISBNs to scrape")
         
         # Log ISBN details
-        for isbn, metadata in isbns.items():
+        for title, isbn, metadata in isbns:
             title = metadata.get('title', 'Unknown Title')
             logger.info(f"  - {isbn}: {title}")
         
