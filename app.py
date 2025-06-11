@@ -229,13 +229,17 @@ def add_book_isbn():
         books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
 
         # Ensure book entry exists
-        isbn_list = books.setdefault(title, [])
-
-        # Check if ISBN already present
+        # If title is not provided, try to get it from Google Books metadata after processing ISBN
+        # We'll set the title variable after fetching metadata if needed
+        original_title = title  # Save what user provided
         already_tracked = False
-        for item in isbn_list:
-            if isbn_input in item:
-                already_tracked = True
+        isbn_list = books.setdefault(title, []) if title else None
+        for t, lst in books.items():
+            for item in lst:
+                if isbn_input in item:
+                    already_tracked = True
+                    break
+            if already_tracked:
                 break
         if already_tracked:
             return jsonify({"error": "ISBN already tracked"}), 400
@@ -306,6 +310,16 @@ def add_book_isbn():
         added = 0
         if isbn_input:
             result = asyncio.run(process_isbn(isbn_input))
+            # If title was not provided, try to get it from metadata
+            if not original_title:
+                title_from_metadata = result["metadata"].get("title") if result["metadata"] else None
+                if title_from_metadata:
+                    title = title_from_metadata.strip()
+                    # Move the ISBN under the derived title in books.json
+                    isbn_list = books.setdefault(title, [])
+                else:
+                    title = isbn_input  # fallback to ISBN as title
+                    isbn_list = books.setdefault(title, [])
             if result["success"]:
                 isbn_list.append({isbn_input: result["metadata"]})
                 added = 1
@@ -331,6 +345,7 @@ def add_book_isbn():
                     isbn_list.append({isbn_candidate: result["metadata"]})
                     added += 1
                 seen.add(isbn_candidate)
+        
         if added:
             books_file.write_text(json.dumps(books, indent=4))
             logger.info(f"Added {added} ISBNs under {title}")
