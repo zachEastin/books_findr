@@ -11,6 +11,7 @@ from pathlib import Path
 import json
 import html
 import io
+import asyncio
 
 # Import visualization module
 try:
@@ -54,6 +55,7 @@ def load_prices_data():
         else:
             logger.warning("prices.csv not found, creating empty DataFrame")
             # Create empty DataFrame with expected columns
+            df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
             df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
             return df
     except Exception as e:
@@ -194,15 +196,34 @@ def get_books():
 
 @app.route("/api/books", methods=["POST"])
 def add_book_isbn():
-    """Add a new ISBN under a book title"""
+    """Add a new ISBN under a book title or update icon_url if patch_icon is set"""
     try:
         from scripts.google_books_api import GoogleBooksAPI
         data = request.json or {}
         title = data.get("title", "").strip()
         isbn_input = data.get("isbn", "").strip()
+        author = data.get("author", "").strip()
+        icon_url = data.get("icon_url", "").strip()
+        patch_icon = data.get("patch_icon", False)
 
-        if not title or not isbn_input:
-            return jsonify({"error": "Title and ISBN are required"}), 400
+        books_file = BASE_DIR / "books.json"
+        books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
+
+        if patch_icon and title and isbn_input and icon_url:
+            # Only update icon_url for the given ISBN
+            isbn_list = books.get(title, [])
+            updated = False
+            for item in isbn_list:
+                if isbn_input in item:
+                    item[isbn_input]["icon_url"] = icon_url
+                    updated = True
+                    break
+            if updated:
+                books_file.write_text(json.dumps(books, indent=4))
+                logger.info(f"Updated icon_url for {isbn_input} under {title}")
+                return jsonify({"message": "Icon updated"})
+            else:
+                return jsonify({"error": "ISBN not found for icon update"}), 404
 
         books_file = BASE_DIR / "books.json"
         books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
@@ -233,6 +254,28 @@ def add_book_isbn():
                 logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
                 metadata_result = google_books_api.fetch_book_metadata(isbn)
                 metadata_result["source"] = "google_books"
+                # Try to fetch Google Books thumbnail/icon
+                if metadata_result.get("success") and "imageLinks" in metadata_result:
+                    # Already present (future-proof)
+                    pass
+                elif metadata_result.get("success") and metadata_result.get("isbn13"):
+                    # Try to fetch image from Google Books API directly
+                    try:
+                        # Use Google Books API to get volume info for this ISBN
+                        import requests
+                        gb_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{clean_isbn}"
+                        resp = requests.get(gb_url, timeout=10)
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            if data.get("totalItems", 0) > 0:
+                                volume_info = data["items"][0]["volumeInfo"]
+                                image_links = volume_info.get("imageLinks", {})
+                                # Prefer thumbnail, fallback to smallThumbnail
+                                icon_url = image_links.get("thumbnail") or image_links.get("smallThumbnail")
+                                if icon_url:
+                                    metadata_result["icon_url"] = icon_url
+                    except Exception as e:
+                        logger.warning(f"Could not fetch Google Books icon for {isbn}: {e}")
             else:
                 logger.warning("Google Books API not available, adding ISBN without metadata")
                 metadata_result = google_books_api.normalize_isbn(isbn)
@@ -248,6 +291,7 @@ def add_book_isbn():
                     "year": metadata_result.get("year", ""),
                     "source": metadata_result.get("source", "manual"),
                     "notes": metadata_result.get("notes", ""),
+                    "icon_url": metadata_result.get("icon_url", ""),
                 }
                 result["success"] = True
                 result["metadata"] = metadata_result
@@ -255,14 +299,40 @@ def add_book_isbn():
                 result["error"] = metadata_result.get("error", "Unknown error")
             return result
 
-        result = asyncio.run(process_isbn(isbn_input))
-        if result["success"]:
-            isbn_list.append({isbn_input: result["metadata"]})
-            books_file.write_text(json.dumps(books, indent=4))
-            logger.info(f"Added ISBN {isbn_input} under {title}")
-            return jsonify({"message": f"ISBN {isbn_input} added"})
+        added = 0
+        if isbn_input:
+            result = asyncio.run(process_isbn(isbn_input))
+            if result["success"]:
+                isbn_list.append({isbn_input: result["metadata"]})
+                added = 1
+            else:
+                return jsonify({"error": result["error"]}), 400
         else:
-            return jsonify({"error": result["error"]}), 400
+            # Require author if adding by title only
+            if not author:
+                return jsonify({"error": "Author is required when adding by title"}), 400
+            google_books_api = GoogleBooksAPI()
+            search_results = google_books_api.search_by_title_and_author(title, author=author, max_results=5)
+            if not search_results:
+                return jsonify({"error": "No ISBNs found for title and author"}), 404
+            seen = set()
+            for item in search_results:
+                isbn_candidate = item.get("isbn13") or item.get("isbn10")
+                if not isbn_candidate or isbn_candidate in seen:
+                    continue
+                if any(isbn_candidate in x for x in isbn_list):
+                    continue
+                result = asyncio.run(process_isbn(isbn_candidate))
+                if result["success"]:
+                    isbn_list.append({isbn_candidate: result["metadata"]})
+                    added += 1
+                seen.add(isbn_candidate)
+        if added:
+            books_file.write_text(json.dumps(books, indent=4))
+            logger.info(f"Added {added} ISBNs under {title}")
+            return jsonify({"message": f"Added {added} ISBN(s)"})
+        else:
+            return jsonify({"error": "No ISBNs added"}), 400
 
     except Exception as e:
         logger.error(f"Error adding ISBN: {e}")
@@ -830,7 +900,7 @@ def export_html():
         for isbn in df["isbn"].unique():
             isbn_data = df[df["isbn"] == isbn]
             
-            # Get book title - prioritize metadata over price data
+            # Get book title - prioritize ISBNdb metadata over price data
             title = "Unknown Title"
             try:
                 isbn_metadata = json.loads((BASE_DIR / "isbns.json").read_bytes())
