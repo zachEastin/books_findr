@@ -63,7 +63,13 @@ def clean_price(price_text: str) -> Optional[float]:
         return None
 
     # Remove common currency symbols and text
-    cleaned = re.sub(r"[^\d.,]", "", price_text.replace(",", ""))
+    # Remove all non-digit and non-period characters, then ensure only one period (decimal point) remains and it's surrounded by digits
+    cleaned = re.sub(r'^\.+|\.+$', '', re.sub(r"[^\d.]", "", price_text))
+    # Ensure the period is surrounded by digits (e.g., ".99" -> "0.99", "99." -> "99.0")
+    if cleaned.startswith('.'):
+        cleaned = '0' + cleaned
+    if cleaned.endswith('.'):
+        cleaned = cleaned + '0'
 
     try:
         return float(cleaned)
@@ -387,6 +393,13 @@ def _scrape_abebooks_sync(search_term: str, search_url: str) -> dict:
                 price_value = clean_price(price_text)
                 if not price_value or price_value <= 0:
                     continue
+
+                # Get Shipping and add to Price
+                shipping_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group span")
+                shipping_text = shipping_elem.text.strip()
+                shipping_value = clean_price(shipping_text)
+                if shipping_value and shipping_value > 0:
+                    price_value += shipping_value
 
                 title_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a span")
                 title_text = title_elem.text.strip()
