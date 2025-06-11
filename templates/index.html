@@ -152,11 +152,33 @@
 
         .isbn-card {
             transition: all 0.3s ease;
-        }
-
-        .isbn-card:hover {
+        }        .isbn-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        /* Nested collapsible styling */
+        .collapsible li.active .collapsible-header {
+            background-color: #e3f2fd !important;
+        }
+
+        .collapsible .collapsible .collapsible-header {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .collapsible .collapsible .collapsible-body {
+            background-color: #fafbfc;
+        }
+
+        /* Source badge adjustments for compact view */
+        .source-badge {
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        /* Compact price display */
+        .price-compact {
+            font-family: monospace;
         }
     </style>
 </head>
@@ -604,8 +626,7 @@
                                             ${isbnData.max_price ? `<span style="margin-left: 1rem;"><small><strong>Max:</strong> $${isbnData.max_price.toFixed(2)}</small></span>` : ''}
                                         </div>
                                     ` : ''}
-                                    
-                                    <!-- Collapsible source details for this ISBN -->
+                                      <!-- Collapsible source details for this ISBN -->
                                     <ul class="collapsible" style="margin-top: 0.5rem; box-shadow: none; border: 1px solid #e0e0e0;">
                                         <li>
                                             <div class="collapsible-header" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
@@ -615,32 +636,90 @@
                                             <div class="collapsible-body" style="padding: 0.5rem;">
                     `;
 
-                    // Add source details
+                    // Group prices by date
+                    const pricesByDate = {};
                     isbnData.prices.forEach(priceData => {
-                        const sourceClass = priceData.source.toLowerCase().replace(/[^a-z]/g, '');
-                        const priceDisplay = priceData.price ? `$${priceData.price.toFixed(2)}` : 'N/A';
-                        const priceTextClass = priceData.price ?
-                            (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
-                            'grey-text';
+                        const date = priceData.timestamp ? new Date(priceData.timestamp).toDateString() : 'Unknown Date';
+                        if (!pricesByDate[date]) {
+                            pricesByDate[date] = [];
+                        }
+                        pricesByDate[date].push(priceData);
+                    });
 
+                    // Sort dates (newest first)
+                    const sortedDates = Object.keys(pricesByDate).sort((a, b) => {
+                        if (a === 'Unknown Date') return 1;
+                        if (b === 'Unknown Date') return -1;
+                        return new Date(b) - new Date(a);
+                    });
+
+                    // Create nested collapsibles for each date
+                    sortedDates.forEach((date, dateIndex) => {
+                        const isLatest = dateIndex === 0 && date !== 'Unknown Date';
+                        const formattedDate = date === 'Unknown Date' ? 'Unknown Date' : 
+                            new Date(date).toLocaleDateString(undefined, { 
+                                weekday: 'short', 
+                                month: 'short', 
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+                        
                         html += `
-                                <div style="margin-bottom: 0.5rem; padding: 0.25rem; border: 1px solid #f0f0f0; border-radius: 4px; background: #fafafa;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span class="source-badge source-${sourceClass}">${priceData.source}</span>
-                                        <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.8rem;">${priceDisplay}</span>
-                                    </div>                                    <div style="margin-top: 0.25rem;">
-                                        ${priceData.success === true ?
-                                '<small class="green-text"><i class="material-icons tiny">check</i> Success</small>' :
-                                '<small class="red-text"><i class="material-icons tiny">error</i> Failed</small>'
+                            <ul class="collapsible" style="margin: 0.25rem 0; box-shadow: none; border: 1px solid #e9e9e9;">
+                                <li class="${isLatest ? 'active' : ''}">
+                                    <div class="collapsible-header" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; background: ${isLatest ? '#e3f2fd' : '#f9f9f9'};">
+                                        <i class="material-icons tiny" style="font-size: 16px;">date_range</i>
+                                        <span style="font-weight: 500; margin-left: 0.25rem;">${formattedDate}</span>
+                                        <span class="new badge ${isLatest ? 'blue' : 'grey'} white-text" data-badge-caption="" style="margin-left: auto; font-size: 0.7rem; padding: 0.1rem 0.3rem; min-width: 1.5rem;">${pricesByDate[date].length}</span>
+                                    </div>
+                                    <div class="collapsible-body" style="padding: 0.3rem; ${isLatest ? 'display: block;' : ''}">
+                        `;
+
+                        // Add sources for this date - group by source for compact display
+                        const sourcesByName = {};
+                        pricesByDate[date].forEach(priceData => {
+                            if (!sourcesByName[priceData.source]) {
+                                sourcesByName[priceData.source] = [];
                             }
+                            sourcesByName[priceData.source].push(priceData);
+                        });
+
+                        Object.entries(sourcesByName).forEach(([sourceName, sourcePrices]) => {
+                            // Use the most recent price for this source on this date
+                            const priceData = sourcePrices.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))[0];
+                            
+                            const sourceClass = priceData.source.toLowerCase().replace(/[^a-z]/g, '');
+                            const priceDisplay = priceData.price ? `$${priceData.price.toFixed(2)}` : 'N/A';
+                            const priceTextClass = priceData.price ?
+                                (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
+                                'grey-text';
+
+                            html += `
+                                <div style="margin-bottom: 0.3rem; padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem;">
+                                    <div style="display: flex; align-items: center; flex: 1;">
+                                        <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
+                                        <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        ${priceData.success === true ?
+                                            '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
+                                            '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
+                                        }
                                         ${priceData.url ? `
-                                            <a href="${priceData.url}" target="_blank" class="btn-small blue" style="padding: 0 0.25rem; height: 20px; line-height: 20px; font-size: 0.6rem; margin-left: 0.5rem;">
-                                                <i class="material-icons tiny">open_in_new</i>
+                                            <a href="${priceData.url}" target="_blank" style="margin-left: 0.3rem; color: #1976d2; text-decoration: none;">
+                                                <i class="material-icons tiny" style="font-size: 14px;">open_in_new</i>
                                             </a>
                                         ` : ''}
                                     </div>
                                 </div>
                             `;
+                        });
+
+                        html += `
+                                    </div>
+                                </li>
+                            </ul>
+                        `;
                     });
 
                     html += `
