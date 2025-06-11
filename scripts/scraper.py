@@ -736,10 +736,11 @@ async def scrape_rainbowresource_async(isbn_data: dict, book_title: str = "") ->
     return result
 
 
-async def scrape_abebooks_async(isbn_data: dict) -> dict:
+async def scrape_abebooks_async(isbn_data: dict, book_title: str = "") -> dict:
     """Async scrape book price from AbeBooks with enhanced search strategies"""
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
+        "book_title": book_title,
         "source": "AbeBooks",
         "price": None,
         "title": None,
@@ -1193,8 +1194,9 @@ def scrape_rainbowresource_sync(isbn: dict, book_title: str = "") -> dict:
     return asyncio.run(scrape_rainbowresource_async(isbn, book_title))
 
 
+def scrape_abebooks_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_abebooks_async"""
-    return asyncio.run(scrape_abebooks_async(isbn))
+    return asyncio.run(scrape_abebooks_async(isbn, book_title))
 
 
 def scrape_camelcamelcamel_sync(isbn: dict, book_title: str = "") -> dict:
