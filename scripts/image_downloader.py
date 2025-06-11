@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 import os
 
 from .logger import scraper_logger
-from .scraper import get_chrome_driver
+from .scraper import get_chrome_driver, clean_price
 
 # Configuration
 BASE_DIR = Path(__file__).parent.parent
@@ -326,9 +326,77 @@ def download_rainbowresource_image(isbn: str, url: str) -> Dict[str, Any]:
     return result
 
 
+def download_abebooks_image(isbn: str, url: str) -> Dict[str, Any]:
+    """Download book image from AbeBooks (lowest priced item)"""
+    result = {
+        "success": False,
+        "isbn": isbn,
+        "source": "abebooks",
+        "image_url": None,
+        "image_path": None,
+        "error": None,
+    }
+
+    driver = None
+    try:
+        if image_exists(isbn, "abebooks"):
+            image_path = get_image_path(isbn, "abebooks")
+            result.update({
+                "success": True,
+                "image_path": str(image_path.relative_to(BASE_DIR)),
+                "error": "Image already exists",
+            })
+            return result
+
+        driver = get_chrome_driver()
+        driver.get(url)
+
+        wait = WebDriverWait(driver, TIMEOUT)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.result-data")))
+
+        result_items = driver.find_elements(By.CSS_SELECTOR, "div.result-data")
+
+        lowest_price = float("inf")
+        best_image_url = None
+
+        for item in result_items:
+            try:
+                price_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group p.item-price")
+                price_text = price_elem.text.strip()
+                price_value = clean_price(price_text)
+                if price_value is None:
+                    continue
+
+                image_container = item.find_element(By.XPATH, "../div[contains(@class,'result-image')]//a/div[contains(@class,'srp-image-holder')]/img")
+                img_url = image_container.get_attribute("src")
+
+                if price_value < lowest_price and img_url:
+                    lowest_price = price_value
+                    best_image_url = img_url
+
+            except Exception:
+                continue
+
+        if best_image_url:
+            result["image_url"] = best_image_url
+            download_result = asyncio.run(download_image_from_url(best_image_url, isbn, "abebooks"))
+            result.update(download_result)
+        else:
+            result["error"] = "No image found for lowest price item"
+
+    except Exception as e:
+        result["error"] = str(e)
+        scraper_logger.error(f"Error scraping AbeBooks image for {isbn}: {e}")
+    finally:
+        if driver:
+            driver.quit()
+
+    return result
+
+
 def get_existing_image_info(isbn: str) -> Dict[str, Any]:
     """Get information about existing images for an ISBN"""
-    sources = ["bookscouter", "christianbook", "rainbowresource"]
+    sources = ["bookscouter", "christianbook", "rainbowresource", "abebooks"]
     images = {}
     
     for source in sources:
@@ -357,6 +425,8 @@ def download_image_for_isbn_source(isbn: str, source: str, url: str) -> Dict[str
         return download_christianbook_image(isbn, url)
     elif source.lower() == "rainbowresource":
         return download_rainbowresource_image(isbn, url)
+    elif source.lower() == "abebooks":
+        return download_abebooks_image(isbn, url)
     else:
         return {
             "success": False,
