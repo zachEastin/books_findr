@@ -733,14 +733,26 @@
                                     </div>
                                 `;
                             }
-                        });
-
-                        html += `
+                        });                        html += `
                                     </div>
                                 </li>
                             </ul>
+                        `;
+                    });
+
+                    html += `
+                                </div>
+                            </div>
                         </div>
                     `;
+                });
+
+                html += `
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                `;
             });
 
             container.innerHTML = html;
