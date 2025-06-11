@@ -1,11 +1,11 @@
 # Book Price Tracker
 
-A local Python app that tracks book prices across various retailers using ISBNs. Scrapes BookScouter, Christianbook, RainbowResource, and pulls pricing history graphs from CamelCamelCamel. Data is stored in CSV and updated daily.
+A local Python app that tracks book prices across various retailers using ISBNs. Scrapes BookScouter, Christianbook, RainbowResource, AbeBooks, and pulls pricing history graphs from CamelCamelCamel. Data is stored in CSV and updated daily.
 
 ## Features
 
 - Daily price scraping and storage
-- Tracks BookScouter, Christianbook.com, RainbowResource.com
+- Tracks BookScouter, Christianbook.com, RainbowResource.com, AbeBooks.com
 - CamelCamelCamel graph integration
 - Visual UI using Flask and Material Design
 - CSV-based data tracking

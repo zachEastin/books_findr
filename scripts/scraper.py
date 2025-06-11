@@ -354,6 +354,80 @@ def _scrape_rainbowresource_sync(search_term: str, search_url: str) -> dict:
     return result_update
 
 
+def _scrape_abebooks_sync(search_term: str, search_url: str) -> dict:
+    """Synchronous helper function for AbeBooks scraping"""
+    result_update = {
+        "price": None,
+        "title": None,
+        "url": search_url,
+        "notes": "",
+        "success": False,
+    }
+
+    driver = None
+    try:
+        driver = get_chrome_driver()
+        scraper_logger.info(f"Scraping AbeBooks for term: {search_term}")
+
+        driver.get(search_url)
+
+        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        time.sleep(5)
+
+        result_items = driver.find_elements(By.CSS_SELECTOR, "div.result-data")
+
+        lowest_price = float("inf")
+        best_title = None
+        best_url = None
+
+        for item in result_items:
+            try:
+                price_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group p.item-price")
+                price_text = price_elem.text.strip()
+                price_value = clean_price(price_text)
+                if not price_value or price_value <= 0:
+                    continue
+
+                title_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a span")
+                title_text = title_elem.text.strip()
+                url_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a")
+                href = url_elem.get_attribute("href")
+
+                if price_value < lowest_price:
+                    lowest_price = price_value
+                    best_title = title_text
+                    best_url = href
+
+            except NoSuchElementException:
+                continue
+
+        if lowest_price != float("inf"):
+            result_update.update({
+                "price": lowest_price,
+                "title": best_title,
+                "url": best_url or search_url,
+                "success": True,
+                "notes": "Found price in search results",
+            })
+        else:
+            result_update["notes"] = "No valid prices found"
+
+    except TimeoutException:
+        result_update["notes"] = "Page load timeout"
+        scraper_logger.error(f"Timeout scraping AbeBooks for term {search_term}")
+    except WebDriverException as e:
+        result_update["notes"] = f"WebDriver error: {str(e)}"
+        scraper_logger.error(f"WebDriver error scraping AbeBooks for term {search_term}: {e}")
+    except Exception as e:
+        result_update["notes"] = f"Unexpected error: {str(e)}"
+        scraper_logger.error(f"Unexpected error scraping AbeBooks for term {search_term}: {e}")
+    finally:
+        if driver:
+            driver.quit()
+
+    return result_update
+
+
 def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
     """Synchronous helper function for CamelCamelCamel scraping"""
     result_update = {
@@ -646,6 +720,68 @@ async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
     return result
 
 
+async def scrape_abebooks_async(isbn_data: dict) -> dict:
+    """Async scrape book price from AbeBooks with enhanced search strategies"""
+    result = {
+        "isbn": isbn_data.get("isbn13", "unknown"),
+        "source": "AbeBooks",
+        "price": None,
+        "title": None,
+        "url": None,
+        "notes": "",
+        "success": False,
+    }
+
+    try:
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"AbeBooks: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
+        )
+
+        for search_term, strategy_name in search_strategies:
+            try:
+                encoded_term = urllib.parse.quote(search_term)
+                search_url = f"https://www.abebooks.com/servlet/SearchResults?kn={encoded_term}"
+                result["url"] = search_url
+
+                scraper_logger.info(f"AbeBooks: Trying {strategy_name} with term '{search_term}'")
+
+                scraping_result = _scrape_abebooks_sync(search_term, search_url)
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"AbeBooks: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(
+                        f"AbeBooks: No results with {strategy_name} for term {search_term} and url {search_url}"
+                    )
+
+            except Exception as e:
+                scraper_logger.warning(f"AbeBooks: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
+
+    except Exception as e:
+        result["notes"] = f"Unexpected error: {str(e)}"
+        scraper_logger.error(
+            f"Unexpected error scraping AbeBooks for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
+
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "AbeBooks",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
+    return result
+
+
 async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
     """
     Async scrape Amazon price history from CamelCamelCamel with enhanced search strategies
@@ -735,6 +871,7 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
         scrape_bookscouter_async(isbn),
         scrape_christianbook_async(isbn),
         scrape_rainbowresource_async(isbn),
+        scrape_abebooks_async(isbn),
         # scrape_camelcamelcamel_async(isbn),  # Uncomment to include CamelCamelCamel
     ]
 
@@ -744,7 +881,7 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
 
         # Process results and handle any exceptions
         processed_results = []
-        source_names = ["BookScouter", "Christianbook", "RainbowResource"]  # , "CamelCamelCamel"]
+        source_names = ["BookScouter", "Christianbook", "RainbowResource", "AbeBooks"]  # , "CamelCamelCamel"]
 
         for i, result in enumerate(results):
             if isinstance(result, Exception):
@@ -954,6 +1091,11 @@ def scrape_rainbowresource_sync(isbn: str) -> dict:
     return asyncio.run(scrape_rainbowresource_async(isbn))
 
 
+def scrape_abebooks_sync(isbn: str) -> dict:
+    """Sync wrapper for scrape_abebooks_async"""
+    return asyncio.run(scrape_abebooks_async(isbn))
+
+
 def scrape_camelcamelcamel_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_camelcamelcamel_async"""
     return asyncio.run(scrape_camelcamelcamel_async(isbn))
@@ -976,6 +1118,7 @@ def scrape_all_sources_sync(isbn: dict) -> list[dict]:
 scrape_bookscouter = scrape_bookscouter_sync
 scrape_christianbook = scrape_christianbook_sync
 scrape_rainbowresource = scrape_rainbowresource_sync
+scrape_abebooks = scrape_abebooks_sync
 scrape_camelcamelcamel = scrape_camelcamelcamel_sync
 scrape_all_sources = scrape_all_sources_sync
 
