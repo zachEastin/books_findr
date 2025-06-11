@@ -25,7 +25,8 @@
                 ],
                 "year": "1998",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "icon_url": "http://books.google.com/books/content?id=3lquUzBkVsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         },
         {
@@ -53,7 +54,8 @@
                 ],
                 "year": "2020",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "icon_url": "http://books.google.com/books/content?id=bMRgzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         }
     ],
@@ -133,7 +135,8 @@
                 "year": "1978",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=uqUlDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         },
         {
@@ -149,7 +152,8 @@
                 "year": "2003",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         },
         {
@@ -183,7 +187,8 @@
                 "year": "2014",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=AFYuEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         },
         {
@@ -198,6 +203,527 @@
                 ],
                 "publisher": "Follettbound",
                 "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Madeline": [
+        {
+            "9780140564396": {
+                "isbn_input": "9780140564396",
+                "isbn13": "9780140564396",
+                "isbn10": "014056439X",
+                "title": "Madeline",
+                "authors": [
+                    "Ludwig Bemelmans"
+                ],
+                "publisher": "Penguin",
+                "year": "2000",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=jJHqDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780451470515": {
+                "isbn_input": "9780451470515",
+                "isbn13": "9780451470515",
+                "isbn10": "0451470516",
+                "title": "A Madeline Treasury",
+                "authors": [
+                    "Ludwig Bemelmans"
+                ],
+                "publisher": "Penguin",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=D3mCEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780439096331": {
+                "isbn_input": "9780439096331",
+                "isbn13": "9780439096331",
+                "isbn10": "0439096332",
+                "title": "Madeline in America and Other Holiday Tales",
+                "authors": [
+                    "Ludwig Bemelmans",
+                    "John Bemelmans Marciano"
+                ],
+                "publisher": "Arthur A. Levine Books",
+                "year": "1999",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781591128052": {
+                "isbn_input": "9781591128052",
+                "isbn13": "9781591128052",
+                "isbn10": "1591128056",
+                "title": "Madeline",
+                "authors": [
+                    "Ludwig Bemelmans"
+                ],
+                "publisher": "Live Oak Media (NY)",
+                "year": "1982",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ZJOGngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Rag Coat": [
+        {
+            "9780316574075": {
+                "isbn_input": "9780316574075",
+                "isbn13": "9780316574075",
+                "isbn10": "0316574074",
+                "title": "The Rag Coat",
+                "authors": [
+                    "Lauren Mills"
+                ],
+                "publisher": "Little, Brown Books for Young Readers",
+                "year": "1991",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=R6FnGwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780669365085": {
+                "isbn_input": "9780669365085",
+                "isbn13": "9780669365085",
+                "isbn10": "0669365084",
+                "title": "The Rag Coat D C Heath Edition",
+                "authors": [
+                    "John Mills",
+                    "Lauren Mills"
+                ],
+                "publisher": null,
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780440832423": {
+                "isbn_input": "9780440832423",
+                "isbn13": "9780440832423",
+                "isbn10": "044083242X",
+                "title": "The Rag Coat",
+                "authors": [
+                    "Lauren A. Mills"
+                ],
+                "publisher": null,
+                "year": "1991",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780780483293": {
+                "isbn_input": "9780780483293",
+                "isbn13": "9780780483293",
+                "isbn10": "0780483294",
+                "title": "Rag Coat",
+                "authors": [
+                    "Lauren Mills"
+                ],
+                "publisher": null,
+                "year": "1991",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Who Owns the Sun?": [
+        {
+            "9781933407531": {
+                "isbn_input": "9781933407531",
+                "isbn13": "9781933407531",
+                "isbn10": "1933407530",
+                "title": "Who Owns the Sun?",
+                "authors": [
+                    "Stacy Chbosky"
+                ],
+                "publisher": "In the Think of Things",
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Mike Mulligan and His Steam Shovel": [
+        {
+            "9780547350578": {
+                "isbn_input": "9780547350578",
+                "isbn13": "9780547350578",
+                "isbn10": "0547350570",
+                "title": "Mike Mulligan and His Steam Shovel",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=YhhjClaj92AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780395664995": {
+                "isbn_input": "9780395664995",
+                "isbn13": "9780395664995",
+                "isbn10": "0395664993",
+                "title": "Mike Mulligan and His Steam Shovel",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Sandpiper",
+                "year": "1993",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=0Yg7qAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780618737567": {
+                "isbn_input": "9780618737567",
+                "isbn13": "9780618737567",
+                "isbn10": "0618737561",
+                "title": "Mike Mulligan and His Steam Shovel",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2006",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=lEfLsgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780395861349": {
+                "isbn_input": "9780395861349",
+                "isbn13": "9780395861349",
+                "isbn10": "0395861349",
+                "title": "Mike Mulligan y Su M\u00e1quina Maravillosa",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1997",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=p4w4TpX5jnQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780618256273": {
+                "isbn_input": "9780618256273",
+                "isbn13": "9780618256273",
+                "isbn10": "061825627X",
+                "title": "Mike Mulligan and More",
+                "authors": [
+                    "Virginia Lee Burton"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=JqKRmAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Glorious Flight": [
+        {
+            "9781101643716": {
+                "isbn_input": "9781101643716",
+                "isbn13": "9781101643716",
+                "isbn10": "1101643714",
+                "title": "The Glorious Flight",
+                "authors": [
+                    "Alice Provensen",
+                    "Martin Provensen"
+                ],
+                "publisher": "Penguin",
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=-yhu2THb0JwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780395588017": {
+                "isbn_input": "9780395588017",
+                "isbn13": "9780395588017",
+                "isbn10": "0395588014",
+                "title": "The Information Please Kids Almanac",
+                "authors": [
+                    "Alice Siegel",
+                    "Margo McLoone"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=wkmYxHg-OGMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780758700490": {
+                "isbn_input": "9780758700490",
+                "isbn13": "9780758700490",
+                "isbn10": "0758700490",
+                "title": "The Glorious Flight",
+                "authors": [
+                    "Alice Provensen"
+                ],
+                "publisher": "Follettbound",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780091543006": {
+                "isbn_input": "9780091543006",
+                "isbn13": "9780091543006",
+                "isbn10": "0091543002",
+                "title": "The Glorious Flight",
+                "authors": [
+                    "Alice Provensen",
+                    "Martin Provensen"
+                ],
+                "publisher": null,
+                "year": "1983",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "How to Make an Apple Pie and See the World": [
+        {
+            "9780679880837": {
+                "isbn_input": "9780679880837",
+                "isbn13": "9780679880837",
+                "isbn10": "0679880836",
+                "title": "How to Make an Apple Pie and See the World",
+                "authors": [
+                    "Marjorie Priceman"
+                ],
+                "publisher": "Dragonfly Books",
+                "year": "1996",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=33gCDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780385752930": {
+                "isbn_input": "9780385752930",
+                "isbn13": "9780385752930",
+                "isbn10": "0385752938",
+                "title": "How to Make a Cherry Pie and See the U.S.A.",
+                "authors": [
+                    "Marjorie Priceman"
+                ],
+                "publisher": "Dragonfly Books",
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=1FR6C1GEKAIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780307793126": {
+                "isbn_input": "9780307793126",
+                "isbn13": "9780307793126",
+                "isbn10": "0307793125",
+                "title": "How to Make an Apple Pie and See the World",
+                "authors": [
+                    "Marjorie Priceman"
+                ],
+                "publisher": "Dragonfly Books",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=2CeOAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780673610980": {
+                "isbn_input": "9780673610980",
+                "isbn13": "9780673610980",
+                "isbn10": "0673610985",
+                "title": "Reading 2000 Big Book Grade 2.5 How to Make an Apple Pie and See the World",
+                "authors": [
+                    "Marjorie Priceman"
+                ],
+                "publisher": "Pearson Scott Foresman",
+                "year": "1999",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Grandfather's Journey": [
+        {
+            "9780544332591": {
+                "isbn_input": "9780544332591",
+                "isbn13": "9780544332591",
+                "isbn10": "0544332598",
+                "title": "Grandfather's Journey (Read-aloud)",
+                "authors": [
+                    "Allen Say"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=PzpCCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780605069411": {
+                "isbn_input": "9780605069411",
+                "isbn13": "9780605069411",
+                "isbn10": "0605069417",
+                "title": "Grandfather's Journey",
+                "authors": [
+                    "Allen Say"
+                ],
+                "publisher": null,
+                "year": "1993",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780547350530": {
+                "isbn_input": "9780547350530",
+                "isbn13": "9780547350530",
+                "isbn10": "0547350538",
+                "title": "Grandfather's Journey",
+                "authors": [
+                    "Allen Say"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=aYuOocOuWL4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780395630365": {
+                "isbn_input": "9780395630365",
+                "isbn13": "9780395630365",
+                "isbn10": "0395630363",
+                "title": "The Lost Lake",
+                "authors": [
+                    "Allen Say"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=cNJucgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9782211035712": {
+                "isbn_input": "9782211035712",
+                "isbn13": "9782211035712",
+                "isbn10": "221103571X",
+                "title": "Le voyage de grand-p\u00e8re",
+                "authors": [
+                    "Allen Say"
+                ],
+                "publisher": "L'Ecole des Loisirs",
+                "year": "1995",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Cranberry Thanksgiving": [
+        {
+            "9798888180594": {
+                "isbn_input": "9798888180594",
+                "isbn13": "9798888180594",
+                "isbn10": null,
+                "title": "Cranberry Thanksgiving",
+                "authors": [
+                    "Wende Devlin"
+                ],
+                "publisher": null,
+                "year": "2024",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ktSr0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9781930900684": {
+                "isbn_input": "9781930900684",
+                "isbn13": "9781930900684",
+                "isbn10": "1930900686",
+                "title": "Cranberry Christmas",
+                "authors": [
+                    "Wende Devlin"
+                ],
+                "publisher": "Cranberryport",
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=MRiOngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780590077606": {
+                "isbn_input": "9780590077606",
+                "isbn13": "9780590077606",
+                "isbn10": "0590077600",
+                "title": "Cranberry Christmas",
+                "authors": [
+                    "Wende Devlin",
+                    "Harry Devlin"
+                ],
+                "publisher": "Four Winds",
+                "year": "1980",
                 "success": true,
                 "error": null,
                 "source": "google_books"
