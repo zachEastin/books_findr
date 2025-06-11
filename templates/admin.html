@@ -70,10 +70,50 @@
         .status-pending {
             background-color: #ff9800;
         }
+
+        .isbn-group {
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .isbn-group-header {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .isbn-group-header:hover {
+            background-color: #f5f5f5;
+        }
+
+        .isbn-group-list {
+            display: none;
+            padding: 0 10px 10px;
+        }
+
+        .isbn-item-subgroup {
+            background: #f0f2f6;
+            max-width: 92%;
+            margin-left: 5%;
+            border-left: 5px solid #667eea;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px #e0e0e0;
+            padding: 13px 10px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        .isbn-item-subgroup:hover {
+            background: #e3e6ee !important;
+            box-shadow: 0 2px 6px #d0d3db;
+        }
     </style>
 </head>
 
-<body class="grey lighten-4">
+<body class="grey lighten-4"></body>
     <!-- Navigation -->
     <nav class="blue darken-3">
         <div class="nav-wrapper container">
@@ -106,16 +146,40 @@
                             <i class="material-icons left">add</i>Add New ISBN
                         </span>
                         <div class="row">
-                            <div class="input-field col s12">
-                                <input id="new-isbn" type="text" placeholder="9780134685991">
-                                <label for="new-isbn">ISBN (10 or 13 digits)</label>
+                            <div class="col s12">
+                                <ul class="tabs">
+                                    <li class="tab col s6"><a class="active" href="#add-by-isbn">ISBN</a></li>
+                                    <li class="tab col s6"><a href="#add-by-title">Title</a></li>
+                                </ul>
+                            </div>
+                            <div id="add-by-isbn" class="col s12" style="margin-top: 20px;">
+                                <div class="input-field">
+                                    <input id="new-title-isbn" type="text" required>
+                                    <label for="new-title-isbn">Book Title <span class="red-text">*</span></label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="new-isbn" type="text" required>
+                                    <label for="new-isbn">ISBN <span class="red-text">*</span></label>
+                                </div>
+                                <button class="btn blue waves-effect waves-light" onclick="addISBN('isbn')">
+                                    <i class="material-icons left">add</i>Add by ISBN
+                                </button>
+                            </div>
+                            <div id="add-by-title" class="col s12" style="margin-top: 20px;">
+                                <div class="input-field">
+                                    <input id="new-title-title" type="text" required>
+                                    <label for="new-title-title">Book Title <span class="red-text">*</span></label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="new-author" type="text" required>
+                                    <label for="new-author">Author <span class="red-text">*</span></label>
+                                </div>
+                                <button class="btn blue waves-effect waves-light" onclick="addISBN('title')">
+                                    <i class="material-icons left">add</i>Add by Title & Author
+                                </button>
+                                <div class="grey-text" style="margin-top:10px;">Both title and author are required to add by title.</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-action">
-                        <button class="btn blue waves-effect waves-light" onclick="addISBN()">
-                            <i class="material-icons left">add</i>Add ISBN
-                        </button>
                     </div>
                 </div>
             </div>
@@ -182,39 +246,62 @@
         // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
             M.AutoInit();
+            var el = document.querySelectorAll('.tabs');
+            M.Tabs.init(el);
             loadISBNs();
             loadActivity();
         });        // Load ISBNs
 
-        // Add new ISBN
-        async function addISBN() {
-            const isbnInput = document.getElementById('new-isbn');
-            const isbn = isbnInput.value.trim();
-
-            if (!isbn) {
-                M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
-                return;
+        // Add new ISBN or by title/author
+        async function addISBN(mode) {
+            let title = "";
+            let isbn = "";
+            let author = "";
+            if (mode === 'isbn') {
+                title = document.getElementById('new-title-isbn').value.trim();
+                isbn = document.getElementById('new-isbn').value.trim();
+                if (!title) {
+                    M.toast({ html: 'Please enter a title', classes: 'orange' });
+                    return;
+                }
+                if (!isbn) {
+                    M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
+                    return;
+                }
+            } else {
+                title = document.getElementById('new-title-title').value.trim();
+                author = document.getElementById('new-author').value.trim();
+                if (!title) {
+                    M.toast({ html: 'Please enter a title', classes: 'orange' });
+                    return;
+                }
+                if (!author) {
+                    M.toast({ html: 'Please enter an author', classes: 'orange' });
+                    return;
+                }
             }
-
-            if (isbn.includes(',')) {
-                const isbns = isbn.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                M.toast({ html: `Processing ${isbns.length} ISBNs`, classes: 'blue' });
-            }
-
             try {
-                const response = await fetch('/api/isbns', {
+                const response = await fetch('/api/books', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ isbn: isbn })
+                    body: JSON.stringify({
+                        title: title,
+                        isbn: mode === 'isbn' ? isbn : '',
+                        author: mode === 'title' ? author : ''
+                    })
                 });
-
                 const data = await response.json();
-
                 if (response.ok) {
                     M.toast({ html: data.message, classes: 'green' });
-                    isbnInput.value = '';
+                    if (mode === 'isbn') {
+                        document.getElementById('new-title-isbn').value = '';
+                        document.getElementById('new-isbn').value = '';
+                    } else {
+                        document.getElementById('new-title-title').value = '';
+                        document.getElementById('new-author').value = '';
+                    }
                     loadISBNs();
                 } else {
                     M.toast({ html: data.error, classes: 'red' });
@@ -226,13 +313,13 @@
         }
 
         // Remove ISBN
-        async function removeISBN(isbn) {
-            if (!confirm(`Remove ISBN ${isbn} from tracking?`)) {
+        async function removeISBN(title, isbn) {
+            if (!confirm(`Remove ISBN ${isbn} from ${title}?`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`/api/isbns/${isbn}`, {
+                const response = await fetch(`/api/books/${encodeURIComponent(title)}/${isbn}`, {
                     method: 'DELETE'
                 });
 
@@ -304,19 +391,98 @@
             isbnList.innerHTML = '<div class="grey-text">Loading ISBNs...</div>';
 
             try {
-                const response = await fetch('/api/isbns');
+                const response = await fetch('/api/books');
                 if (response.ok) {
                     const data = await response.json();
-                    isbnCount.textContent = data['count'] || '0'; // Update count
-                    if (data && Object.keys(data['isbns']).length > 0) {
-                        isbnList.innerHTML = data['isbns'].map(isbn_data => `
-                            <div class="isbn-item" data-isbn="${isbn_data.isbn}">
-                                <span class="title">${isbn_data.title}</span>
-                                <span class="isbn">${isbn_data.isbn13}</span>
-                                <button class="btn red" onclick="removeISBN('${isbn_data.isbn}')">Remove</button>
-                                <button class="btn blue" onclick="scrapeISBN('${isbn_data.isbn}')">Scrape</button>
-                            </div>
-                        `).join('');
+                    isbnCount.textContent = Object.keys(data).length.toString();
+                    if (data && Object.keys(data).length > 0) {
+                        let html = '';
+                        Object.entries(data).forEach(([title, items]) => {
+                            // Find first icon and author for the group
+                            let firstIcon = '';
+                            let firstAuthor = '';
+                            let isbnCount = items.length;
+                            for (let i = 0; i < items.length; i++) {
+                                const meta = items[i][Object.keys(items[i])[0]] || {};
+                                if (!firstIcon && meta.icon_url) firstIcon = meta.icon_url;
+                                if (!firstAuthor && meta.authors && meta.authors.length) firstAuthor = meta.authors.join(', ');
+                                if (firstIcon && firstAuthor) break;
+                            }
+                            if (isbnCount === 1) {
+                                // Show as before, but with group info
+                                const item = items[0];
+                                const isbn = Object.keys(item)[0];
+                                const meta = item[isbn] || {};
+                                const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
+                                const iconUrl = meta.icon_url || '';
+                                html += `
+                                <div class="isbn-item">
+                                    <div class="isbn-info">
+                                        <div class="book-title">
+                                            ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
+                                            ${title}
+                                        </div>
+                                        <div class="isbn-number">
+                                            <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
+                                            ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
+                                        </div>
+                                        <div class="book-meta">
+                                            ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
+                                            ${meta.year ? ' • ' + meta.year : ''}
+                                        </div>
+                                    </div>
+                                    <div class="isbn-actions">
+                                        <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
+                                        <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
+                                    </div>
+                                </div>
+                                `;
+                            } else {
+                                // Dropdown group styled like isbn-item
+                                const groupId = 'group-' + btoa(title).replace(/[^a-zA-Z0-9]/g, '');
+                                html += `
+                                <div class="isbn-group" style="margin-bottom: 18px;">
+                                    <div class="isbn-group-header isbn-item" onclick="toggleIsbnGroup('${groupId}', this)" style="cursor:pointer; display:flex; align-items:center; background:#fff; border-radius:8px; box-shadow:0 1px 3px #e0e0e0; padding:15px 10px; border:1px solid #e0e0e0; margin-bottom:0; transition:box-shadow 0.2s;">
+                                        ${firstIcon ? `<img src="${firstIcon}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:10px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:10px;color:#bdbdbd;'>menu_book</i>`}
+                                        <span style="font-size:1.2em;font-weight:500;">${title}</span>
+                                        <span style="margin-left:10px;color:#666;">${firstAuthor ? 'by ' + firstAuthor : ''}</span>
+                                        <span class="new badge blue white-text" data-badge-caption="ISBNs" style="margin-left:auto;">${isbnCount}</span>
+                                        <i class="material-icons group-chevron" style="margin-left:10px;transition:transform 0.2s;">expand_more</i>
+                                    </div>
+                                    <div class="isbn-group-list" id="${groupId}" style="display:none; background:#fafbfc; border-radius:0 0 8px 8px; border:1px solid #e0e0e0; border-top:none;">
+                                `;
+                                items.forEach(item => {
+                                    const isbn = Object.keys(item)[0];
+                                    const meta = item[isbn] || {};
+                                    const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
+                                    const iconUrl = meta.icon_url || '';
+                                    html += `
+                                    <div class="isbn-item isbn-item-subgroup" style="background:#f0f2f6; max-width:92%; margin-left:5%; border-left:5px solid #667eea; border-radius:6px; box-shadow:0 1px 2px #e0e0e0; padding:13px 10px; margin-bottom:10px; transition:background 0.2s;">
+                                        <div class="isbn-info">
+                                            <div class="book-title">
+                                                ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
+                                                ${title}
+                                            </div>
+                                            <div class="isbn-number">
+                                                <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
+                                                ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
+                                            </div>
+                                            <div class="book-meta">
+                                                ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
+                                                ${meta.year ? ' • ' + meta.year : ''}
+                                            </div>
+                                        </div>
+                                        <div class="isbn-actions">
+                                            <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
+                                            <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
+                                        </div>
+                                    </div>
+                                    `;
+                                });
+                                html += `</div></div>`;
+                            }
+                        });
+                        isbnList.innerHTML = html;
                     } else {
                         isbnList.innerHTML = '<div class="grey-text">No ISBNs found</div>';
                     }
@@ -383,6 +549,11 @@
                 addISBN();
             }
         });
+        document.getElementById('new-title').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addISBN();
+            }
+        });
 
         // Load image for specific ISBN
         async function loadImageForISBN(isbn) {
@@ -439,6 +610,57 @@
             } catch (error) {
                 console.error('Error downloading image:', error);
                 M.toast({ html: 'Error downloading image', classes: 'red' });
+            }
+        }
+
+        // Add this function to handle loading the Google Books icon
+        async function loadGoogleBooksIcon(title, isbn, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="material-icons">hourglass_top</i>';
+            try {
+                // Call Google Books API directly to get the icon
+                const resp = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.totalItems > 0 && data.items[0].volumeInfo.imageLinks) {
+                        const imageLinks = data.items[0].volumeInfo.imageLinks;
+                        const iconUrl = imageLinks.thumbnail || imageLinks.smallThumbnail || '';
+                        if (iconUrl) {
+                            // Update the books.json via API (simulate PATCH by re-adding with icon_url)
+                            const patchResp = await fetch('/api/books', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ title: title, isbn: isbn, icon_url: iconUrl, patch_icon: true })
+                            });
+                            if (patchResp.ok) {
+                                M.toast({ html: 'Icon loaded!', classes: 'green' });
+                                loadISBNs();
+                                return;
+                            }
+                        }
+                    }
+                }
+                M.toast({ html: 'No icon found for this ISBN', classes: 'orange' });
+            } catch (e) {
+                M.toast({ html: 'Error loading icon', classes: 'red' });
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="material-icons">image_search</i>';
+        }
+
+        // Dropdown toggle function with chevron rotation
+        function toggleIsbnGroup(groupId, headerEl) {
+            const el = document.getElementById(groupId);
+            if (el) {
+                const isOpen = el.style.display === 'block';
+                el.style.display = isOpen ? 'none' : 'block';
+                // Rotate chevron
+                if (headerEl) {
+                    const chevron = headerEl.querySelector('.group-chevron');
+                    if (chevron) {
+                        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                    }
+                }
             }
         }
     </script>

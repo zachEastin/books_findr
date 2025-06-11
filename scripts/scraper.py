@@ -517,7 +517,7 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
 
 
 # Async scraper functions
-async def scrape_bookscouter_async(isbn_data: dict) -> dict:
+async def scrape_bookscouter_async(isbn_data: dict, book_title: str = "") -> dict:
     """
     Async scrape book price from BookScouter with enhanced search strategies
 
@@ -529,6 +529,7 @@ async def scrape_bookscouter_async(isbn_data: dict) -> dict:
     """
     result = {
         "isbn": isbn_data.get("isbn13"),
+        "book_title": book_title,
         "source": "BookScouter",
         "price": None,
         "title": None,
@@ -589,7 +590,7 @@ async def scrape_bookscouter_async(isbn_data: dict) -> dict:
     return result
 
 
-async def scrape_christianbook_async(isbn_data: dict) -> dict:
+async def scrape_christianbook_async(isbn_data: dict, book_title: str = "") -> dict:
     """
     Async scrape book price from Christianbook.com with enhanced search strategies
 
@@ -601,6 +602,7 @@ async def scrape_christianbook_async(isbn_data: dict) -> dict:
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
+        "book_title": book_title,
         "source": "Christianbook",
         "price": None,
         "title": None,
@@ -661,7 +663,7 @@ async def scrape_christianbook_async(isbn_data: dict) -> dict:
     return result
 
 
-async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
+async def scrape_rainbowresource_async(isbn_data: dict, book_title: str = "") -> dict:
     """
     Async scrape book price from RainbowResource.com with enhanced search strategies
 
@@ -673,6 +675,7 @@ async def scrape_rainbowresource_async(isbn_data: dict) -> dict:
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
+        "book_title": book_title,
         "source": "RainbowResource",
         "price": None,
         "title": None,
@@ -795,7 +798,69 @@ async def scrape_abebooks_async(isbn_data: dict) -> dict:
     return result
 
 
-async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
+async def scrape_abebooks_async(isbn_data: dict, book_title: str = "") -> dict:
+    """Async scrape book price from AbeBooks with enhanced search strategies"""
+    result = {
+        "isbn": isbn_data.get("isbn13", "unknown"),
+        "source": "AbeBooks",
+        "price": None,
+        "title": None,
+        "url": None,
+        "notes": "",
+        "success": False,
+    }
+
+    try:
+        search_strategies = get_search_strategies(isbn_data)
+        scraper_logger.info(
+            f"AbeBooks: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', 'unknown')}"
+        )
+
+        for search_term, strategy_name in search_strategies:
+            try:
+                encoded_term = urllib.parse.quote(search_term)
+                search_url = f"https://www.abebooks.com/servlet/SearchResults?kn={encoded_term}"
+                result["url"] = search_url
+
+                scraper_logger.info(f"AbeBooks: Trying {strategy_name} with term '{search_term}'")
+
+                scraping_result = _scrape_abebooks_sync(search_term, search_url)
+
+                if scraping_result.get("success"):
+                    result.update(scraping_result)
+                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
+                    scraper_logger.info(f"AbeBooks: Success with {strategy_name}")
+                    break
+                else:
+                    scraper_logger.info(
+                        f"AbeBooks: No results with {strategy_name} for term {search_term} and url {search_url}"
+                    )
+
+            except Exception as e:
+                scraper_logger.warning(f"AbeBooks: Error with {strategy_name}: {e}")
+                continue
+
+        if not result["success"]:
+            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
+
+    except Exception as e:
+        result["notes"] = f"Unexpected error: {str(e)}"
+        scraper_logger.error(
+            f"Unexpected error scraping AbeBooks for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
+        )
+
+    log_scrape_result(
+        scraper_logger,
+        isbn_data.get("isbn13", "unknown"),
+        "AbeBooks",
+        result["success"],
+        result["price"],
+        result["notes"],
+    )
+    return result
+
+
+async def scrape_camelcamelcamel_async(isbn_data: dict, book_title: str = "") -> dict:
     """
     Async scrape Amazon price history from CamelCamelCamel with enhanced search strategies
     Note: This gets the current Amazon price, not historical data
@@ -808,6 +873,7 @@ async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
     """
     result = {
         "isbn": isbn_data.get("isbn13", "unknown"),
+        "book_title": book_title,
         "source": "CamelCamelCamel",
         "price": None,
         "title": None,
@@ -868,7 +934,7 @@ async def scrape_camelcamelcamel_async(isbn_data: dict) -> dict:
     return result
 
 
-async def scrape_all_sources_async(isbn: dict) -> list[dict]:
+async def scrape_all_sources_async(isbn: dict, book_title: str = "") -> list[dict]:
     """
     Async scrape an ISBN from all sources concurrently
 
@@ -878,13 +944,16 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     Returns:
         List of result dictionaries from all sources
     """
-    log_task_start(scraper_logger, f"Async scraping all sources for ISBN {isbn.get('isbn13') or 'unknown'}")
+    log_task_start(
+        scraper_logger,
+        f"Async scraping all sources for ISBN {isbn.get('isbn13') or 'unknown'}",
+    )
     start_time = time.time()  # Create async tasks for all scrapers
     tasks = [
-        scrape_bookscouter_async(isbn),
-        scrape_christianbook_async(isbn),
-        scrape_rainbowresource_async(isbn),
-        scrape_abebooks_async(isbn),
+        scrape_bookscouter_async(isbn, book_title),
+        scrape_christianbook_async(isbn, book_title),
+        scrape_rainbowresource_async(isbn, book_title),
+        scrape_abebooks_async(isbn, book_title),
         # scrape_camelcamelcamel_async(isbn),  # Uncomment to include CamelCamelCamel
     ]
 
@@ -902,7 +971,8 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
                 scraper_logger.error(f"Error in {source_names[i]} for ISBN {isbn}: {result}")
                 processed_results.append(
                     {
-                        "isbn": isbn,
+                        "isbn": isbn.get("isbn13", "unknown"),
+                        "book_title": book_title,
                         "source": source_names[i],
                         "price": None,
                         "title": None,
@@ -934,7 +1004,9 @@ async def scrape_all_sources_async(isbn: dict) -> list[dict]:
     return results
 
 
-async def scrape_multiple_isbns(isbns: list[str], batch_size: int = MAX_CONCURRENT_SCRAPERS) -> list[dict]:
+async def scrape_multiple_isbns(
+    isbns: list[tuple[str, str, dict]], batch_size: int = MAX_CONCURRENT_SCRAPERS
+) -> list[dict]:
     """
     Async scrape multiple ISBNs with controlled concurrency
 
@@ -945,18 +1017,22 @@ async def scrape_multiple_isbns(isbns: list[str], batch_size: int = MAX_CONCURRE
     Returns:
         List of all scraping results
     """
-    log_task_start(scraper_logger, f"Starting async bulk scraping for {len(isbns)} ISBNs")
+    log_task_start(
+        scraper_logger, f"Starting async bulk scraping for {len(isbns)} ISBNs"
+    )
     start_time = time.time()
 
     all_results = []
 
     # Process ISBNs in batches to avoid overwhelming the sites
     for i in range(0, len(isbns), batch_size):
-        batch = list(isbns.values())[i : i + batch_size]
+        batch = isbns[i : i + batch_size]
         scraper_logger.info(f"Processing batch {i // batch_size + 1}: ISBNs {i + 1}-{min(i + batch_size, len(isbns))}")
 
         # Create tasks for this batch
-        batch_tasks = [scrape_all_sources_async(isbn) for isbn in batch]
+        batch_tasks = [
+            scrape_all_sources_async(meta, title) for title, _, meta in batch
+        ]
 
         try:
             # Run batch concurrently
@@ -1022,32 +1098,38 @@ def save_results_to_csv(results: list[dict]):
         scraper_logger.error(f"Error saving results to CSV: {e}")
 
 
-def load_isbns_from_file(filepath: str = None) -> dict[str, dict]:
-    """
-    Load ISBNs from a text file
+def load_isbns_from_file(filepath: str = None) -> list[tuple[str, str, dict]]:
+    """Load book/ISBN combinations from ``books.json``.
 
     Args:
-        filepath: Path to the ISBNs file (default: isbns.json in base directory)
+        filepath: Path to the books file (defaults to ``books.json`` in the
+            project root)
 
     Returns:
-        List of ISBNs
+        A list of ``(title, isbn, metadata)`` tuples
     """
     if filepath is None:
-        filepath = BASE_DIR / "isbns.json"
+        filepath = BASE_DIR / "books.json"
 
     try:
         with open(filepath, "r") as f:
-            isbns = json.load(f)
+            books = json.load(f)
 
-        scraper_logger.info(f"Loaded {len(list(isbns.keys()))} ISBNs from {filepath}")
-        return isbns
+        results: list[tuple[str, str, dict]] = []
+        for title, isbn_list in books.items():
+            for item in isbn_list:
+                for isbn, meta in item.items():
+                    results.append((title, str(isbn), meta))
+
+        scraper_logger.info(f"Loaded {len(results)} ISBNs from {filepath}")
+        return results
 
     except FileNotFoundError:
-        scraper_logger.warning(f"ISBNs file not found: {filepath}")
-        return {}
+        scraper_logger.warning(f"Books file not found: {filepath}")
+        return []
     except Exception as e:
         scraper_logger.error(f"Error loading ISBNs from file: {e}")
-        return {}
+        return []
 
 
 async def scrape_all_isbns_async(isbn_file: str = None) -> None:
@@ -1089,32 +1171,31 @@ scrape_all_isbns = scrape_all_isbns_async
 
 
 # Sync wrapper functions for backward compatibility
-def scrape_bookscouter_sync(isbn: str) -> dict:
+def scrape_bookscouter_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_bookscouter_async"""
-    return asyncio.run(scrape_bookscouter_async(isbn))
+    return asyncio.run(scrape_bookscouter_async(isbn, book_title))
 
 
-def scrape_christianbook_sync(isbn: str) -> dict:
+def scrape_christianbook_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_christianbook_async"""
-    return asyncio.run(scrape_christianbook_async(isbn))
+    return asyncio.run(scrape_christianbook_async(isbn, book_title))
 
 
-def scrape_rainbowresource_sync(isbn: str) -> dict:
+def scrape_rainbowresource_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_rainbowresource_async"""
-    return asyncio.run(scrape_rainbowresource_async(isbn))
+    return asyncio.run(scrape_rainbowresource_async(isbn, book_title))
 
 
-def scrape_abebooks_sync(isbn: str) -> dict:
     """Sync wrapper for scrape_abebooks_async"""
     return asyncio.run(scrape_abebooks_async(isbn))
 
 
-def scrape_camelcamelcamel_sync(isbn: str) -> dict:
+def scrape_camelcamelcamel_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_camelcamelcamel_async"""
-    return asyncio.run(scrape_camelcamelcamel_async(isbn))
+    return asyncio.run(scrape_camelcamelcamel_async(isbn, book_title))
 
 
-def scrape_all_sources_sync(isbn: dict) -> list[dict]:
+def scrape_all_sources_sync(isbn: dict, book_title: str = "") -> list[dict]:
     """
     Sync wrapper for scrape_all_sources_async - maintains backward compatibility
 
@@ -1124,7 +1205,7 @@ def scrape_all_sources_sync(isbn: dict) -> list[dict]:
     Returns:
         List of result dictionaries from all sources
     """
-    return asyncio.run(scrape_all_sources_async(isbn))
+    return asyncio.run(scrape_all_sources_async(isbn, book_title))
 
 
 # Backward compatibility: Export sync versions under original names
