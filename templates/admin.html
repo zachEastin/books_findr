@@ -164,7 +164,7 @@
                             <div id="add-by-isbn" class="col s12" style="margin-top: 20px;">
                                 <div class="input-field">
                                     <input id="new-title-isbn" type="text" required>
-                                    <label for="new-title-isbn">Book Title <span class="red-text">*</span></label>
+                                    <label for="new-title-isbn">Book Title</label>
                                 </div>
                                 <div class="input-field">
                                     <input id="new-isbn" type="text" required>
@@ -269,10 +269,6 @@
             if (mode === 'isbn') {
                 title = document.getElementById('new-title-isbn').value.trim();
                 isbn = document.getElementById('new-isbn').value.trim();
-                if (!title) {
-                    M.toast({ html: 'Please enter a title', classes: 'orange' });
-                    return;
-                }
                 if (!isbn) {
                     M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
                     return;
