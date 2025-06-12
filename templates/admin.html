@@ -288,11 +288,61 @@
                         </button>
                         <button class="btn orange waves-effect waves-light" onclick="loadISBNs()">
                             <i class="material-icons left">refresh</i>Refresh List
-                        </button>
+                        </button>                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Search Section -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card admin-card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">search</i>Search Books
+                        </span>
+                        <p>Search for books by title, author, or ISBN. If not found, add manually.</p>
+                        
+                        <div class="row">
+                            <div class="input-field col s12 m8">
+                                <input id="search-query" type="text" placeholder="Enter title, author, ISBN, or 'Title by Author'">
+                                <label for="search-query">Search Query</label>
+                            </div>
+                            <div class="col s12 m4">
+                                <button class="btn blue waves-effect waves-light" onclick="searchBooks()" style="margin-top: 1rem;">
+                                    <i class="material-icons left">search</i>Search
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Results -->
+                        <div id="search-results" style="display: none;">
+                            <h6>Search Results</h6>
+                            <div id="results-container"></div>
+                        </div>
+                        
+                        <!-- No Results / Manual Entry -->
+                        <div id="no-results" style="display: none;">
+                            <div class="card-panel orange lighten-4">
+                                <div class="row" style="margin-bottom: 0;">
+                                    <div class="col s12 m8">
+                                        <i class="material-icons left orange-text">info</i>
+                                        <span><strong>No results found</strong> for your search. Would you like to add this book manually?</span>
+                                    </div>
+                                    <div class="col s12 m4">
+                                        <button class="btn orange waves-effect waves-light" onclick="openManualEntryFromSearch()">
+                                            <i class="material-icons left">add</i>Add Manually
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>        <!-- Grade Level Book Organization -->
+        </div>
+
+        <!-- Grade Level Book Organization -->
         <div class="row">
             <div class="col s12">
                 <div class="card admin-card">
@@ -447,7 +497,11 @@
     <!-- Material Design JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <script>        // Initialize Materialize components
+    <script>        
+        // Global variables
+        let currentSearchQuery = '';
+        
+        // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
             M.AutoInit();
             
@@ -528,14 +582,22 @@
                         document.getElementById('new-title-isbn').value = '';
                         document.getElementById('new-isbn').value = '';
                         // Don't reset grade level: document.getElementById('grade-level-isbn').value = '';
-                    } else {
-                        document.getElementById('new-title-title').value = '';
+                    } else {                        document.getElementById('new-title-title').value = '';
                         document.getElementById('new-author').value = '';
                         // Don't reset grade level: document.getElementById('grade-level-title').value = '';
                     }
                     loadISBNs();
                 } else {
-                    M.toast({ html: data.error, classes: 'red' });
+                    // Check if we should show the manual entry form
+                    if (data.show_manual_form && data.prefill_data) {
+                        // Show toast with error message first
+                        M.toast({ html: data.error, classes: 'orange' });
+                        
+                        // Open manual entry modal and pre-fill with user's input
+                        openManualEntryWithPrefill(data.prefill_data);
+                    } else {
+                        M.toast({ html: data.error, classes: 'red' });
+                    }
                 }
             } catch (error) {
                 console.error('Error adding ISBN:', error);
@@ -1089,7 +1151,466 @@
                 }
             }
         }
+
+        // Add ISBN input field for manual entry
+        function addISBNInput() {
+            const isbnInputsContainer = document.getElementById('isbn-inputs');
+            const newInputRow = document.createElement('div');
+            newInputRow.className = 'input-field isbn-input-row';
+            newInputRow.style = 'display: flex; align-items: center; margin-bottom: 10px;';
+            newInputRow.innerHTML = `
+                <input type="text" class="isbn-input validate" placeholder="Enter ISBN (10 or 13 digits)" required>
+                <button type="button" class="btn-flat red-text remove-isbn-btn" style="margin-left: 10px; display: none;">
+                    <i class="material-icons">remove</i>
+                </button>
+            `;
+            
+            // Show remove button on input focus
+            newInputRow.querySelector('input').addEventListener('focus', function () {
+                newInputRow.querySelector('.remove-isbn-btn').style.display = 'inline-block';
+            });
+            
+            // Hide remove button when input is empty
+            newInputRow.querySelector('input').addEventListener('input', function () {
+                if (!this.value.trim()) {
+                    newInputRow.querySelector('.remove-isbn-btn').style.display = 'none';
+                } else {
+                    newInputRow.querySelector('.remove-isbn-btn').style.display = 'inline-block';
+                }
+            });
+            
+            // Remove input row on button click
+            newInputRow.querySelector('.remove-isbn-btn').addEventListener('click', function () {
+                isbnInputsContainer.removeChild(newInputRow);
+            });
+            
+            isbnInputsContainer.appendChild(newInputRow);
+            M.updateTextFields();
+        }
+
+        // Submit manual book entry
+        async function submitManualEntry() {
+            const title = document.getElementById('manual-title').value.trim();
+            const authors = document.getElementById('manual-authors').value.trim();
+            const isbnElements = document.querySelectorAll('.isbn-input');
+            const isbns = Array.from(isbnElements).map(el => el.value.trim()).filter(Boolean);
+            const publisher = document.getElementById('manual-publisher').value.trim();
+            const year = document.getElementById('manual-year').value.trim();
+            const iconUrl = document.getElementById('manual-icon-url').value.trim();
+            const gradeLevel = document.getElementById('manual-grade').value;
+            const btn = document.querySelector("#manual-entry-modal .btn.blue");
+
+            if (!title) {
+                M.toast({ html: 'Please enter a book title', classes: 'orange' });
+                return;
+            }
+            if (isbns.length === 0) {
+                M.toast({ html: 'Please enter at least one ISBN', classes: 'orange' });
+                return;
+            }
+
+            // Show spinner and disable button
+            if (btn) {
+                btn.disabled = true;
+                btn._originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="material-icons rotating">autorenew</i>Adding...';
+            }
+
+            try {
+                const response = await fetch('/api/books/manual', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        authors: authors.split(',').map(a => a.trim()),
+                        isbns: isbns,
+                        publisher: publisher,
+                        year: year,
+                        icon_url: iconUrl,
+                        grade: gradeLevel
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    M.toast({ html: 'Book added successfully!', classes: 'green' });
+                    // Close the modal
+                    const modal = M.Modal.getInstance(document.getElementById('manual-entry-modal'));
+                    modal.close();
+                    // Reset the form
+                    document.getElementById('manual-title').value = '';
+                    document.getElementById('manual-authors').value = '';
+                    document.getElementById('manual-publisher').value = '';
+                    document.getElementById('manual-year').value = '';
+                    document.getElementById('manual-icon-url').value = '';
+                    document.getElementById('manual-grade').selectedIndex = 0;
+                    // Clear ISBN inputs
+                    document.getElementById('isbn-inputs').innerHTML = '';
+                    addISBNInput(); // Add one empty input by default
+                    loadISBNs();
+                } else {
+                    M.toast({ html: data.error, classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error adding book manually:', error);
+                M.toast({ html: 'Error adding book manually', classes: 'red' });
+            } finally {
+                // Restore button state
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn._originalHTML || '<i class="material-icons left">save</i>Add Book';
+                }            }
+        }        // Book Search Functions
+        
+        // Search for books
+        async function searchBooks() {
+            const query = document.getElementById('search-query').value.trim();
+            if (!query) {
+                M.toast({ html: 'Please enter a search query', classes: 'orange' });
+                return;
+            }
+            
+            currentSearchQuery = query;
+            
+            try {
+                // Show loading
+                document.getElementById('search-results').style.display = 'none';
+                document.getElementById('no-results').style.display = 'none';
+                
+                const response = await fetch('/api/books/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        type: 'auto'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.search_successful && data.results.length > 0) {
+                        displaySearchResults(data.results);
+                    } else {
+                        showNoResults();
+                    }
+                } else {
+                    M.toast({ html: data.error || 'Search failed', classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error searching books:', error);
+                M.toast({ html: 'Error searching books', classes: 'red' });
+            }
+        }
+        
+        // Display search results
+        function displaySearchResults(results) {
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+            
+            results.forEach((book, index) => {
+                const authorsText = book.authors && book.authors.length > 0 ? 
+                    book.authors.join(', ') : 'Unknown Author';
+                
+                const card = document.createElement('div');
+                card.className = 'card-panel';
+                card.innerHTML = `
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s12 m8">
+                            <h6 style="margin: 0 0 0.5rem 0;">${book.title}</h6>
+                            <p style="margin: 0; color: #666;">
+                                <strong>Authors:</strong> ${authorsText}<br>
+                                ${book.publisher ? `<strong>Publisher:</strong> ${book.publisher}<br>` : ''}
+                                ${book.year ? `<strong>Year:</strong> ${book.year}<br>` : ''}
+                                ${book.isbn13 ? `<strong>ISBN-13:</strong> ${book.isbn13}<br>` : ''}
+                                ${book.isbn10 ? `<strong>ISBN-10:</strong> ${book.isbn10}` : ''}
+                            </p>
+                        </div>
+                        <div class="col s12 m4">
+                            <button class="btn green waves-effect waves-light" 
+                                    onclick="addBookFromSearch(${index})" 
+                                    style="width: 100%;">
+                                <i class="material-icons left">add</i>Add This Book
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            document.getElementById('search-results').style.display = 'block';
+            
+            // Store results for later use
+            window.searchResults = results;
+        }
+        
+        // Show no results message
+        function showNoResults() {
+            document.getElementById('no-results').style.display = 'block';
+        }
+        
+        // Add book from search results
+        async function addBookFromSearch(index) {
+            const book = window.searchResults[index];
+            if (!book) return;
+            
+            try {
+                const isbn = book.isbn13 || book.isbn10;
+                if (!isbn) {
+                    M.toast({ html: 'No ISBN available for this book', classes: 'orange' });
+                    return;
+                }
+                
+                const response = await fetch('/api/books', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: book.title,
+                        isbn: isbn,
+                        grade: '' // Could add grade selection later
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    M.toast({ html: data.message, classes: 'green' });
+                    loadISBNs(); // Refresh the list
+                    // Clear search
+                    document.getElementById('search-query').value = '';
+                    document.getElementById('search-results').style.display = 'none';
+                    document.getElementById('no-results').style.display = 'none';
+                } else {
+                    M.toast({ html: data.error || 'Failed to add book', classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error adding book:', error);
+                M.toast({ html: 'Error adding book', classes: 'red' });
+            }
+        }
+        
+        // Open manual entry modal with search query pre-filled
+        function openManualEntryFromSearch() {
+            // Pre-fill the manual entry form with search query
+            const modal = M.Modal.getInstance(document.getElementById('manual-entry-modal'));
+            
+            // Try to parse the search query
+            const query = currentSearchQuery;
+            if (query.includes(' by ')) {
+                const parts = query.split(' by ');
+                if (parts.length === 2) {
+                    document.getElementById('manual-title').value = parts[0].trim();
+                    document.getElementById('manual-authors').value = parts[1].trim();
+                }
+            } else {
+                // Assume it's a title
+                document.getElementById('manual-title').value = query;
+            }
+            
+            // Update labels
+            M.updateTextFields();
+            
+            modal.open();
+        }
+          // Open manual entry modal with prefill data from failed search
+        function openManualEntryWithPrefill(prefillData) {
+            // Get the modal instance
+            const modal = M.Modal.getInstance(document.getElementById('manual-entry-modal'));
+            
+            // Clear any existing form data first
+            document.getElementById('manual-title').value = '';
+            document.getElementById('manual-authors').value = '';
+            document.getElementById('manual-publisher').value = '';
+            document.getElementById('manual-year').value = '';
+            document.getElementById('manual-icon-url').value = '';
+            document.getElementById('manual-grade').selectedIndex = 0;
+            
+            // Clear existing ISBN inputs and start fresh
+            document.getElementById('isbn-inputs').innerHTML = '';
+            
+            // Pre-fill with the provided data
+            if (prefillData.title) {
+                document.getElementById('manual-title').value = prefillData.title;
+            }
+            
+            if (prefillData.authors) {
+                document.getElementById('manual-authors').value = prefillData.authors;
+            }
+            
+            if (prefillData.grade) {
+                const gradeSelect = document.getElementById('manual-grade');
+                // Find and select the matching grade option
+                for (let i = 0; i < gradeSelect.options.length; i++) {
+                    if (gradeSelect.options[i].value === prefillData.grade) {
+                        gradeSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // Handle ISBN input - create input field(s) with the ISBN data
+            if (prefillData.isbn) {
+                // Create first ISBN input with the provided ISBN
+                addISBNInputWithValue(prefillData.isbn);
+            } else {
+                // Add one empty ISBN input by default
+                addISBNInput();
+            }
+            
+            // Update Materialize labels to show above filled inputs
+            M.updateTextFields();
+            
+            // Update select elements
+            M.FormSelect.init(document.querySelectorAll('select'));
+            
+            // Open the modal
+            modal.open();
+        }
+        
+        // Helper function to add ISBN input with a specific value
+        function addISBNInputWithValue(isbnValue) {
+            const container = document.getElementById('isbn-inputs');
+            const newInputRow = document.createElement('div');
+            newInputRow.className = 'input-field isbn-input-row';
+            newInputRow.style = 'display: flex; align-items: center; margin-bottom: 10px;';
+            newInputRow.innerHTML = `
+                <input type="text" class="isbn-input validate" placeholder="Enter ISBN (10 or 13 digits)" required value="${isbnValue}">
+                <button type="button" class="btn-flat red-text remove-isbn-btn" style="margin-left: 10px;">
+                    <i class="material-icons">remove</i>
+                </button>
+            `;
+            
+            // Show remove button since we have a value
+            newInputRow.querySelector('.remove-isbn-btn').style.display = 'inline-block';
+            
+            // Show remove button on input focus
+            newInputRow.querySelector('input').addEventListener('focus', function () {
+                newInputRow.querySelector('.remove-isbn-btn').style.display = 'inline-block';
+            });
+            
+            // Hide remove button when input is empty
+            newInputRow.querySelector('input').addEventListener('input', function () {
+                if (!this.value.trim()) {
+                    newInputRow.querySelector('.remove-isbn-btn').style.display = 'none';
+                } else {
+                    newInputRow.querySelector('.remove-isbn-btn').style.display = 'inline-block';
+                }
+            });
+            
+            // Remove input row on button click
+            newInputRow.querySelector('.remove-isbn-btn').addEventListener('click', function () {
+                container.removeChild(newInputRow);
+            });
+            
+            container.appendChild(newInputRow);
+            M.updateTextFields();
+        }
+        
+        // Add enter key support for search
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-query');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBooks();
+                    }
+                });
+            }
+        });
     </script>
+
+    <!-- Manual Book Entry Modal -->
+    <div id="manual-entry-modal" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4>Add Book Manually</h4>
+            <p>Book not found? Add it manually with your own details.</p>
+            
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="manual-title" type="text" class="validate" required>
+                    <label for="manual-title">Book Title <span class="red-text">*</span></label>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="manual-authors" type="text" class="validate">
+                    <label for="manual-authors">Authors (comma-separated)</label>
+                    <span class="helper-text">Example: John Smith, Jane Doe</span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col s12">
+                    <label>ISBNs <span class="red-text">*</span></label>
+                    <div id="isbn-inputs">
+                        <div class="input-field isbn-input-row" style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="text" class="isbn-input validate" placeholder="Enter ISBN (10 or 13 digits)" required>
+                            <button type="button" class="btn-flat red-text remove-isbn-btn" style="margin-left: 10px; display: none;">
+                                <i class="material-icons">remove</i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-flat blue-text" onclick="addISBNInput()">
+                        <i class="material-icons left">add</i>Add another ISBN
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="manual-publisher" type="text" class="validate">
+                    <label for="manual-publisher">Publisher</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="manual-year" type="text" class="validate">
+                    <label for="manual-year">Year</label>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="manual-icon-url" type="url" class="validate">
+                    <label for="manual-icon-url">Cover Image URL</label>
+                    <span class="helper-text">Optional: Direct link to book cover image</span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col s12">
+                    <select id="manual-grade">
+                        <option value="" disabled selected>Select Grade Level (Optional)</option>
+                        <option value="Kindergarten">Kindergarten</option>
+                        <option value="1st Grade">1st Grade</option>
+                        <option value="2nd Grade">2nd Grade</option>
+                        <option value="3rd Grade">3rd Grade</option>
+                        <option value="4th Grade">4th Grade</option>
+                        <option value="5th Grade">5th Grade</option>
+                        <option value="6th Grade">6th Grade</option>
+                        <option value="7th Grade">7th Grade</option>
+                        <option value="8th Grade">8th Grade</option>
+                        <option value="9th Grade">9th Grade</option>
+                        <option value="10th Grade">10th Grade</option>
+                        <option value="11th Grade">11th Grade</option>
+                        <option value="12th Grade">12th Grade</option>
+                    </select>
+                    <label>Grade Level</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="modal-close waves-effect waves-grey btn-flat">Cancel</button>
+            <button type="button" class="waves-effect waves-green btn blue" onclick="submitManualEntry()">
+                <i class="material-icons left">save</i>Add Book
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>

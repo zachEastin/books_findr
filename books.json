@@ -1153,7 +1153,6 @@
             }
         }
     ],
-    "Test Book for Grade Level": [],
     "The Great Gatsby": [
         {
             "9789389647365": {
@@ -1243,7 +1242,6 @@
             }
         }
     ],
-    "Peter Rabbit Tales": [],
     "The Cricket in Times Square": [
         {
             "0374390401": {
@@ -1299,6 +1297,40 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=Va5kDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "A Child's History of the World": [
+        {
+            "1684110149": {
+                "title": "A Child's History of the World",
+                "isbn13": "",
+                "isbn10": "1684110149",
+                "authors": [
+                    "Virgil Hillyer"
+                ],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://www.sonlight.com/media//catalog/product/S/-/S-CH15.jpg"
+            }
+        }
+    ],
+    "Beatrix Potter Peter Rabbit Tales Collection": [
+        {
+            "9798867054816": {
+                "title": "Beatrix Potter Peter Rabbit Tales Collection",
+                "isbn13": "9798867054816",
+                "isbn10": "",
+                "authors": [
+                    "Beatrix Potter"
+                ],
+                "publisher": "Independently published",
+                "year": "2023",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://images.isbndb.com/covers/17388213488905.jpg"
             }
         }
     ]

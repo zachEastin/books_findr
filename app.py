@@ -317,25 +317,44 @@ def add_book_isbn():
             if not original_title:
                 title_from_metadata = result["metadata"].get("title") if result["metadata"] else None
                 if title_from_metadata:
-                    title = title_from_metadata.strip()
-                    # Move the ISBN under the derived title in books.json
+                    title = title_from_metadata.strip()                    # Move the ISBN under the derived title in books.json
                     isbn_list = books.setdefault(title, [])
                 else:
                     title = isbn_input  # fallback to ISBN as title
                     isbn_list = books.setdefault(title, [])
+            
             if result["success"]:
                 isbn_list.append({isbn_input: result["metadata"]})
                 added = 1
             else:
-                return jsonify({"error": result["error"]}), 400
-        else:
+                # Return structured response to trigger manual entry form
+                return jsonify({
+                    "error": result["error"],
+                    "show_manual_form": True,
+                    "prefill_data": {
+                        "title": title if title else "",
+                        "isbn": isbn_input,
+                        "authors": "",
+                        "grade": grade if grade else ""
+                    }
+                }), 400
             # Require author if adding by title only
             if not author:
                 return jsonify({"error": "Author is required when adding by title"}), 400
             google_books_api = GoogleBooksAPI()
             search_results = google_books_api.search_by_title_and_author(title, author=author, max_results=5)
             if not search_results:
-                return jsonify({"error": "No ISBNs found for title and author"}), 404
+                # Return structured response to trigger manual entry form
+                return jsonify({
+                    "error": "No ISBNs found for title and author",
+                    "show_manual_form": True,
+                    "prefill_data": {
+                        "title": title if title else "",
+                        "isbn": "",
+                        "authors": author if author else "",
+                        "grade": grade if grade else ""
+                    }
+                }), 400
             seen = set()
             for item in search_results:
                 isbn_candidate = item.get("isbn13") or item.get("isbn10")
@@ -347,7 +366,7 @@ def add_book_isbn():
                 if result["success"]:
                     isbn_list.append({isbn_candidate: result["metadata"]})
                     added += 1
-                seen.add(isbn_candidate)        
+                seen.add(isbn_candidate)
         if added:
             books_file.write_text(json.dumps(books, indent=4))
             logger.info(f"Added {added} ISBNs under {title}")
@@ -404,6 +423,81 @@ def remove_isbn(title, isbn):
 
     except Exception as e:
         logger.error(f"Error removing ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/books/search", methods=["POST"])
+def search_books():
+    """Search for books by title, author, or ISBN"""
+    try:
+        data = request.json or {}
+        query = data.get("query", "").strip()
+        search_type = data.get("type", "auto")  # auto, title, author, isbn
+        
+        if not query:
+            return jsonify({"error": "Search query is required"}), 400
+        
+        results = []
+        
+        # Import Google Books API
+        try:
+            from scripts.google_books_api import GoogleBooksAPI
+            google_books_api = GoogleBooksAPI()
+        except ImportError:
+            return jsonify({"error": "Google Books API not available"}), 500
+        
+        if search_type == "isbn" or (search_type == "auto" and query.replace("-", "").replace(" ", "").isdigit()):
+            # Search by ISBN
+            clean_isbn = query.replace("-", "").replace(" ", "")
+            if len(clean_isbn) in [10, 13]:
+                metadata = google_books_api.fetch_book_metadata(clean_isbn)
+                if metadata.get("success") and metadata.get("title"):
+                    results.append({
+                        "title": metadata["title"],
+                        "authors": metadata.get("authors", []),
+                        "publisher": metadata.get("publisher", ""),
+                        "year": metadata.get("year", ""),
+                        "isbn13": metadata.get("isbn13", ""),
+                        "isbn10": metadata.get("isbn10", ""),
+                        "icon_url": metadata.get("icon_url", ""),
+                        "search_type": "isbn"
+                    })
+        
+        if not results and search_type in ["title", "author", "auto"]:
+            # Search by title (and possibly author)
+            search_terms = query.split(" by ")
+            if len(search_terms) == 2:
+                # Format: "Book Title by Author Name"
+                title_part = search_terms[0].strip()
+                author_part = search_terms[1].strip()
+            else:
+                title_part = query
+                author_part = None
+            
+            search_results = google_books_api.search_by_title_and_author(title_part, author_part, max_results=10)
+            
+            for book in search_results:
+                if book.get("title"):
+                    results.append({
+                        "title": book["title"],
+                        "authors": book.get("authors", []),
+                        "publisher": book.get("publisher", ""),
+                        "year": book.get("year", ""),
+                        "isbn13": book.get("isbn13", ""),
+                        "isbn10": book.get("isbn10", ""),
+                        "icon_url": book.get("icon_url", ""),
+                        "search_type": "title"
+                    })
+        
+        return jsonify({
+            "query": query,
+            "results": results,
+            "total_results": len(results),
+            "search_successful": len(results) > 0
+        })
+    
+    except Exception as e:
+        logger.error(f"Error searching books: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -1548,6 +1642,107 @@ def move_book_to_grade():
         return jsonify({"message": f"Moved '{book}' to {grade}"})
     except Exception as e:
         logger.error(f"Error moving book to grade: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/books/manual", methods=["POST"])
+def add_book_manual():
+    """Add a book manually with custom metadata"""
+    try:
+        data = request.json or {}
+        title = data.get("title", "").strip()
+        authors_data = data.get("authors", [])
+        isbns = data.get("isbns", [])
+        icon_url = data.get("icon_url", "").strip()
+        publisher = data.get("publisher", "").strip()
+        year = data.get("year", "").strip()
+        grade = data.get("grade", "").strip()
+
+        # Handle authors - can be string or list
+        if isinstance(authors_data, list):
+            authors_str = ", ".join(authors_data)
+        else:
+            authors_str = str(authors_data).strip()
+
+        # Validation
+        if not title:
+            return jsonify({"error": "Title is required"}), 400
+        
+        if not isbns or len(isbns) == 0:
+            return jsonify({"error": "At least one ISBN is required"}), 400
+
+        # Clean and validate ISBNs
+        clean_isbns = []
+        for isbn in isbns:
+            isbn = isbn.strip().replace("-", "").replace(" ", "")
+            if isbn and len(isbn) in [10, 13]:
+                clean_isbns.append(isbn)
+            elif isbn:  # Non-empty but invalid
+                return jsonify({"error": f"Invalid ISBN format: {isbn}"}), 400
+        
+        if not clean_isbns:
+            return jsonify({"error": "No valid ISBNs provided"}), 400
+
+        # Parse authors
+        authors = []
+        if authors_str:
+            authors = [author.strip() for author in authors_str.split(",") if author.strip()]
+
+        books_file = BASE_DIR / "books.json"
+        books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
+
+        # Check if any ISBN is already tracked
+        for isbn in clean_isbns:
+            for book_title, isbn_list in books.items():
+                for item in isbn_list:
+                    if isbn in item:
+                        return jsonify({"error": f"ISBN {isbn} is already tracked under '{book_title}'"}), 400
+
+        # Create book entry
+        isbn_list = books.setdefault(title, [])
+        
+        # Add each ISBN with the same metadata
+        for isbn in clean_isbns:
+            isbn_metadata = {
+                "title": title,
+                "isbn13": isbn if len(isbn) == 13 else "",
+                "isbn10": isbn if len(isbn) == 10 else "",
+                "authors": authors,
+                "publisher": publisher,
+                "year": year,
+                "source": "manual",
+                "notes": "",
+                "icon_url": icon_url
+            }
+            isbn_list.append({isbn: isbn_metadata})
+
+        # Save to file
+        books_file.write_text(json.dumps(books, indent=4))
+        logger.info(f"Manually added '{title}' with {len(clean_isbns)} ISBN(s): {', '.join(clean_isbns)}")
+
+        # Assign to grade level if specified
+        if grade:
+            try:
+                with grade_db_lock:
+                    grades = load_grades()
+                    if grade not in grades:
+                        grades[grade] = []
+                    if title not in grades[grade]:
+                        grades[grade].append(title)
+                        save_grades(grades)
+                        logger.info(f"Assigned '{title}' to {grade}")
+            except Exception as e:
+                logger.error(f"Error assigning book to grade: {e}")
+                # Don't fail the entire operation if grade assignment fails
+
+        isbn_count = len(clean_isbns)
+        if isbn_count == 1:
+            return jsonify({"message": f"Manually added '{title}' with ISBN {clean_isbns[0]}"})
+        else:
+            return jsonify({"message": f"Manually added '{title}' with {isbn_count} ISBNs"})
+
+    except Exception as e:
+        logger.error(f"Error manually adding book: {e}")
         return jsonify({"error": str(e)}), 500
 
 
