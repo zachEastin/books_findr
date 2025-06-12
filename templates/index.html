@@ -567,38 +567,21 @@
         try {
             loadingIcon.style.display = 'inline-block';
 
-            // Load both books and grades data
-            const [booksResponse, gradesResponse] = await Promise.all([
-                fetch('/api/prices-by-book'),
-                fetch('/api/grades')
+            // Fetch all books, grades, and price data
+            const [booksResponse, gradesResponse, pricesResponse] = await Promise.all([
+                fetch('/api/books'),
+                fetch('/api/grades'),
+                fetch('/api/prices-by-book')
             ]);
-            
-            if (!booksResponse.ok || !gradesResponse.ok) {
+
+            if (!booksResponse.ok || !gradesResponse.ok || !pricesResponse.ok) {
                 throw new Error('Failed to load data');
             }
-            
-            const booksResult = await booksResponse.json();
-            const gradesData = await gradesResponse.json();
 
-            if (booksResult.error) {
-                throw new Error(booksResult.error);
-            }
-
-            if (!booksResult.data || Object.keys(booksResult.data).length === 0) {
-                gradeContainers.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (container) {
-                        container.innerHTML = `
-                            <div class="center-align" style="padding: 2rem;">
-                                <i class="material-icons large grey-text">inbox</i>
-                                <h5 class="grey-text">No book data available</h5>
-                                <p class="grey-text">No price data found for any books.</p>
-                            </div>
-                        `;
-                    }
-                });
-                return;
-            }
+            const booksData = await booksResponse.json(); // { title: [ {isbn: {...meta}}, ... ] }
+            const gradesData = await gradesResponse.json(); // { grade: [title, ...] }
+            const pricesResult = await pricesResponse.json(); // { data: { title: { ...priceData } } }
+            const pricesData = pricesResult.data || {};
 
             // Organize books by grade level
             const gradeMapping = {
@@ -616,7 +599,7 @@
                 '11th Grade': 'grade-11-list',
                 '12th Grade': 'grade-12-list'
             };
-            
+
             // Create reverse mapping to find which grade a book belongs to
             const bookToGrade = {};
             for (const [gradeName, bookList] of Object.entries(gradesData)) {
@@ -624,7 +607,7 @@
                     bookToGrade[bookTitle] = gradeName;
                 });
             }
-            
+
             // Clear all containers
             gradeContainers.forEach(containerId => {
                 const container = document.getElementById(containerId);
@@ -633,14 +616,70 @@
                 }
             });
 
+            // Merge all book titles from booksData and pricesData
+            const allTitles = new Set([
+                ...Object.keys(booksData),
+                ...Object.keys(pricesData)
+            ]);
+
             // Organize and display books
-            Object.entries(booksResult.data).forEach(([title, bookData]) => {
+            allTitles.forEach(title => {
+                // Book meta from booksData (for ISBNs, authors, etc)
+                const bookMeta = booksData[title];
+                // Price data from pricesData (may be undefined)
+                const bookPriceData = pricesData[title];
+                // Compose a merged bookData object for rendering
+                let mergedBookData;
+                if (bookPriceData) {
+                    // Use price data as base, but add icon_url from meta if missing
+                    mergedBookData = { ...bookPriceData };
+                    if (bookMeta && bookMeta.length > 0) {
+                        // Try to get icon_url from first ISBN meta if not present
+                        if (!mergedBookData.icon_url) {
+                            const meta = bookMeta[0][Object.keys(bookMeta[0])[0]];
+                            if (meta && meta.icon_url) mergedBookData.icon_url = meta.icon_url;
+                        }
+                    }
+                } else if (bookMeta && bookMeta.length > 0) {
+                    // No price data, but we have meta: build a minimal bookData
+                    const isbns = bookMeta.map(item => Object.keys(item)[0]);
+                    const meta = bookMeta[0][isbns[0]];
+                    mergedBookData = {
+                        title: title,
+                        isbns: isbns,
+                        icon_url: meta && meta.icon_url ? meta.icon_url : '',
+                        sources: [],
+                        successful_records: 0,
+                        total_records: 0,
+                        current_price_count: 0,
+                        avg_current_price: null,
+                        lowest_price_ever: null,
+                        lowest_price_date: null,
+                        highest_price_ever: null,
+                        highest_price_date: null,
+                        best_current_price: null,
+                        best_price_url: null,
+                        isbn_details: Object.fromEntries(isbns.map(isbn => [isbn, {
+                            isbn: isbn,
+                            sources: [],
+                            successful_records: 0,
+                            total_records: 0,
+                            price_count: 0,
+                            avg_price: null,
+                            max_price: null,
+                            min_price: null,
+                            prices: []
+                        }]))
+                    };
+                } else {
+                    // Should not happen, but skip if no data at all
+                    return;
+                }
                 const assignedGrade = bookToGrade[title];
                 const containerId = assignedGrade ? gradeMapping[assignedGrade] : 'unassigned-list';
                 const container = document.getElementById(containerId);
-                
                 if (container) {
-                    container.innerHTML += generateBookHTML(bookData);
+                    container.innerHTML += generateBookHTML(mergedBookData);
                 }
             });
 
@@ -657,8 +696,22 @@
             M.Collapsible.init(document.querySelectorAll('.collapsible'));
 
             // Load images for each book
-            Object.values(booksResult.data).forEach(bookData => {
-                loadBookImageForBook(bookData.title, bookData.isbns, bookData.icon_url);
+            allTitles.forEach(title => {
+                const bookMeta = booksData[title];
+                let iconUrl = '';
+                let isbns = [];
+                if (bookMeta && bookMeta.length > 0) {
+                    isbns = bookMeta.map(item => Object.keys(item)[0]);
+                    const meta = bookMeta[0][isbns[0]];
+                    if (meta && meta.icon_url) iconUrl = meta.icon_url;
+                }
+                // Try to get icon_url from price data if not in meta
+                if (!iconUrl && pricesData[title] && pricesData[title].icon_url) {
+                    iconUrl = pricesData[title].icon_url;
+                }
+                if (isbns.length > 0) {
+                    loadBookImageForBook(title, isbns, iconUrl);
+                }
             });
 
         } catch (error) {
