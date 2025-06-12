@@ -8,6 +8,7 @@ from .scraper import (
     scrape_all_sources,
     load_isbns_from_file,
     save_results_to_csv,
+    initialize_chromedriver_session,  # New session management function
     # Async versions
     scrape_all_isbns_async,
     scrape_multiple_isbns,
@@ -35,6 +36,7 @@ __all__ = [
     "scrape_all_sources",
     "load_isbns_from_file",
     "save_results_to_csv",
+    "initialize_chromedriver_session",  # New session management function
     # Async versions
     "scrape_all_isbns_async",
     "scrape_multiple_isbns",

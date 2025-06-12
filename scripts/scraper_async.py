@@ -21,6 +21,10 @@ from datetime import datetime
 import re  # for clean_price
 from typing import Dict, List, Optional
 import json
+import os
+import stat
+import subprocess
+import threading
 
 from .logger import scraper_logger, log_scrape_result, log_task_start, log_task_complete
 
@@ -32,10 +36,148 @@ PRICES_CSV = DATA_DIR / "prices.csv"
 TIMEOUT = 15  # seconds
 MAX_CONCURRENT_SCRAPERS = 3  # Limit concurrent scrapers to be respectful
 
+# Global ChromeDriver management
+_chromedriver_path = None
+_chromedriver_lock = threading.Lock()
+_chromedriver_initialized = False
+
+
+def _fix_chromedriver_permissions_windows(driver_path: str) -> bool:
+    """
+    Fix ChromeDriver permissions on Windows using PowerShell
+    
+    Args:
+        driver_path: Path to the ChromeDriver executable
+        
+    Returns:
+        bool: True if permissions were set successfully, False otherwise
+    """
+    try:
+        # Check if file is already executable (has correct permissions)
+        if os.access(driver_path, os.X_OK):
+            scraper_logger.info(f"ChromeDriver already has execute permissions: {driver_path}")
+            return True
+            
+        scraper_logger.info(f"Attempting to fix ChromeDriver permissions on Windows: {driver_path}")
+        
+        # Use PowerShell to set full control permissions for the current user
+        powershell_cmd = [
+            "powershell", "-Command",
+            f'$acl = Get-Acl "{driver_path}"; '
+            f'$accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("{os.environ.get("USERNAME", "")}", "FullControl", "Allow"); '
+            f'$acl.SetAccessRule($accessRule); '
+            f'Set-Acl "{driver_path}" $acl'
+        ]
+        
+        result = subprocess.run(powershell_cmd, capture_output=True, text=True, timeout=30)
+        
+        if result.returncode == 0:
+            # Verify the fix worked
+            if os.access(driver_path, os.X_OK):
+                scraper_logger.info("Successfully fixed ChromeDriver permissions using PowerShell")
+                return True
+            else:
+                scraper_logger.warning("PowerShell command succeeded but file still not executable")
+                
+        else:
+            scraper_logger.error(f"PowerShell permission fix failed: {result.stderr}")
+            
+    except subprocess.TimeoutExpired:
+        scraper_logger.error("PowerShell permission fix timed out")
+    except Exception as e:
+        scraper_logger.error(f"Error fixing ChromeDriver permissions: {e}")
+    
+    # Fallback: Try using os.chmod (may not work on Windows but worth trying)
+    try:
+        os.chmod(driver_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+        scraper_logger.info("Applied fallback permissions using os.chmod")
+        return os.access(driver_path, os.X_OK)
+    except Exception as e:
+        scraper_logger.error(f"Fallback permission fix failed: {e}")
+        
+    return False
+
+
+def _initialize_chromedriver_once() -> Optional[str]:
+    """
+    Initialize ChromeDriver once and return the path to the executable.
+    This function is thread-safe and will only download/initialize once per session.
+    
+    Returns:
+        str: Path to the ChromeDriver executable, or None if initialization failed
+    """
+    global _chromedriver_path, _chromedriver_initialized
+    
+    with _chromedriver_lock:
+        # If already initialized, return the cached path
+        if _chromedriver_initialized and _chromedriver_path:
+            if os.path.exists(_chromedriver_path) and os.access(_chromedriver_path, os.X_OK):
+                return _chromedriver_path
+            else:
+                scraper_logger.warning("Cached ChromeDriver path is invalid, reinitializing...")
+                _chromedriver_initialized = False
+                _chromedriver_path = None
+        
+        if _chromedriver_initialized:
+            return _chromedriver_path
+            
+        scraper_logger.info("Initializing ChromeDriver (one-time setup for session)...")
+        
+        try:
+            # Download and get the ChromeDriver path
+            # webdriver-manager handles caching, so subsequent calls are fast
+            driver_path = ChromeDriverManager().install()
+            scraper_logger.info(f"ChromeDriver downloaded/located at: {driver_path}")
+            
+            # Verify the file exists
+            if not os.path.exists(driver_path):
+                scraper_logger.error(f"ChromeDriver file not found after download: {driver_path}")
+                return None
+            
+            # Check and fix permissions on Windows
+            if os.name == 'nt':  # Windows
+                if not os.access(driver_path, os.X_OK):
+                    scraper_logger.warning("ChromeDriver lacks execute permissions, attempting to fix...")
+                    if not _fix_chromedriver_permissions_windows(driver_path):
+                        scraper_logger.error("Failed to fix ChromeDriver permissions")
+                        return None
+                else:
+                    scraper_logger.info("ChromeDriver permissions are correct")
+              # Test the ChromeDriver by creating a minimal service
+            try:
+                # Don't start the service, just verify it can be created
+                Service(driver_path)
+                scraper_logger.info("ChromeDriver validation successful")
+            except Exception as e:
+                scraper_logger.error(f"ChromeDriver validation failed: {e}")
+                return None
+            
+            # Cache the successful path
+            _chromedriver_path = driver_path
+            _chromedriver_initialized = True
+            
+            scraper_logger.info(f"ChromeDriver session initialization complete: {driver_path}")
+            return driver_path
+            
+        except Exception as e:
+            scraper_logger.error(f"Failed to initialize ChromeDriver: {e}")
+            _chromedriver_initialized = True  # Mark as attempted to avoid repeated failures
+            _chromedriver_path = None
+            return None
+
 
 def get_chrome_driver() -> webdriver.Chrome:
-    """Create and configure Chrome WebDriver with automatic driver management"""
+    """
+    Create and configure Chrome WebDriver using the pre-initialized ChromeDriver executable.
+    This function reuses the same ChromeDriver executable that was downloaded once at session start.
+    """
     try:
+        # Get the pre-initialized ChromeDriver path
+        driver_path = _initialize_chromedriver_once()
+        if not driver_path:
+            raise Exception("ChromeDriver initialization failed")
+        
+        # Configure Chrome options
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Run in background
         chrome_options.add_argument("--no-sandbox")
@@ -45,15 +187,46 @@ def get_chrome_driver() -> webdriver.Chrome:
         chrome_options.add_argument(
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         )
-
-        # Use webdriver-manager to automatically download and manage ChromeDriver
-        service = Service(ChromeDriverManager().install())
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        
+        # Create service using the pre-initialized ChromeDriver path
+        service = Service(executable_path=driver_path)
+        
+        # Create the WebDriver instance
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.set_page_load_timeout(TIMEOUT)
+          # Hide automation indicators
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        scraper_logger.debug(f"Created Chrome WebDriver instance using: {driver_path}")
         return driver
+        
     except Exception as e:
         scraper_logger.error(f"Failed to create Chrome driver: {e}")
         raise
+
+
+def initialize_chromedriver_session() -> bool:
+    """
+    Initialize ChromeDriver for the current session.
+    Call this once at the start of your scraping session for optimal performance.
+    
+    Returns:
+        bool: True if initialization was successful, False otherwise
+    """
+    try:
+        driver_path = _initialize_chromedriver_once()
+        if driver_path:
+            scraper_logger.info(f"ChromeDriver session ready: {driver_path}")
+            return True
+        else:
+            scraper_logger.error("ChromeDriver session initialization failed")
+            return False
+    except Exception as e:
+        scraper_logger.error(f"Error initializing ChromeDriver session: {e}")
+        return False
 
 
 def clean_price(price_text: str) -> Optional[float]:
