@@ -53,13 +53,12 @@ def load_prices_data():
     try:
         if PRICES_CSV.exists():
             # Load with ISBN as string to avoid integer conversion
-            df = pd.read_csv(PRICES_CSV, dtype={'isbn': str})
+            df = pd.read_csv(PRICES_CSV, dtype={'isbn': str}, keep_default_na=False, na_values=[""])
             logger.info(f"Loaded {len(df)} price records from CSV")
             return df
         else:
             logger.warning("prices.csv not found, creating empty DataFrame")
             # Create empty DataFrame with expected columns
-            df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
             df = pd.DataFrame(columns=["timestamp", "isbn", "book_title", "title", "source", "price", "url", "notes"])
             return df
     except Exception as e:
@@ -569,8 +568,21 @@ def get_recent_prices():
         # Sort by timestamp and get latest 20 records
         df_recent = df.sort_values("timestamp", ascending=False).head(20)
 
-        # Convert to list of dictionaries
+        # Convert to list of dictionaries and replace np.nan with None
         records = df_recent.to_dict("records")
+        # Replace np.nan with None recursively
+        import numpy as np
+        def clean_nans(obj):
+            if isinstance(obj, dict):
+                return {k: clean_nans(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [clean_nans(v) for v in obj]
+            elif isinstance(obj, float) and np.isnan(obj):
+                return None
+            else:
+                return obj
+        records = clean_nans(records)
+        
         return jsonify(records)
 
     except Exception as e:
