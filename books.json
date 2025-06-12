@@ -4237,5 +4237,75 @@
                 "icon_url": "http://books.google.com/books/content?id=avDTkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         }
+    ],
+    "Something Beautiful for God": [
+        {
+            "0060660430": {
+                "isbn_input": "0060660430",
+                "isbn13": "9780060660437",
+                "isbn10": "0060660430",
+                "title": "Something Beautiful for God",
+                "authors": [
+                    "Malcolm Muggeridge"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1986",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=irO7hAQLmsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Roots of Endurance": [
+        {
+            "1581348142": {
+                "isbn_input": "1581348142",
+                "isbn13": "9781581348149",
+                "isbn10": "1581348142",
+                "title": "The Roots of Endurance",
+                "authors": [
+                    "John Piper"
+                ],
+                "publisher": null,
+                "year": "2006",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=BhDSwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Writing & Rhetoric Book 9: Description & Impersonation": [
+        {
+            "9781600513374": {
+                "title": "Writing & Rhetoric Book 9: Description & Impersonation",
+                "isbn13": "9781600513374",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "Classical Academic Press",
+                "year": "2017",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/513374.jpg"
+            }
+        }
+    ],
+    "Writing & Rhetoric Book 10: Thesis Part 1": [
+        {
+            "9781600513770": {
+                "title": "Writing & Rhetoric Book 10: Thesis Part 1",
+                "isbn13": "9781600513770",
+                "isbn10": "",
+                "authors": [
+                    "Paul Kortepeter"
+                ],
+                "publisher": "Classical Academic Press",
+                "year": "2019",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://g.christianbook.com/dg/product/web/f400/513780.jpg"
+            }
+        }
     ]
 }
