@@ -10,7 +10,8 @@
                 ],
                 "year": "2008",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/51iq--MWmZL._SY445_SX342_PQ88_.jpg"
             }
         }
     ],
@@ -71,7 +72,8 @@
                 ],
                 "year": "2019",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/51nxh3qUHzL._SY445_SX342_PQ88_.jpg"
             }
         },
         {
@@ -102,7 +104,9 @@
                 ],
                 "year": "2007",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "publisher": "",
+                "icon_url": "https://m.media-amazon.com/images/I/212L0PMgV+L._AC_UY218_.jpg"
             }
         }
     ],
@@ -118,7 +122,9 @@
                 ],
                 "year": "2007",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "publisher": "",
+                "icon_url": "https://pictures.abebooks.com/inventory/md/md32223196600.jpg"
             }
         }
     ],
@@ -133,7 +139,9 @@
                 ],
                 "year": "2007",
                 "source": "google_books",
-                "notes": ""
+                "notes": "",
+                "publisher": "",
+                "icon_url": "https://m.media-amazon.com/images/I/21AT4579CeL._AC_UY218_.jpg"
             }
         }
     ],
@@ -377,7 +385,9 @@
                 "year": "2011",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "data:image/jpeg;base64,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",
+                "notes": ""
             }
         }
     ],
@@ -1287,11 +1297,13 @@
                 "authors": [
                     "Iris Hatfield"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2008",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/515HDYhFmNL._SX342_SY445_PQ88_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2033,11 +2045,13 @@
                 "authors": [
                     "Rudyard Kipling"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2022",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/81xh95E0spL._SY342_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2336,11 +2350,13 @@
                 "authors": [
                     "Iris Hatfield"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2021",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/61Fz73RFHkL._SX445_.jpg",
+                "notes": ""
             }
         },
         {
@@ -2390,7 +2406,9 @@
                 "year": "2014",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/61zMsT4LUQL._SY342_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2443,7 +2461,8 @@
                 "year": "1997",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/81cmFB8p2rL._SY342_.jpg"
             }
         }
     ],
@@ -2461,7 +2480,9 @@
                 "year": "2010",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/71FYhcQJQcL._SY342_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2532,11 +2553,13 @@
                 "authors": [
                     "Dorothy Canfield Fisher"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2013",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/51j75u1aOqL._SY445_SX342_PQ88_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2665,11 +2688,13 @@
                 "authors": [
                     "Kathleen V. Kudlinski"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2001",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/71K8Vvtk4FL._SY342_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2778,11 +2803,13 @@
                 "authors": [
                     "Laura Ingalls Wilder"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "1932",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/91jsOzK+K1L._SY342_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -2896,7 +2923,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=BTX5GX3QYpkC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "https://m.media-amazon.com/images/I/51ZsV-phSoL._SY445_SX342_PQ88_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -3000,11 +3028,13 @@
                     "Tammy Peters",
                     "Daniel Coupland"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2021",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/71jFN+do3+L._AC_UY327_FMwebp_QL65_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -3036,11 +3066,13 @@
                 "authors": [
                     "Fable Stu Ed"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2013",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/71TOlQzep3L._AC_UY327_FMwebp_QL65_.jpg",
+                "notes": ""
             }
         }
     ],
@@ -3054,11 +3086,13 @@
                 "authors": [
                     "Narrative Stu"
                 ],
-                "publisher": null,
+                "publisher": "",
                 "year": "2013",
                 "success": true,
                 "error": null,
-                "source": "google_books"
+                "source": "google_books",
+                "icon_url": "https://m.media-amazon.com/images/I/71y36cI1J+L._AC_UY327_FMwebp_QL65_.jpg",
+                "notes": ""
             }
         }
     ],
