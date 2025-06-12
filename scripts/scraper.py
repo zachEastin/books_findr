@@ -1,6 +1,6 @@
 """
 Book Price Tracker - Async Web Scraping Module
-Handles scraping from BookScouter, Christianbook, RainbowResource, and CamelCamelCamel
+Handles scraping from AbeBooks, Christianbook, and RainbowResource
 Uses asyncio for concurrent scraping to improve performance
 Integrates with ISBNdb API for enhanced search capabilities
 """
@@ -295,76 +295,6 @@ def get_search_strategies(isbn_data: dict) -> list[tuple[str, str]]:
         scraper_logger.warning(f"Error getting search strategies for {isbn_data.get('isbn_13', 'unknown')}: {e}")
 
     return strategies
-
-
-def _scrape_bookscouter_sync(search_term: str, url: str) -> dict:
-    """Synchronous helper function for BookScouter scraping"""
-    result_update = {
-        "price": None,
-        "title": None,
-        "notes": "",
-        "success": False,
-    }
-
-    driver = None
-    try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping BookScouter for term: {search_term}")
-
-        driver.get(url)
-
-        # Wait for page to load
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
-
-        # Try to find book title
-        try:
-            title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
-            result_update["title"] = title_element.text.strip()
-        except NoSuchElementException:
-            scraper_logger.warning(f"Could not find title for term `{search_term}` on BookScouter")
-
-        # Try to find the lowest price
-        try:
-            # Look for price elements (BookScouter typically shows prices in a table)
-            price_elements = driver.find_elements(
-                By.CSS_SELECTOR,
-                "[class^='BestVendorPrice'], [class*='BestVendorPrice']",
-            )
-
-            prices = []
-            for element in price_elements:
-                price_text = element.text.strip()
-                price_value = clean_price(price_text)
-                if price_value and price_value > 0:
-                    prices.append(price_value)
-
-            if prices:
-                result_update["price"] = min(prices)  # Get lowest selling price
-                result_update["success"] = True
-                result_update["notes"] = f"Found {len(prices)} prices, showing lowest: ${result_update['price']:.2f}"
-            else:
-                result_update["notes"] = "No valid prices found"
-
-        except NoSuchElementException:
-            result_update["notes"] = "Price elements not found"
-
-    except TimeoutException:
-        result_update["notes"] = "Page load timeout"
-        scraper_logger.error(f"Timeout scraping BookScouter for term {search_term}")
-    except WebDriverException as e:
-        result_update["notes"] = f"WebDriver error: {str(e)}"
-        scraper_logger.error(f"WebDriver error scraping BookScouter for term {search_term}: {e}")
-    except Exception as e:
-        result_update["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping BookScouter for term {search_term}: {e}")
-    finally:
-        if driver:
-            driver.quit()
-
-    return result_update
 
 
 def _scrape_christianbook_sync(search_term: str, search_url: str) -> dict:
@@ -701,83 +631,6 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
     return result_update
 
 
-# Async scraper functions
-async def scrape_bookscouter_async(isbn_data: dict, book_title: str = "") -> dict:
-    """
-    Async scrape book price from BookScouter with enhanced search strategies
-
-    Args:
-        isbn: The ISBN to search for
-
-    Returns:
-        dictionary with scraping results
-    """
-    result = {
-        "isbn": isbn_data.get("isbn13"),
-        "book_title": book_title,
-        "source": "BookScouter",
-        "price": None,
-        "title": None,
-        "url": None,
-        "notes": "",
-        "success": False,
-    }
-
-    try:
-        # Get search strategies in order of preference
-        search_strategies = get_search_strategies(isbn_data)
-        scraper_logger.info(
-            f"BookScouter: Trying {len(search_strategies)} search strategies for {isbn_data.get('title', isbn_data.get('isbn13', 'unknown'))}"
-        )
-
-        # Try each search strategy until we find results
-        for search_term, strategy_name in search_strategies:
-            try:
-                # BookScouter uses direct ISBN lookup in URL
-                url = f"https://bookscouter.com/book/{search_term}?type=buy"
-                result["url"] = url
-
-                scraper_logger.info(f"BookScouter: Trying {strategy_name} with term '{search_term}'")
-
-                loop = asyncio.get_running_loop()
-                scraping_result = await loop.run_in_executor(
-                    executor, _scrape_bookscouter_sync, search_term, url
-                )
-
-                if scraping_result.get("success"):
-                    result.update(scraping_result)
-                    result["notes"] = f"Found using {strategy_name}: {result['notes']}"
-                    scraper_logger.info(f"BookScouter: Success with {strategy_name}")
-                    break
-                else:
-                    scraper_logger.info(
-                        f"BookScouter: No results with {strategy_name} for term {search_term} and url {url}"
-                    )
-
-            except Exception as e:
-                scraper_logger.warning(f"BookScouter: Error with {strategy_name}: {e}")
-                continue
-
-        if not result["success"]:
-            result["notes"] = f"No results found with any search strategy (tried {len(search_strategies)} methods)"
-
-    except Exception as e:
-        result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(
-            f"Unexpected error scraping BookScouter for ISBN {isbn_data.get('isbn13', 'unknown')}: {e}"
-        )
-
-    log_scrape_result(
-        scraper_logger,
-        isbn_data.get("isbn13", "unknown"),
-        "BookScouter",
-        result["success"],
-        result["price"],
-        result["notes"],
-    )
-    return result
-
-
 async def scrape_christianbook_async(isbn_data: dict, book_title: str = "") -> dict:
     """
     Async scrape book price from Christianbook.com with enhanced search strategies
@@ -1089,11 +942,9 @@ async def scrape_all_sources_async(isbn: dict, book_title: str = "") -> list[dic
     )
     start_time = time.time()  # Create async tasks for all scrapers
     tasks = [
-        scrape_bookscouter_async(isbn, book_title),
         scrape_christianbook_async(isbn, book_title),
         scrape_rainbowresource_async(isbn, book_title),
         scrape_abebooks_async(isbn, book_title),
-        # scrape_camelcamelcamel_async(isbn),  # Uncomment to include CamelCamelCamel
     ]
 
     try:
@@ -1102,7 +953,7 @@ async def scrape_all_sources_async(isbn: dict, book_title: str = "") -> list[dic
 
         # Process results and handle any exceptions
         processed_results = []
-        source_names = ["BookScouter", "Christianbook", "RainbowResource", "AbeBooks"]  # , "CamelCamelCamel"]
+        source_names = ["Christianbook", "RainbowResource", "AbeBooks"]  # , "CamelCamelCamel"]
 
         for i, result in enumerate(results):
             if isinstance(result, Exception):
@@ -1330,11 +1181,6 @@ scrape_all_isbns = scrape_all_isbns_async
 
 
 # Sync wrapper functions for backward compatibility
-def scrape_bookscouter_sync(isbn: dict, book_title: str = "") -> dict:
-    """Sync wrapper for scrape_bookscouter_async"""
-    return asyncio.run(scrape_bookscouter_async(isbn, book_title))
-
-
 def scrape_christianbook_sync(isbn: dict, book_title: str = "") -> dict:
     """Sync wrapper for scrape_christianbook_async"""
     return asyncio.run(scrape_christianbook_async(isbn, book_title))
@@ -1369,7 +1215,6 @@ def scrape_all_sources_sync(isbn: dict, book_title: str = "") -> list[dict]:
 
 
 # Backward compatibility: Export sync versions under original names
-scrape_bookscouter = scrape_bookscouter_sync
 scrape_christianbook = scrape_christianbook_sync
 scrape_rainbowresource = scrape_rainbowresource_sync
 scrape_abebooks = scrape_abebooks_sync
@@ -1392,25 +1237,21 @@ if __name__ == "__main__":
             print("   ❌ Failed to initialize ChromeDriver session")
             return
 
-        # Test individual scrapers        
-        print("\n1. Testing async BookScouter...")
-        result = await scrape_bookscouter_async(test_isbn)
-        print(f"   Result: {result}")
-
-        print("\n2. Testing async Christianbook...")
+        # Test individual scrapers
+        print("\n1. Testing async Christianbook...")
         result = await scrape_christianbook_async(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n3. Testing async RainbowResource...")
+        print("\n2. Testing async RainbowResource...")
         result = await scrape_rainbowresource_async(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n4. Testing async all sources (concurrent)...")
+        print("\n3. Testing async all sources (concurrent)...")
         all_results = await scrape_all_sources_async(test_isbn)
         save_results_to_csv(all_results)
         print(f"   Saved {len(all_results)} results to CSV")
 
-        print("\n5. Testing multiple ISBNs async...")
+        print("\n4. Testing multiple ISBNs async...")
         test_isbns = [test_isbn, "9780132350884"]  # Add another test ISBN
         multiple_results = await scrape_multiple_isbns(test_isbns, batch_size=2)
         print(f"   Processed {len(test_isbns)} ISBNs, got {len(multiple_results)} total results")

@@ -21,7 +21,6 @@ This document provides comprehensive information about the book cover image func
   - `POST /api/images/cleanup` - Clean up old image files
 
 - **Supported Sources**:
-  - **BookScouter** (`bookscouter`)
   - **ChristianBook** (`christianbook`) 
   - **RainbowResource** (`rainbowresource`)
 

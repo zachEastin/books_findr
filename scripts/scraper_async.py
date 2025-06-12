@@ -1,6 +1,6 @@
 """
 Book Price Tracker - Async Web Scraping Module
-Handles scraping from BookScouter, Christianbook, RainbowResource, and CamelCamelCamel
+Handles scraping from AbeBooks, Christianbook, RainbowResource, and CamelCamelCamel
 Uses asyncio for concurrent scraping to improve performance
 """
 
@@ -244,73 +244,6 @@ def clean_price(price_text: str) -> Optional[float]:
         return float(cleaned)
     except (ValueError, TypeError):
         return None
-
-
-def _scrape_bookscouter_sync(isbn: str, url: str) -> Dict:
-    """Synchronous helper function for BookScouter scraping"""
-    result_update = {
-        "price": None,
-        "title": None,
-        "notes": "",
-        "success": False,
-    }
-
-    driver = None
-    try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping BookScouter for ISBN: {isbn}")
-
-        driver.get(url)
-
-        # Wait for page to load
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-        # Try to find book title
-        try:
-            title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
-            result_update["title"] = title_element.text.strip()
-        except NoSuchElementException:
-            scraper_logger.warning(f"Could not find title for ISBN {isbn} on BookScouter")
-
-        # Try to find the lowest price
-        try:
-            # Look for price elements (BookScouter typically shows prices in a table)
-            price_elements = driver.find_elements(
-                By.CSS_SELECTOR,
-                "[class^='BestVendorPrice'], [class*='BestVendorPrice']",
-            )
-
-            prices = []
-            for element in price_elements:
-                price_text = element.text.strip()
-                price_value = clean_price(price_text)
-                if price_value and price_value > 0:
-                    prices.append(price_value)
-
-            if prices:
-                result_update["price"] = min(prices)  # Get lowest selling price
-                result_update["success"] = True
-                result_update["notes"] = f"Found {len(prices)} prices, showing lowest: ${result_update['price']:.2f}"
-            else:
-                result_update["notes"] = "No valid prices found"
-
-        except NoSuchElementException:
-            result_update["notes"] = "Price elements not found"
-
-    except TimeoutException:
-        result_update["notes"] = "Page load timeout"
-        scraper_logger.error(f"Timeout scraping BookScouter for ISBN {isbn}")
-    except WebDriverException as e:
-        result_update["notes"] = f"WebDriver error: {str(e)}"
-        scraper_logger.error(f"WebDriver error scraping BookScouter for ISBN {isbn}: {e}")
-    except Exception as e:
-        result_update["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping BookScouter for ISBN {isbn}: {e}")
-    finally:
-        if driver:
-            driver.quit()
-
-    return result_update
 
 
 def _scrape_christianbook_sync(isbn: str, search_url: str) -> Dict:
@@ -561,44 +494,6 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> Dict:
 
 
 # Async scraper functions
-async def scrape_bookscouter(isbn: str) -> Dict:
-    """
-    Async scrape book price from BookScouter
-
-    Args:
-        isbn: The ISBN to search for
-
-    Returns:
-        Dictionary with scraping results
-    """
-    result = {
-        "isbn": isbn,
-        "source": "BookScouter",
-        "price": None,
-        "title": None,
-        "url": None,
-        "notes": "",
-        "success": False,
-    }
-
-    try:
-        url = f"https://bookscouter.com/book/{isbn}?type=buy"
-        result["url"] = url
-
-        # Run the synchronous scraping operation in a thread
-        loop = asyncio.get_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraping_result = await loop.run_in_executor(executor, _scrape_bookscouter_sync, isbn, url)
-            result.update(scraping_result)
-
-    except Exception as e:
-        result["notes"] = f"Unexpected error: {str(e)}"
-        scraper_logger.error(f"Unexpected error scraping BookScouter for ISBN {isbn}: {e}")
-
-    log_scrape_result(scraper_logger, isbn, "BookScouter", result["success"], result["price"], result["notes"])
-    return result
-
-
 async def scrape_christianbook(isbn: str) -> Dict:
     """
     Async scrape book price from Christianbook.com
@@ -732,7 +627,6 @@ async def scrape_all_sources(isbn: str) -> List[Dict]:
 
     # Create async tasks for all scrapers
     tasks = [
-        scrape_bookscouter(isbn),
         scrape_christianbook(isbn),
         scrape_rainbowresource(isbn),
         # scrape_camelcamelcamel(isbn),  # Uncomment to include CamelCamelCamel
@@ -744,7 +638,7 @@ async def scrape_all_sources(isbn: str) -> List[Dict]:
 
         # Process results and handle any exceptions
         processed_results = []
-        source_names = ["BookScouter", "Christianbook", "RainbowResource"]  # , "CamelCamelCamel"]
+        source_names = ["Christianbook", "RainbowResource"]  # , "CamelCamelCamel"]
 
         for i, result in enumerate(results):
             if isinstance(result, Exception):
@@ -951,24 +845,20 @@ if __name__ == "__main__":
         print("Testing async scraper functions...")
 
         # Test individual scrapers
-        print("\n1. Testing async BookScouter...")
-        result = await scrape_bookscouter(test_isbn)
-        print(f"   Result: {result}")
-
-        print("\n2. Testing async Christianbook...")
+        print("\n1. Testing async Christianbook...")
         result = await scrape_christianbook(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n3. Testing async RainbowResource...")
+        print("\n2. Testing async RainbowResource...")
         result = await scrape_rainbowresource(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n4. Testing async all sources (concurrent)...")
+        print("\n3. Testing async all sources (concurrent)...")
         all_results = await scrape_all_sources(test_isbn)
         save_results_to_csv(all_results)
         print(f"   Saved {len(all_results)} results to CSV")
 
-        print("\n5. Testing multiple ISBNs async...")
+        print("\n4. Testing multiple ISBNs async...")
         test_isbns = [test_isbn, "9780132350884"]  # Add another test ISBN
         multiple_results = await scrape_multiple_isbns(test_isbns, batch_size=2)
         print(f"   Processed {len(test_isbns)} ISBNs, got {len(multiple_results)} total results")

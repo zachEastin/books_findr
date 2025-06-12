@@ -150,76 +150,6 @@ async def download_image_from_url(url: str, isbn: str, source: str) -> Dict[str,
     return result
 
 
-def download_bookscouter_image(isbn: str, url: str) -> Dict[str, Any]:
-    """Download book image from BookScouter"""
-    result = {
-        "success": False,
-        "isbn": isbn,
-        "source": "bookscouter",
-        "image_url": None,
-        "image_path": None,
-        "error": None
-    }
-    
-    driver = None
-    try:
-        # Check if image already exists
-        if image_exists(isbn, "bookscouter"):
-            image_path = get_image_path(isbn, "bookscouter")
-            result.update({
-                "success": True,
-                "image_path": str(image_path.relative_to(BASE_DIR)),
-                "error": "Image already exists"
-            })
-            return result
-        
-        driver = get_chrome_driver_with_images()
-        driver.get(url)
-        
-        # Wait for page to load
-        wait = WebDriverWait(driver, TIMEOUT)
-        
-        # Look for the book image using multiple selectors
-        image_selectors = [
-            "section[class*='BookDetailsSection'] img",
-            "div[class*='BookAssetWrapper'] img", 
-            "div[aria-label='Open book image'] img",
-            ".book-image img",
-            "img[alt*='book']",
-            "img[src*='book']"
-        ]
-        
-        image_element = None
-        for selector in image_selectors:
-            try:
-                image_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
-                break
-            except TimeoutException:
-                continue
-        
-        if image_element:
-            image_url = image_element.get_attribute("src")
-            if image_url and image_url.startswith("http"):
-                result["image_url"] = image_url
-                
-                # Download the image
-                download_result = asyncio.run(download_image_from_url(image_url, isbn, "bookscouter"))
-                result.update(download_result)
-            else:
-                result["error"] = "No valid image URL found"
-        else:
-            result["error"] = "No image element found"
-            
-    except Exception as e:
-        result["error"] = str(e)
-        scraper_logger.error(f"Error scraping BookScouter image for {isbn}: {e}")
-    finally:
-        if driver:
-            driver.quit()
-    
-    return result
-
-
 def download_christianbook_image(isbn: str, url: str) -> Dict[str, Any]:
     """Download book image from ChristianBook"""
     result = {
@@ -445,7 +375,7 @@ def download_abebooks_image(isbn: str, url: str) -> Dict[str, Any]:
 
 def get_existing_image_info(isbn: str) -> Dict[str, Any]:
     """Get information about existing images for an ISBN"""
-    sources = ["bookscouter", "christianbook", "rainbowresource", "abebooks"]
+    sources = ["christianbook", "rainbowresource", "abebooks"]
     images = {}
     
     for source in sources:
@@ -467,10 +397,7 @@ def get_existing_image_info(isbn: str) -> Dict[str, Any]:
 
 def download_image_for_isbn_source(isbn: str, source: str, url: str) -> Dict[str, Any]:
     """Download image for specific ISBN and source"""
-    
-    if source.lower() == "bookscouter":
-        return download_bookscouter_image(isbn, url)
-    elif source.lower() == "christianbook":
+    if source.lower() == "christianbook":
         return download_christianbook_image(isbn, url)
     elif source.lower() == "rainbowresource":
         return download_rainbowresource_image(isbn, url)
