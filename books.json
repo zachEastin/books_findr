@@ -3712,6 +3712,40 @@
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=Ue-koAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
+        },
+        {
+            "0997244240": {
+                "isbn_input": "0997244240",
+                "isbn13": "9780997244243",
+                "isbn10": "0997244240",
+                "title": "Trivium Tables",
+                "authors": [
+                    "Classical Conversations MultiMedia"
+                ],
+                "publisher": null,
+                "year": "2017",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=rS0-tAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "0996566090": {
+                "isbn_input": "0996566090",
+                "isbn13": "9780996566094",
+                "isbn10": "0996566090",
+                "title": "Trivium Tables",
+                "authors": [
+                    "Classical Conversations MultiMedia"
+                ],
+                "publisher": null,
+                "year": "2016",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=o-pEvgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
         }
     ],
     "Mrs. Frisby and the Rats of Nimh": [
@@ -3875,6 +3909,20 @@
                 "error": null,
                 "source": "google_books"
             }
+        },
+        {
+            "9781600512988": {
+                "isbn_input": "9781600512988",
+                "isbn13": "9781600512988",
+                "isbn10": "1600512984",
+                "title": "Writing & Rhetoric",
+                "authors": [],
+                "publisher": null,
+                "year": null,
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
         }
     ],
     "Well-Ordered Language 3A": [
@@ -3944,6 +3992,249 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=zOsMkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Middle Ages": [
+        {
+            "1597313521": {
+                "isbn_input": "1597313521",
+                "isbn13": "9781597313520",
+                "isbn10": "1597313521",
+                "title": "The Middle Ages",
+                "authors": [
+                    "Dorothy Mills"
+                ],
+                "publisher": "Angelico Press",
+                "year": "2007",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=bEuQPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Renaissance and Reformation Times": [
+        {
+            "1597313513": {
+                "isbn_input": "1597313513",
+                "isbn13": "9781597313513",
+                "isbn10": "1597313513",
+                "title": "Renaissance and Reformation Times",
+                "authors": [
+                    "Dorothy Mills"
+                ],
+                "publisher": "Angelico Press",
+                "year": "2007",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=mjcgKQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Beowulf": [
+        {
+            "9780393320978": {
+                "isbn_input": "9780393320978",
+                "isbn13": "9780393320978",
+                "isbn10": "0393320979",
+                "title": "Beowulf",
+                "authors": [
+                    "Seamus Heaney"
+                ],
+                "publisher": "W. W. Norton & Company",
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=m-7crEM3A0AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "King Arthur and His Knights of the Round Table": [
+        {
+            "9780141321011": {
+                "isbn_input": "9780141321011",
+                "isbn13": "9780141321011",
+                "isbn10": "0141321016",
+                "title": "King Arthur and His Knights of the Round Table",
+                "authors": [
+                    "Roger Lancelyn Green"
+                ],
+                "publisher": "National Geographic Books",
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=K4uMEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Sir Gawain and the Green Knight, Pearl, and Sir Orfeo": [
+        {
+            "0358652979": {
+                "isbn_input": "0358652979",
+                "isbn13": "9780358652977",
+                "isbn10": "0358652979",
+                "title": "Sir Gawain and the Green Knight, Pearl, and Sir Orfeo",
+                "authors": [
+                    "Christopher Tolkien"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=htUqEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Tristan and Iseult": [
+        {
+            "0374479828": {
+                "title": "Tristan and Iseult",
+                "isbn13": "",
+                "isbn10": "0374479828",
+                "authors": [
+                    "Rosemary Sutcliff"
+                ],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://pictures.abebooks.com/isbn/9780374479824-us.jpg"
+            }
+        }
+    ],
+    "Till We Have Faces": [
+        {
+            "0062565419": {
+                "isbn_input": "0062565419",
+                "isbn13": "9780062565419",
+                "isbn10": "0062565419",
+                "title": "Till We Have Faces",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "HarperOne",
+                "year": "2017",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=t0mjDAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Joan of Arc": [
+        {
+            "0898702682": {
+                "isbn_input": "0898702682",
+                "isbn13": "9780898702682",
+                "isbn10": "0898702682",
+                "title": "Joan of Arc",
+                "authors": [
+                    "Mark Twain"
+                ],
+                "publisher": "Ignatius Press",
+                "year": "1989",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=RCr_SE1DNoUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Macbeth": [
+        {
+            "0743477103": {
+                "isbn_input": "0743477103",
+                "isbn13": "9780743477109",
+                "isbn10": "0743477103",
+                "title": "Macbeth",
+                "authors": [
+                    "William Shakespeare"
+                ],
+                "publisher": "Simon & Schuster",
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=m9et0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Writing & Rhetoric Book 8: Comparison": [
+        {
+            "9781600513084": {
+                "title": "Writing & Rhetoric Book 8: Comparison",
+                "isbn13": "9781600513084",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/71UDl7MSscL._SL1000_.jpg"
+            }
+        }
+    ],
+    "Latin for the New Millennium": [
+        {
+            "0865168083": {
+                "isbn_input": "0865168083",
+                "isbn13": "9780865168084",
+                "isbn10": "0865168083",
+                "title": "Latin for the New Millennium",
+                "authors": [
+                    "Milena Minkova",
+                    "Terence Tunberg"
+                ],
+                "publisher": null,
+                "year": "2017",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "The Best Things in Life": [
+        {
+            "0877849226": {
+                "isbn_input": "0877849226",
+                "isbn13": "9780877849223",
+                "isbn10": "0877849226",
+                "title": "The Best Things in Life",
+                "authors": [
+                    "Peter Kreeft"
+                ],
+                "publisher": "IVP Books",
+                "year": "1984",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=9g0tAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Discovery of Deduction": [
+        {
+            "9781600510335": {
+                "isbn_input": "9781600510335",
+                "isbn13": "9781600510335",
+                "isbn10": "1600510337",
+                "title": "The Discovery of Deduction",
+                "authors": [
+                    "Joelle Hodge",
+                    "Aaron Larsen",
+                    "Shelly Johnson"
+                ],
+                "publisher": null,
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=avDTkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         }
     ]
