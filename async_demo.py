@@ -81,7 +81,7 @@ async def demo_performance_comparison():
     print(f"Performance test with ISBN: {isbn}")
 
     print("\n🐌 Theoretical Sequential Time:")
-    print("   - BookScouter: ~8 seconds")
+    print("   - AbeBooks: ~8 seconds")
     print("   - Christianbook: ~8 seconds")
     print("   - RainbowResource: ~8 seconds")
     print("   - Total: ~24 seconds")

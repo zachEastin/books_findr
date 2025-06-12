@@ -128,7 +128,6 @@ if __name__ == "__main__":
     test_logger.error("This is an error")
 
     # Test scrape logging
-    log_scrape_result(test_logger, "9780134685991", "BookScouter", True, 45.99)
     log_scrape_result(test_logger, "9780134685991", "Christianbook", False, error="Connection timeout")
 
     print(f"Log files created in: {LOGS_DIR}")

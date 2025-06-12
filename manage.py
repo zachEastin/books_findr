@@ -35,7 +35,7 @@ def main():
     scrape_parser.add_argument("--all", action="store_true", help="Scrape all ISBNs from file")
     scrape_parser.add_argument(
         "--source",
-        choices=["bookscouter", "christianbook", "rainbowresource", "camelcamelcamel"],
+        choices=["christianbook", "rainbowresource", "abebooks", "camelcamelcamel"],
         help="Scrape from specific source only",
     )
 
