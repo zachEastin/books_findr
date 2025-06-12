@@ -178,11 +178,35 @@
         .source-badge {
             display: inline-block;
             white-space: nowrap;
-        }
-
-        /* Compact price display */
+        }        /* Compact price display */
         .price-compact {
             font-family: monospace;
+        }
+
+        /* Responsive tab styling */
+        .tabs .tab {
+            min-width: 60px;
+        }
+        
+        .tabs .tab a {
+            font-size: 12px;
+            padding: 0 8px;
+        }
+
+        @media only screen and (max-width: 992px) {
+            .tabs .tab a {
+                font-size: 10px;
+                padding: 0 4px;
+            }
+        }
+
+        /* Grade content styling */
+        .grade-content {
+            padding-top: 20px;
+        }
+
+        .grade-content h6 {
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -235,14 +259,13 @@
         <div class="card-panel red lighten-4">
             <span class="red-text"><strong>Error:</strong> {{ error }}</span>
         </div>
-        {% endif %}
-
-        <!-- Prices by ISBN Section -->
+        {% endif %}        <!-- Books by Grade Level Section -->
         <div class="row">
             <div class="col s12">
-                <div class="card">                    <div class="card-content"> <span class="card-title">
-                            <i class="material-icons left">library_books</i>
-                            Books Overview
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">
+                            <i class="material-icons left">school</i>Books by Grade Level
                             <div class="right">
                                 <button class="btn-small blue" onclick="loadISBNData()" style="margin-right: 10px;">
                                     <i class="material-icons left">refresh</i>Refresh
@@ -251,22 +274,126 @@
                                     style="display: none;">autorenew</i>
                             </div>
                         </span>
-                        <div id="isbn-prices-container">
-                            <div class="center-align" style="padding: 2rem;">
-                                <div class="preloader-wrapper small active">
-                                    <div class="spinner-layer spinner-blue-only">
-                                        <div class="circle-clipper left">
-                                            <div class="circle"></div>
-                                        </div>
-                                        <div class="gap-patch">
-                                            <div class="circle"></div>
-                                        </div>
-                                        <div class="circle-clipper right">
-                                            <div class="circle"></div>
+                        
+                        <!-- Grade Level Tabs -->
+                        <div class="row">
+                            <div class="col s12">
+                                <ul class="tabs" id="grade-tabs">
+                                    <li class="tab col"><a class="active" href="#unassigned-books">Unassigned</a></li>
+                                    <li class="tab col"><a href="#kindergarten-books">K</a></li>
+                                    <li class="tab col"><a href="#grade-1-books">1st</a></li>
+                                    <li class="tab col"><a href="#grade-2-books">2nd</a></li>
+                                    <li class="tab col"><a href="#grade-3-books">3rd</a></li>
+                                    <li class="tab col"><a href="#grade-4-books">4th</a></li>
+                                    <li class="tab col"><a href="#grade-5-books">5th</a></li>
+                                    <li class="tab col"><a href="#grade-6-books">6th</a></li>
+                                    <li class="tab col"><a href="#grade-7-books">7th</a></li>
+                                    <li class="tab col"><a href="#grade-8-books">8th</a></li>
+                                    <li class="tab col"><a href="#grade-9-books">9th</a></li>
+                                    <li class="tab col"><a href="#grade-10-books">10th</a></li>
+                                    <li class="tab col"><a href="#grade-11-books">11th</a></li>
+                                    <li class="tab col"><a href="#grade-12-books">12th</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div id="unassigned-books" class="grade-content">
+                            <div id="unassigned-list">
+                                <div class="center-align" style="padding: 2rem;">
+                                    <div class="preloader-wrapper small active">
+                                        <div class="spinner-layer spinner-blue-only">
+                                            <div class="circle-clipper left">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="gap-patch">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="circle-clipper right">
+                                                <div class="circle"></div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <p class="grey-text">Loading book data...</p>
                                 </div>
-                                <p class="grey-text">Loading book data...</p>
+                            </div>
+                        </div>
+
+                        <div id="kindergarten-books" class="grade-content">
+                            <div id="kindergarten-list">
+                                <!-- Kindergarten books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-1-books" class="grade-content">
+                            <div id="grade-1-list">
+                                <!-- 1st grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-2-books" class="grade-content">
+                            <div id="grade-2-list">
+                                <!-- 2nd grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-3-books" class="grade-content">
+                            <div id="grade-3-list">
+                                <!-- 3rd grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-4-books" class="grade-content">
+                            <div id="grade-4-list">
+                                <!-- 4th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-5-books" class="grade-content">
+                            <div id="grade-5-list">
+                                <!-- 5th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-6-books" class="grade-content">
+                            <div id="grade-6-list">
+                                <!-- 6th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-7-books" class="grade-content">
+                            <div id="grade-7-list">
+                                <!-- 7th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-8-books" class="grade-content">
+                            <div id="grade-8-list">
+                                <!-- 8th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-9-books" class="grade-content">
+                            <div id="grade-9-list">
+                                <!-- 9th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-10-books" class="grade-content">
+                            <div id="grade-10-list">
+                                <!-- 10th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-11-books" class="grade-content">
+                            <div id="grade-11-list">
+                                <!-- 11th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-12-books" class="grade-content">
+                            <div id="grade-12-list">
+                                <!-- 12th grade books will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -351,8 +478,7 @@
     </script>
     <!-- Material Design JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-        // Initialize Material Design components
+    <script>        // Initialize Material Design components
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize tooltips
             var tooltips = document.querySelectorAll('.tooltipped');
@@ -365,6 +491,10 @@
             // Initialize selects
             var selects = document.querySelectorAll('select');
             M.FormSelect.init(selects);
+
+            // Initialize tabs
+            var tabsEl = document.querySelectorAll('.tabs');
+            M.Tabs.init(tabsEl);
 
             // Search and filter functionality
             const searchInput = document.getElementById('search-input');
@@ -415,344 +545,429 @@
 
             // Load ISBN-grouped data
             loadISBNData();
-        });    // Function to load and display book-grouped data
+        });    // Function to load and display book-grouped data organized by grade level
     async function loadISBNData() {
-        const container = document.getElementById('isbn-prices-container');
         const loadingIcon = document.getElementById('isbn-loading');
+        
+        // Clear all grade lists
+        const gradeContainers = [
+            'unassigned-list', 'kindergarten-list', 'grade-1-list', 'grade-2-list',
+            'grade-3-list', 'grade-4-list', 'grade-5-list', 'grade-6-list',
+            'grade-7-list', 'grade-8-list', 'grade-9-list', 'grade-10-list',
+            'grade-11-list', 'grade-12-list'
+        ];
+        
+        gradeContainers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = '<div class="center-align" style="padding: 2rem;"><p class="grey-text">Loading books...</p></div>';
+            }
+        });
 
         try {
             loadingIcon.style.display = 'inline-block';
 
-            const response = await fetch('/api/prices-by-book');
-            const result = await response.json();
+            // Load both books and grades data
+            const [booksResponse, gradesResponse] = await Promise.all([
+                fetch('/api/prices-by-book'),
+                fetch('/api/grades')
+            ]);
+            
+            if (!booksResponse.ok || !gradesResponse.ok) {
+                throw new Error('Failed to load data');
+            }
+            
+            const booksResult = await booksResponse.json();
+            const gradesData = await gradesResponse.json();
 
-            if (result.error) {
-                throw new Error(result.error);
+            if (booksResult.error) {
+                throw new Error(booksResult.error);
             }
 
-            if (!result.data || Object.keys(result.data).length === 0) {
-                container.innerHTML = `
-                        <div class="center-align" style="padding: 2rem;">
-                            <i class="material-icons large grey-text">inbox</i>
-                            <h5 class="grey-text">No book data available</h5>
-                            <p class="grey-text">No price data found for any books.</p>
-                        </div>
-                    `;
+            if (!booksResult.data || Object.keys(booksResult.data).length === 0) {
+                gradeContainers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="center-align" style="padding: 2rem;">
+                                <i class="material-icons large grey-text">inbox</i>
+                                <h5 class="grey-text">No book data available</h5>
+                                <p class="grey-text">No price data found for any books.</p>
+                            </div>
+                        `;
+                    }
+                });
                 return;
             }
 
-            // Create HTML for each book
-            let html = '';
-            Object.values(result.data).forEach(bookData => {
-                const bestPrice = bookData.best_current_price;
-                const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
+            // Organize books by grade level
+            const gradeMapping = {
+                'Kindergarten': 'kindergarten-list',
+                '1st Grade': 'grade-1-list',
+                '2nd Grade': 'grade-2-list',
+                '3rd Grade': 'grade-3-list',
+                '4th Grade': 'grade-4-list',
+                '5th Grade': 'grade-5-list',
+                '6th Grade': 'grade-6-list',
+                '7th Grade': 'grade-7-list',
+                '8th Grade': 'grade-8-list',
+                '9th Grade': 'grade-9-list',
+                '10th Grade': 'grade-10-list',
+                '11th Grade': 'grade-11-list',
+                '12th Grade': 'grade-12-list'
+            };
+            
+            // Create reverse mapping to find which grade a book belongs to
+            const bookToGrade = {};
+            for (const [gradeName, bookList] of Object.entries(gradesData)) {
+                bookList.forEach(bookTitle => {
+                    bookToGrade[bookTitle] = gradeName;
+                });
+            }
+            
+            // Clear all containers
+            gradeContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '';
+                }
+            });
 
-                html += `
-                        <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; min-height: 280px;">
-                            <div class="row" style="margin-bottom: 0.5rem; min-height: 250px;">
-                                <div class="col s12 m3" style="display: flex; flex-direction: column; align-items: center;">
-                                    <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container" style="width: 180px; height: 200px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; text-align: center; margin-bottom: 0.5rem;">
-                                        Loading...
-                                    </div>
-                                    <div id="image-actions-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions" style="display: none;">
-                                        <div class="dropdown-trigger btn-small orange" data-target="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; padding: 0 0.5rem; font-size: 0.7rem;">
-                                            <i class="material-icons tiny">image</i> Get Image
-                                        </div>
-                                        <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
-                                            <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'bookscouter')">BookScouter</a></li>
-                                            <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
-                                            <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
-                                        </ul>
-                                    </div>
+            // Organize and display books
+            Object.entries(booksResult.data).forEach(([title, bookData]) => {
+                const assignedGrade = bookToGrade[title];
+                const containerId = assignedGrade ? gradeMapping[assignedGrade] : 'unassigned-list';
+                const container = document.getElementById(containerId);
+                
+                if (container) {
+                    container.innerHTML += generateBookHTML(bookData);
+                }
+            });
+
+            // Show empty messages for grade levels with no books
+            gradeContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container && container.innerHTML === '') {
+                    container.innerHTML = '<div class="center-align grey-text" style="padding: 2rem;">No books assigned to this grade level</div>';
+                }
+            });
+
+            // Initialize dropdowns and collapsibles after adding HTML
+            M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
+            M.Collapsible.init(document.querySelectorAll('.collapsible'));
+
+            // Load images for each book
+            Object.values(booksResult.data).forEach(bookData => {
+                loadBookImageForBook(bookData.title, bookData.isbns, bookData.icon_url);
+            });
+
+        } catch (error) {
+            console.error('Error loading book data:', error);
+            gradeContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `
+                        <div class="center-align" style="padding: 2rem;">
+                            <i class="material-icons large red-text">error</i>
+                            <h5 class="red-text">Error Loading Data</h5>
+                            <p class="grey-text">${error.message}</p>
+                            <button class="btn blue" onclick="loadISBNData()">
+                                <i class="material-icons left">refresh</i>Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+        } finally {
+            loadingIcon.style.display = 'none';
+        }
+    }
+
+    // Generate HTML for a single book card
+    function generateBookHTML(bookData) {
+        const bestPrice = bookData.best_current_price;
+        const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
+
+        let html = `
+            <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; min-height: 280px;">
+                <div class="row" style="margin-bottom: 0.5rem; min-height: 250px;">
+                    <div class="col s12 m3" style="display: flex; flex-direction: column; align-items: center;">
+                        <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container" style="width: 180px; height: 200px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; text-align: center; margin-bottom: 0.5rem;">
+                            Loading...
+                        </div>
+                        <div id="image-actions-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions" style="display: none;">
+                            <div class="dropdown-trigger btn-small orange" data-target="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; padding: 0 0.5rem; font-size: 0.7rem;">
+                                <i class="material-icons tiny">image</i> Get Image
+                            </div>
+                            <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
+                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'bookscouter')">BookScouter</a></li>
+                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
+                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col s12 m6" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h6 class="book-title" style="margin: 0 0 0.5rem 0; font-weight: 600; color: #2d3748; font-size: 1.3rem;">
+                                ${bookData.title}
+                            </h6>
+                            <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
+                                <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
+                            </p>
+                        </div>
+                        <div class="row" style="margin-top: 1rem;">
+                            <div class="col s6">
+                                <div class="center-align">
+                                    <strong class="blue-text">${bookData.sources.length}</strong>
+                                    <br><small>Sources</small>
                                 </div>
-                                <div class="col s12 m6" style="display: flex; flex-direction: column; justify-content: space-between;">
-                                    <div>
-                                        <h6 class="book-title" style="margin: 0 0 0.5rem 0; font-weight: 600; color: #2d3748; font-size: 1.3rem;">
-                                            ${bookData.title}
-                                        </h6>
-                                        <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
-                                            <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
-                                        </p>
-                                    </div>
-                                    <div class="row" style="margin-top: 1rem;">
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                <strong class="blue-text">${bookData.sources.length}</strong>
-                                                <br><small>Sources</small>
-                                            </div>
-                                        </div>
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
-                                                <br><small>Success Rate</small>
-                                            </div>
-                                        </div>
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                <strong class="orange-text">${bookData.current_price_count || 0}</strong>
-                                                <br><small>Valid Prices</small>
-                                            </div>
-                                        </div>
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                ${bookData.avg_current_price ? `
-                                                    <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
-                                                    <br><small>Avg Price</small>
-                                                ` : `
-                                                    <strong class="grey-text">N/A</strong>
-                                                    <br><small>Avg Price</small>
-                                                `}
-                                            </div>
-                                        </div>
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                ${bookData.lowest_price_ever ? `
-                                                    <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
-                                                    <br><small>Lowest Ever (${new Date(bookData.lowest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
-                                                ` : `
-                                                    <strong class="grey-text">N/A</strong>
-                                                    <br><small>Lowest Ever</small>
-                                                `}
-                                            </div>
-                                        </div>
-                                        <div class="col s6">
-                                            <div class="center-align">
-                                                ${bookData.highest_price_ever ? `
-                                                    <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
-                                                    <br><small>Highest Ever (${new Date(bookData.highest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
-                                                ` : `
-                                                    <strong class="grey-text">N/A</strong>
-                                                    <br><small>Highest Ever</small>
-                                                `}
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="col s6">
+                                <div class="center-align">
+                                    <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
+                                    <br><small>Success Rate</small>
                                 </div>
-                                <div class="col s12 m3" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                    ${bestPrice ? `
-                                        ${bookData.best_price_url ? `
-                                            <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass.replace('-text', '')}" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; align-items: center;">
-                                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
-                                                    $${bestPrice.toFixed(2)}
-                                                </div>
-                                            </a>
-                                        ` : `
-                                            <div class="btn-large ${priceClass.replace('-text', '')} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; align-items: center;">
-                                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
-                                                    $${bestPrice.toFixed(2)}
-                                                </div>
-                                            </div>
-                                        `}
+                            </div>
+                            <div class="col s6">
+                                <div class="center-align">
+                                    <strong class="orange-text">${bookData.current_price_count || 0}</strong>
+                                    <br><small>Valid Prices</small>
+                                </div>
+                            </div>
+                            <div class="col s6">
+                                <div class="center-align">
+                                    ${bookData.avg_current_price ? `
+                                        <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
+                                        <br><small>Avg Price</small>
                                     ` : `
-                                        <div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center;">
-                                            <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem;">
-                                                N/A
-                                            </div>
-                                            <div style="font-size: 0.9rem;">No Price Data</div>
-                                        </div>
+                                        <strong class="grey-text">N/A</strong>
+                                        <br><small>Avg Price</small>
                                     `}
                                 </div>
-                            </div>                            
-                            <!-- Collapsible ISBN Breakdown -->
-                            <ul class="collapsible" style="margin-top: 1rem; box-shadow: none; -webkit-box-shadow: none;">
-                                <li>
-                                    <div class="collapsible-header" style="padding: 0.5rem 1rem;">
-                                        <i class="material-icons">expand_more</i>
-                                        <span style="font-weight: 600;">Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
-                                    </div>
-                                    <div class="collapsible-body" style="padding: 1rem;">
-                                        <div class="row" style="margin-bottom: 0;">
-                `;
-
-                // Add individual ISBN entries
-                Object.values(bookData.isbn_details).forEach(isbnData => {
-                    const isbnBestPrice = isbnData.min_price;
-                    const isbnPriceClass = isbnBestPrice ? 
-                        (isbnBestPrice > 50 ? 'price-high' : isbnBestPrice > 25 ? 'price-medium' : 'price-low') : 
-                        'grey-text';
-
-                    html += `
-                            <div class="col s12 m6" style="margin-bottom: 1rem;">
-                                <div class="card" style="padding: 1rem; border: 1px solid #f0f0f0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                        <span class="isbn-code" style="font-size: 0.9rem;">${isbnData.isbn}</span>
-                                        ${isbnBestPrice ? `
-                                            <span class="${isbnPriceClass}" style="font-weight: 600;">$${isbnBestPrice.toFixed(2)}</span>
-                                        ` : `
-                                            <span class="grey-text">No Price</span>
-                                        `}
-                                    </div>
-                                    <div class="row" style="margin-bottom: 0.5rem;">
-                                        <div class="col s4">
-                                            <small><strong>${isbnData.sources.length}</strong><br>Sources</small>
-                                        </div>
-                                        <div class="col s4">
-                                            <small><strong>${isbnData.successful_records}/${isbnData.total_records}</strong><br>Success</small>
-                                        </div>
-                                        <div class="col s4">
-                                            <small><strong>${isbnData.price_count || 0}</strong><br>Valid Prices</small>
-                                        </div>
-                                    </div>
-                                    ${isbnData.avg_price ? `
-                                        <div style="margin-bottom: 0.5rem;">
-                                            <small><strong>Avg:</strong> $${isbnData.avg_price.toFixed(2)}</small>
-                                            ${isbnData.max_price ? `<span style="margin-left: 1rem;"><small><strong>Max:</strong> $${isbnData.max_price.toFixed(2)}</small></span>` : ''}
-                                        </div>
-                                    ` : ''}
-                                      <!-- Collapsible source details for this ISBN -->
-                                    <ul class="collapsible" style="margin-top: 0.5rem; box-shadow: none; border: 1px solid #e0e0e0;">
-                                        <li>
-                                            <div class="collapsible-header" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                                <i class="material-icons tiny">expand_more</i>
-                                                <span>Source Details (${isbnData.prices.length})</span>
-                                            </div>
-                                            <div class="collapsible-body" style="padding: 0.5rem;">
-                    `;
-
-                    // Group prices by date
-                    const pricesByDate = {};
-                    isbnData.prices.forEach(priceData => {
-                        const date = priceData.timestamp ? new Date(priceData.timestamp).toDateString() : 'Unknown Date';
-                        if (!pricesByDate[date]) {
-                            pricesByDate[date] = [];
-                        }
-                        pricesByDate[date].push(priceData);
-                    });
-
-                    // Sort dates (newest first)
-                    const sortedDates = Object.keys(pricesByDate).sort((a, b) => {
-                        if (a === 'Unknown Date') return 1;
-                        if (b === 'Unknown Date') return -1;
-                        return new Date(b) - new Date(a);
-                    });
-
-                    // Create nested collapsibles for each date
-                    sortedDates.forEach((date, dateIndex) => {
-                        const isLatest = dateIndex === 0 && date !== 'Unknown Date';
-                        const formattedDate = date === 'Unknown Date' ? 'Unknown Date' : 
-                            new Date(date).toLocaleDateString(undefined, { 
-                                weekday: 'short', 
-                                month: 'short', 
-                                day: 'numeric',
-                                year: 'numeric'
-                            });
-                        
-                        html += `
-                            <ul class="collapsible" style="margin: 0.25rem 0; box-shadow: none; border: 1px solid #e9e9e9;">
-                                <li class="${isLatest ? 'active' : ''}">
-                                    <div class="collapsible-header" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; background: ${isLatest ? '#e3f2fd' : '#f9f9f9'};">
-                                        <i class="material-icons tiny" style="font-size: 16px;">date_range</i>
-                                        <span style="font-weight: 500; margin-left: 0.25rem;">${formattedDate}</span>
-                                        <span class="new badge ${isLatest ? 'blue' : 'grey'} white-text" data-badge-caption="" style="margin-left: auto; font-size: 0.7rem; padding: 0.1rem 0.3rem; min-width: 1.5rem;">${pricesByDate[date].length}</span>
-                                    </div>
-                                    <div class="collapsible-body" style="padding: 0.3rem; ${isLatest ? 'display: block;' : ''}">
-                        `;
-
-                        // Add sources for this date - group by source for compact display
-                        const sourcesByName = {};
-                        pricesByDate[date].forEach(priceData => {
-                            if (!sourcesByName[priceData.source]) {
-                                sourcesByName[priceData.source] = [];
-                            }
-                            sourcesByName[priceData.source].push(priceData);
-                        });
-
-                        Object.entries(sourcesByName).forEach(([sourceName, sourcePrices]) => {
-                            // Use the most recent price for this source on this date
-                            const priceData = sourcePrices.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))[0];
-                            
-                            const sourceClass = priceData.source.toLowerCase().replace(/[^a-z]/g, '');
-                            const priceDisplay = priceData.price ? `$${priceData.price.toFixed(2)}` : 'N/A';
-                            const priceTextClass = priceData.price ?
-                                (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
-                                'grey-text';
-
-                            // Make the whole row clickable if url exists
-                            if (priceData.url) {
-                                html += `
-                                    <a href="${priceData.url}" target="_blank" style="text-decoration: none; color: inherit; display: block; margin-bottom: 0.3rem;">
-                                        <div style="padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem; cursor: pointer;">
-                                            <div style="display: flex; align-items: center; flex: 1;">
-                                                <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
-                                                <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
-                                            </div>
-                                            <div style="display: flex; align-items: center;">
-                                                ${priceData.success === true ?
-                                                    '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
-                                                    '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
-                                                }
-                                                <i class="material-icons tiny" style="font-size: 14px; margin-left: 0.3rem; color: #1976d2;">open_in_new</i>
-                                            </div>
-                                        </div>
-                                    </a>
-                                `;
-                            } else {
-                                html += `
-                                    <div style="margin-bottom: 0.3rem; padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem;">
-                                        <div style="display: flex; align-items: center; flex: 1;">
-                                            <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
-                                            <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center;">
-                                            ${priceData.success === true ?
-                                                '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
-                                                '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
-                                            }
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        });                        html += `
-                                    </div>
-                                </li>
-                            </ul>
-                        `;
-                    });
-
-                    html += `
+                            </div>
+                            <div class="col s6">
+                                <div class="center-align">
+                                    ${bookData.lowest_price_ever ? `
+                                        <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
+                                        <br><small>Lowest Ever (${new Date(bookData.lowest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
+                                    ` : `
+                                        <strong class="grey-text">N/A</strong>
+                                        <br><small>Lowest Ever</small>
+                                    `}
+                                </div>
+                            </div>
+                            <div class="col s6">
+                                <div class="center-align">
+                                    ${bookData.highest_price_ever ? `
+                                        <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
+                                        <br><small>Highest Ever (${new Date(bookData.highest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
+                                    ` : `
+                                        <strong class="grey-text">N/A</strong>
+                                        <br><small>Highest Ever</small>
+                                    `}
                                 </div>
                             </div>
                         </div>
-                    `;
+                    </div>
+                    <div class="col s12 m3" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        ${bestPrice ? `
+                            ${bookData.best_price_url ? `
+                                <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass.replace('-text', '')}" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; align-items: center;">
+                                    <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
+                                        $${bestPrice.toFixed(2)}
+                                    </div>
+                                </a>
+                            ` : `
+                                <div class="btn-large ${priceClass.replace('-text', '')} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; align-items: center;">
+                                    <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
+                                        $${bestPrice.toFixed(2)}
+                                    </div>
+                                </div>
+                            `}
+                        ` : `
+                            <div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem;">
+                                    N/A
+                                </div>
+                                <div style="font-size: 0.9rem;">No Price Data</div>
+                            </div>
+                        `}
+                    </div>
+                </div>                            
+                <!-- Collapsible ISBN Breakdown -->
+                <ul class="collapsible" style="margin-top: 1rem; box-shadow: none; -webkit-box-shadow: none;">
+                    <li>
+                        <div class="collapsible-header" style="padding: 0.5rem 1rem;">
+                            <i class="material-icons">expand_more</i>
+                            <span style="font-weight: 600;">Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
+                        </div>
+                        <div class="collapsible-body" style="padding: 1rem;">
+                            <div class="row" style="margin-bottom: 0;">
+        `;
+
+        // Add individual ISBN entries
+        Object.values(bookData.isbn_details).forEach(isbnData => {
+            const isbnBestPrice = isbnData.min_price;
+            const isbnPriceClass = isbnBestPrice ? 
+                (isbnBestPrice > 50 ? 'price-high' : isbnBestPrice > 25 ? 'price-medium' : 'price-low') : 
+                'grey-text';
+
+            html += `
+                <div class="col s12 m6" style="margin-bottom: 1rem;">
+                    <div class="card" style="padding: 1rem; border: 1px solid #f0f0f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span class="isbn-code" style="font-size: 0.9rem;">${isbnData.isbn}</span>
+                            ${isbnBestPrice ? `
+                                <span class="${isbnPriceClass}" style="font-weight: 600;">$${isbnBestPrice.toFixed(2)}</span>
+                            ` : `
+                                <span class="grey-text">No Price</span>
+                            `}
+                        </div>
+                        <div class="row" style="margin-bottom: 0.5rem;">
+                            <div class="col s4">
+                                <small><strong>${isbnData.sources.length}</strong><br>Sources</small>
+                            </div>
+                            <div class="col s4">
+                                <small><strong>${isbnData.successful_records}/${isbnData.total_records}</strong><br>Success</small>
+                            </div>
+                            <div class="col s4">
+                                <small><strong>${isbnData.price_count || 0}</strong><br>Valid Prices</small>
+                            </div>
+                        </div>
+                        ${isbnData.avg_price ? `
+                            <div style="margin-bottom: 0.5rem;">
+                                <small><strong>Avg:</strong> $${isbnData.avg_price.toFixed(2)}</small>
+                                ${isbnData.max_price ? `<span style="margin-left: 1rem;"><small><strong>Max:</strong> $${isbnData.max_price.toFixed(2)}</small></span>` : ''}
+                            </div>
+                        ` : ''}
+                          <!-- Collapsible source details for this ISBN -->
+                        <ul class="collapsible" style="margin-top: 0.5rem; box-shadow: none; border: 1px solid #e0e0e0;">
+                            <li>
+                                <div class="collapsible-header" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    <i class="material-icons tiny">expand_more</i>
+                                    <span>Source Details (${isbnData.prices.length})</span>
+                                </div>
+                                <div class="collapsible-body" style="padding: 0.5rem;">
+            `;
+
+            // Group prices by date
+            const pricesByDate = {};
+            isbnData.prices.forEach(priceData => {
+                const date = priceData.timestamp ? new Date(priceData.timestamp).toDateString() : 'Unknown Date';
+                if (!pricesByDate[date]) {
+                    pricesByDate[date] = [];
+                }
+                pricesByDate[date].push(priceData);
+            });
+
+            // Sort dates (newest first)
+            const sortedDates = Object.keys(pricesByDate).sort((a, b) => {
+                if (a === 'Unknown Date') return 1;
+                if (b === 'Unknown Date') return -1;
+                return new Date(b) - new Date(a);
+            });
+
+            // Create nested collapsibles for each date
+            sortedDates.forEach((date, dateIndex) => {
+                const isLatest = dateIndex === 0 && date !== 'Unknown Date';
+                const formattedDate = date === 'Unknown Date' ? 'Unknown Date' : 
+                    new Date(date).toLocaleDateString(undefined, { 
+                        weekday: 'short', 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                
+                html += `
+                    <ul class="collapsible" style="margin: 0.25rem 0; box-shadow: none; border: 1px solid #e9e9e9;">
+                        <li class="${isLatest ? 'active' : ''}">
+                            <div class="collapsible-header" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; background: ${isLatest ? '#e3f2fd' : '#f9f9f9'};">
+                                <i class="material-icons tiny" style="font-size: 16px;">date_range</i>
+                                <span style="font-weight: 500; margin-left: 0.25rem;">${formattedDate}</span>
+                                <span class="new badge ${isLatest ? 'blue' : 'grey'} white-text" data-badge-caption="" style="margin-left: auto; font-size: 0.7rem; padding: 0.1rem 0.3rem; min-width: 1.5rem;">${pricesByDate[date].length}</span>
+                            </div>
+                            <div class="collapsible-body" style="padding: 0.3rem; ${isLatest ? 'display: block;' : ''}">
+                `;
+
+                // Add sources for this date - group by source for compact display
+                const sourcesByName = {};
+                pricesByDate[date].forEach(priceData => {
+                    if (!sourcesByName[priceData.source]) {
+                        sourcesByName[priceData.source] = [];
+                    }
+                    sourcesByName[priceData.source].push(priceData);
+                });
+
+                Object.entries(sourcesByName).forEach(([sourceName, sourcePrices]) => {
+                    // Use the most recent price for this source on this date
+                    const priceData = sourcePrices.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))[0];
+                    
+                    const sourceClass = priceData.source.toLowerCase().replace(/[^a-z]/g, '');
+                    const priceDisplay = priceData.price ? `$${priceData.price.toFixed(2)}` : 'N/A';
+                    const priceTextClass = priceData.price ?
+                        (priceData.price > 50 ? 'price-high' : priceData.price > 25 ? 'price-medium' : 'price-low') :
+                        'grey-text';
+
+                    // Make the whole row clickable if url exists
+                    if (priceData.url) {
+                        html += `
+                            <a href="${priceData.url}" target="_blank" style="text-decoration: none; color: inherit; display: block; margin-bottom: 0.3rem;">
+                                <div style="padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem; cursor: pointer;">
+                                    <div style="display: flex; align-items: center; flex: 1;">
+                                        <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
+                                        <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        ${priceData.success === true ?
+                                            '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
+                                            '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
+                                        }
+                                        <i class="material-icons tiny" style="font-size: 14px; margin-left: 0.3rem; color: #1976d2;">open_in_new</i>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                    } else {
+                        html += `
+                            <div style="margin-bottom: 0.3rem; padding: 0.2rem; border: 1px solid #f0f0f0; border-radius: 3px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; min-height: 2rem;">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <span class="source-badge source-${sourceClass}" style="font-size: 0.7rem; padding: 2px 6px;">${priceData.source}</span>
+                                    <span class="${priceTextClass}" style="font-weight: 600; font-size: 0.75rem; margin-left: 0.5rem;">${priceDisplay}</span>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    ${priceData.success === true ?
+                                        '<i class="material-icons tiny green-text" style="font-size: 14px;">check_circle</i>' :
+                                        '<i class="material-icons tiny red-text" style="font-size: 14px;">error</i>'
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
 
                 html += `
                             </div>
                         </li>
                     </ul>
-                </div>
                 `;
             });
 
-            container.innerHTML = html;
-
-            // Initialize dropdowns after adding HTML
-            M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
-            
-            // Initialize collapsibles after adding HTML  
-            M.Collapsible.init(document.querySelectorAll('.collapsible'));
-
-            // Load images for each book
-            Object.values(result.data).forEach(bookData => {
-                loadBookImageForBook(bookData.title, bookData.isbns, bookData.icon_url);
-            });
-
-        } catch (error) {
-            console.error('Error loading book data:', error);
-            container.innerHTML = `
-                    <div class="center-align" style="padding: 2rem;">
-                        <i class="material-icons large red-text">error</i>
-                        <h5 class="red-text">Error Loading Data</h5>
-                        <p class="grey-text">${error.message}</p>
-                        <button class="btn blue" onclick="loadISBNData()">
-                            <i class="material-icons left">refresh</i>Retry
-                        </button>
+            html += `
+                        </div>
                     </div>
-                `;
-        } finally {
-            loadingIcon.style.display = 'none';
-        }
-    }    // Load book image for book title using first available ISBN
+                </div>
+            `;
+        });
+
+        html += `
+                    </div>
+                </li>
+            </ul>
+        </div>
+        `;
+        
+        return html;
+    }// Load book image for book title using first available ISBN
     async function loadBookImageForBook(bookTitle, isbns, iconUrl) {
         const imageId = `book-image-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
         const imageElement = document.getElementById(imageId);
