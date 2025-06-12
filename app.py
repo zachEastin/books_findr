@@ -12,6 +12,7 @@ import json
 import html
 import io
 import asyncio
+from threading import Lock
 
 # Import visualization module
 try:
@@ -30,6 +31,7 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 PRICES_CSV = DATA_DIR / "prices.csv"
 LOGS_DIR = BASE_DIR / "logs"
+GRADES_FILE = DATA_DIR / "grades.json"
 
 # Ensure directories exist
 DATA_DIR.mkdir(exist_ok=True)
@@ -42,6 +44,8 @@ logging.basicConfig(
     handlers=[logging.FileHandler(LOGS_DIR / "app.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
+
+grade_db_lock = Lock()
 
 
 def load_prices_data():
@@ -201,6 +205,7 @@ def add_book_isbn():
         author = data.get("author", "").strip()
         icon_url = data.get("icon_url", "").strip()
         patch_icon = data.get("patch_icon", False)
+        grade = data.get("grade", "").strip()
 
         books_file = BASE_DIR / "books.json"
         books = json.loads(books_file.read_bytes()) if books_file.exists() else {}
@@ -340,11 +345,26 @@ def add_book_isbn():
                 if result["success"]:
                     isbn_list.append({isbn_candidate: result["metadata"]})
                     added += 1
-                seen.add(isbn_candidate)
-        
+                seen.add(isbn_candidate)        
         if added:
             books_file.write_text(json.dumps(books, indent=4))
             logger.info(f"Added {added} ISBNs under {title}")
+            
+            # Assign to grade level if specified
+            if grade:
+                try:
+                    with grade_db_lock:
+                        grades = load_grades()
+                        if grade not in grades:
+                            grades[grade] = []
+                        if title not in grades[grade]:
+                            grades[grade].append(title)
+                            save_grades(grades)
+                            logger.info(f"Assigned '{title}' to {grade}")
+                except Exception as e:
+                    logger.error(f"Error assigning book to grade: {e}")
+                    # Don't fail the entire operation if grade assignment fails
+            
             return jsonify({"message": f"Added {added} ISBN(s)"})
         else:
             return jsonify({"error": "No ISBNs added"}), 400
@@ -1394,6 +1414,136 @@ def cleanup_images():
             
     except Exception as e:
         logger.error(f"Error during image cleanup: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# --- Grade Level Book Grouping API ---
+
+# Helper to load grades.json
+def load_grades() -> dict[str, list[str]]:
+    if not GRADES_FILE.exists():
+        return {}
+    with open(GRADES_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+# Helper to save grades.json
+def save_grades(grades: dict[str, list[str]]):
+    with open(GRADES_FILE, "w", encoding="utf-8") as f:
+        json.dump(grades, f, indent=2)
+
+# Helper to load books.json
+def load_books():
+    books_file = BASE_DIR / "books.json"
+    if not books_file.exists():
+        return {}
+    with open(books_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.route("/api/grades", methods=["GET"])
+def get_grades():
+    """Get all grade groupings"""
+    try:
+        grades = load_grades()
+        return jsonify(grades)
+    except Exception as e:
+        logger.error(f"Error loading grades: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/grades/add", methods=["POST"])
+def add_book_to_grade():
+    """Add a book to a grade level"""
+    try:
+        data = request.json or {}
+        grade = data.get("grade")
+        book = data.get("book")
+        if not grade or not book:
+            return jsonify({"error": "Missing grade or book"}), 400
+        with grade_db_lock:
+            grades = load_grades()
+            books = load_books()
+            if book not in books:
+                return jsonify({"error": "Book not found in books.json"}), 404
+            if grade not in grades:
+                grades[grade] = []
+            if book in grades[grade]:
+                return jsonify({"error": "Book already in grade"}), 400
+            grades[grade].append(book)
+            save_grades(grades)
+        return jsonify({"message": f"Added '{book}' to {grade}"})
+    except Exception as e:
+        logger.error(f"Error adding book to grade: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/grades/remove", methods=["POST"])
+def remove_book_from_grade():
+    """Remove a book from a grade level"""
+    try:
+        data = request.json or {}
+        grade = data.get("grade")
+        book = data.get("book")
+        if not grade or not book:
+            return jsonify({"error": "Missing grade or book"}), 400
+        with grade_db_lock:
+            grades = load_grades()
+            if grade not in grades or book not in grades[grade]:
+                return jsonify({"error": "Book not in grade"}), 404
+            grades[grade].remove(book)
+            save_grades(grades)
+        return jsonify({"message": f"Removed '{book}' from {grade}"})
+    except Exception as e:
+        logger.error(f"Error removing book from grade: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/grades/remove_all", methods=["POST"])
+def remove_book_from_all_grades():
+    """Remove a book from all grades"""
+    try:
+        data = request.json or {}
+        book = data.get("book")
+        if not book:
+            return jsonify({"error": "Missing book"}), 400
+        with grade_db_lock:
+            grades = load_grades()
+            found = False
+            for grade in grades:
+                if book in grades[grade]:
+                    grades[grade].remove(book)
+                    found = True
+            if not found:
+                return jsonify({"error": "Book not found in any grade"}), 404
+            save_grades(grades)
+        return jsonify({"message": f"Removed '{book}' from all grades"})
+    except Exception as e:
+        logger.error(f"Error removing book from all grades: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/grades/move", methods=["POST"])
+def move_book_to_grade():
+    """Remove a book from all grades and add to a given grade"""
+    try:
+        data = request.json or {}
+        grade = data.get("grade")
+        book = data.get("book")
+        if not grade or not book:
+            return jsonify({"error": "Missing grade or book"}), 400
+        with grade_db_lock:
+            grades = load_grades()
+            books = load_books()
+            if book not in books:
+                return jsonify({"error": "Book not found in books.json"}), 404
+            # Remove from all grades
+            for g in grades:
+                if book in grades[g]:
+                    grades[g].remove(book)
+            # Add to new grade
+            if grade not in grades:
+                grades[grade] = []
+            if book not in grades[grade]:
+                grades[grade].append(book)
+            save_grades(grades)
+        return jsonify({"message": f"Moved '{book}' to {grade}"})
+    except Exception as e:
+        logger.error(f"Error moving book to grade: {e}")
         return jsonify({"error": str(e)}), 500
 
 

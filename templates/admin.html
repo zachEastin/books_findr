@@ -109,15 +109,59 @@
         .isbn-item-subgroup:hover {
             background: #e3e6ee !important;
             box-shadow: 0 2px 6px #d0d3db;
-        }
-
-        /* Rotating animation for sync icon */
+        }        /* Rotating animation for sync icon */
         .rotating {
             animation: rotating 1s linear infinite;
         }
         @keyframes rotating {
             from { transform: rotate(0deg); }
             to { transform: rotate(-360deg); }
+        }
+
+        /* Grade content styling */
+        .grade-content {
+            padding-top: 20px;
+        }
+
+        .grade-content h6 {
+            margin-bottom: 15px;
+        }
+
+        /* Responsive tab styling */
+        .tabs .tab {
+            min-width: 60px;
+        }
+        
+        .tabs .tab a {
+            font-size: 12px;
+            padding: 0 8px;
+        }        @media only screen and (max-width: 992px) {
+            .tabs .tab a {
+                font-size: 10px;
+                padding: 0 4px;
+            }
+        }
+
+        /* Fix dropdown clipping issues */
+        .dropdown-content {
+            z-index: 9999 !important;
+            max-height: 300px !important;
+            overflow-y: auto !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25) !important;
+        }
+
+        /* Ensure parent containers don't clip dropdowns */
+        .card-content,
+        .collection,
+        .isbn-group,
+        .isbn-group-list,
+        .grade-content {
+            overflow: visible !important;
+        }
+
+        /* Fix for tab content containers */
+        .tabs .tab-content {
+            overflow: visible !important;
         }
     </style>
 </head>
@@ -160,8 +204,7 @@
                                     <li class="tab col s6"><a class="active" href="#add-by-isbn">ISBN</a></li>
                                     <li class="tab col s6"><a href="#add-by-title">Title</a></li>
                                 </ul>
-                            </div>
-                            <div id="add-by-isbn" class="col s12" style="margin-top: 20px;">
+                            </div>                            <div id="add-by-isbn" class="col s12" style="margin-top: 20px;">
                                 <div class="input-field">
                                     <input id="new-title-isbn" type="text" required>
                                     <label for="new-title-isbn">Book Title</label>
@@ -170,11 +213,29 @@
                                     <input id="new-isbn" type="text" required>
                                     <label for="new-isbn">ISBN <span class="red-text">*</span></label>
                                 </div>
+                                <div class="input-field">
+                                    <select id="grade-level-isbn">
+                                        <option value="" disabled selected>Select Grade Level (Optional)</option>
+                                        <option value="Kindergarten">Kindergarten</option>
+                                        <option value="1st Grade">1st Grade</option>
+                                        <option value="2nd Grade">2nd Grade</option>
+                                        <option value="3rd Grade">3rd Grade</option>
+                                        <option value="4th Grade">4th Grade</option>
+                                        <option value="5th Grade">5th Grade</option>
+                                        <option value="6th Grade">6th Grade</option>
+                                        <option value="7th Grade">7th Grade</option>
+                                        <option value="8th Grade">8th Grade</option>
+                                        <option value="9th Grade">9th Grade</option>
+                                        <option value="10th Grade">10th Grade</option>
+                                        <option value="11th Grade">11th Grade</option>
+                                        <option value="12th Grade">12th Grade</option>
+                                    </select>
+                                    <label>Grade Level</label>
+                                </div>
                                 <button class="btn blue waves-effect waves-light" onclick="addISBN('isbn')">
                                     <i class="material-icons left">add</i>Add by ISBN
                                 </button>
-                            </div>
-                            <div id="add-by-title" class="col s12" style="margin-top: 20px;">
+                            </div>                            <div id="add-by-title" class="col s12" style="margin-top: 20px;">
                                 <div class="input-field">
                                     <input id="new-title-title" type="text" required>
                                     <label for="new-title-title">Book Title <span class="red-text">*</span></label>
@@ -182,6 +243,25 @@
                                 <div class="input-field">
                                     <input id="new-author" type="text" required>
                                     <label for="new-author">Author <span class="red-text">*</span></label>
+                                </div>
+                                <div class="input-field">
+                                    <select id="grade-level-title">
+                                        <option value="" disabled selected>Select Grade Level (Optional)</option>
+                                        <option value="Kindergarten">Kindergarten</option>
+                                        <option value="1st Grade">1st Grade</option>
+                                        <option value="2nd Grade">2nd Grade</option>
+                                        <option value="3rd Grade">3rd Grade</option>
+                                        <option value="4th Grade">4th Grade</option>
+                                        <option value="5th Grade">5th Grade</option>
+                                        <option value="6th Grade">6th Grade</option>
+                                        <option value="7th Grade">7th Grade</option>
+                                        <option value="8th Grade">8th Grade</option>
+                                        <option value="9th Grade">9th Grade</option>
+                                        <option value="10th Grade">10th Grade</option>
+                                        <option value="11th Grade">11th Grade</option>
+                                        <option value="12th Grade">12th Grade</option>
+                                    </select>
+                                    <label>Grade Level</label>
                                 </div>
                                 <button class="btn blue waves-effect waves-light" onclick="addISBN('title')">
                                     <i class="material-icons left">add</i>Add by Title & Author
@@ -212,19 +292,135 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- ISBN List -->
+        </div>        <!-- Grade Level Book Organization -->
         <div class="row">
             <div class="col s12">
                 <div class="card admin-card">
                     <div class="card-content">
                         <span class="card-title">
-                            <i class="material-icons left">list</i>Tracked ISBNs
+                            <i class="material-icons left">school</i>Books by Grade Level
                             <span class="badge blue white-text" id="isbn-count">0</span>
                         </span>
-                        <div id="isbn-list" class="collection">
-                            <!-- ISBNs will be loaded here -->
+                        
+                        <!-- Grade Level Tabs -->
+                        <div class="row">
+                            <div class="col s12">
+                                <ul class="tabs" id="grade-tabs">
+                                    <li class="tab col"><a class="active" href="#unassigned-books">Unassigned</a></li>
+                                    <li class="tab col"><a href="#kindergarten-books">K</a></li>
+                                    <li class="tab col"><a href="#grade-1-books">1st</a></li>
+                                    <li class="tab col"><a href="#grade-2-books">2nd</a></li>
+                                    <li class="tab col"><a href="#grade-3-books">3rd</a></li>
+                                    <li class="tab col"><a href="#grade-4-books">4th</a></li>
+                                    <li class="tab col"><a href="#grade-5-books">5th</a></li>
+                                    <li class="tab col"><a href="#grade-6-books">6th</a></li>
+                                    <li class="tab col"><a href="#grade-7-books">7th</a></li>
+                                    <li class="tab col"><a href="#grade-8-books">8th</a></li>
+                                    <li class="tab col"><a href="#grade-9-books">9th</a></li>
+                                    <li class="tab col"><a href="#grade-10-books">10th</a></li>
+                                    <li class="tab col"><a href="#grade-11-books">11th</a></li>
+                                    <li class="tab col"><a href="#grade-12-books">12th</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div id="unassigned-books" class="grade-content">
+                            <h6 class="grey-text">Books not assigned to any grade level</h6>
+                            <div id="unassigned-list" class="collection">
+                                <!-- Unassigned books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="kindergarten-books" class="grade-content">
+                            <h6 class="grey-text">Kindergarten Books</h6>
+                            <div id="kindergarten-list" class="collection">
+                                <!-- Kindergarten books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-1-books" class="grade-content">
+                            <h6 class="grey-text">1st Grade Books</h6>
+                            <div id="grade-1-list" class="collection">
+                                <!-- 1st grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-2-books" class="grade-content">
+                            <h6 class="grey-text">2nd Grade Books</h6>
+                            <div id="grade-2-list" class="collection">
+                                <!-- 2nd grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-3-books" class="grade-content">
+                            <h6 class="grey-text">3rd Grade Books</h6>
+                            <div id="grade-3-list" class="collection">
+                                <!-- 3rd grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-4-books" class="grade-content">
+                            <h6 class="grey-text">4th Grade Books</h6>
+                            <div id="grade-4-list" class="collection">
+                                <!-- 4th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-5-books" class="grade-content">
+                            <h6 class="grey-text">5th Grade Books</h6>
+                            <div id="grade-5-list" class="collection">
+                                <!-- 5th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-6-books" class="grade-content">
+                            <h6 class="grey-text">6th Grade Books</h6>
+                            <div id="grade-6-list" class="collection">
+                                <!-- 6th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-7-books" class="grade-content">
+                            <h6 class="grey-text">7th Grade Books</h6>
+                            <div id="grade-7-list" class="collection">
+                                <!-- 7th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-8-books" class="grade-content">
+                            <h6 class="grey-text">8th Grade Books</h6>
+                            <div id="grade-8-list" class="collection">
+                                <!-- 8th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-9-books" class="grade-content">
+                            <h6 class="grey-text">9th Grade Books</h6>
+                            <div id="grade-9-list" class="collection">
+                                <!-- 9th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-10-books" class="grade-content">
+                            <h6 class="grey-text">10th Grade Books</h6>
+                            <div id="grade-10-list" class="collection">
+                                <!-- 10th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-11-books" class="grade-content">
+                            <h6 class="grey-text">11th Grade Books</h6>
+                            <div id="grade-11-list" class="collection">
+                                <!-- 11th grade books will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="grade-12-books" class="grade-content">
+                            <h6 class="grey-text">12th Grade Books</h6>
+                            <div id="grade-12-list" class="collection">
+                                <!-- 12th grade books will be loaded here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,25 +447,40 @@
     <!-- Material Design JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <script>
-        // Initialize Materialize components
+    <script>        // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
             M.AutoInit();
-            var el = document.querySelectorAll('.tabs');
-            M.Tabs.init(el);
+            
+            // Initialize tabs
+            var tabsEl = document.querySelectorAll('.tabs');
+            M.Tabs.init(tabsEl);
+            
+            // Initialize select elements
+            var selectEl = document.querySelectorAll('select');
+            M.FormSelect.init(selectEl);
+            
+            // Initialize dropdowns (will be called again when books are loaded)
+            var dropdownEls = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(dropdownEls, {
+                constrainWidth: false,
+                coverTrigger: false,
+                closeOnClick: true,
+                alignment: 'right'
+            });
+            
             loadISBNs();
             loadActivity();
-        });        // Load ISBNs
-
-        // Add new ISBN or by title/author
+        });// Load ISBNs        // Add new ISBN or by title/author
         async function addISBN(mode) {
             let title = "";
             let isbn = "";
             let author = "";
+            let gradeLevel = "";
             let btn;
             if (mode === 'isbn') {
                 title = document.getElementById('new-title-isbn').value.trim();
                 isbn = document.getElementById('new-isbn').value.trim();
+                gradeLevel = document.getElementById('grade-level-isbn').value;
                 btn = document.querySelector("#add-by-isbn button");
                 if (!isbn) {
                     M.toast({ html: 'Please enter an ISBN', classes: 'orange' });
@@ -278,6 +489,7 @@
             } else {
                 title = document.getElementById('new-title-title').value.trim();
                 author = document.getElementById('new-author').value.trim();
+                gradeLevel = document.getElementById('grade-level-title').value;
                 btn = document.querySelector("#add-by-title button");
                 if (!title) {
                     M.toast({ html: 'Please enter a title', classes: 'orange' });
@@ -303,18 +515,22 @@
                     body: JSON.stringify({
                         title: title,
                         isbn: mode === 'isbn' ? isbn : '',
-                        author: mode === 'title' ? author : ''
+                        author: mode === 'title' ? author : '',
+                        grade: gradeLevel
                     })
                 });
                 const data = await response.json();
                 if (response.ok) {
                     M.toast({ html: data.message, classes: 'green' });
+                    // Clear input fields but preserve grade level selection
                     if (mode === 'isbn') {
                         document.getElementById('new-title-isbn').value = '';
                         document.getElementById('new-isbn').value = '';
+                        // Don't reset grade level: document.getElementById('grade-level-isbn').value = '';
                     } else {
                         document.getElementById('new-title-title').value = '';
                         document.getElementById('new-author').value = '';
+                        // Don't reset grade level: document.getElementById('grade-level-title').value = '';
                     }
                     loadISBNs();
                 } else {
@@ -419,120 +635,291 @@
                 console.error('Error scraping all ISBNs:', error);
                 M.toast({ html: 'Error scraping all ISBNs', classes: 'red' });
             }
-        }
-
-        // Load ISBNs
+        }        // Load ISBNs organized by grade levels
         async function loadISBNs() {
             const isbnCount = document.getElementById('isbn-count');
             isbnCount.textContent = '0'; // Reset count
-            const isbnList = document.getElementById('isbn-list');
-            isbnList.innerHTML = '<div class="grey-text">Loading ISBNs...</div>';
+            
+            // Clear all grade lists
+            const gradeContainers = [
+                'unassigned-list', 'kindergarten-list', 'grade-1-list', 'grade-2-list',
+                'grade-3-list', 'grade-4-list', 'grade-5-list', 'grade-6-list',
+                'grade-7-list', 'grade-8-list', 'grade-9-list', 'grade-10-list',
+                'grade-11-list', 'grade-12-list'
+            ];
+            
+            gradeContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '<div class="grey-text">Loading books...</div>';
+                }
+            });
 
             try {
-                const response = await fetch('/api/books');
-                if (response.ok) {
-                    const data = await response.json();
-                    isbnCount.textContent = Object.keys(data).length.toString();
-                    if (data && Object.keys(data).length > 0) {
-                        let html = '';
-                        Object.entries(data).forEach(([title, items]) => {
-                            // Find first icon and author for the group
-                            let firstIcon = '';
-                            let firstAuthor = '';
-                            let isbnCount = items.length;
-                            for (let i = 0; i < items.length; i++) {
-                                const meta = items[i][Object.keys(items[i])[0]] || {};
-                                if (!firstIcon && meta.icon_url) firstIcon = meta.icon_url;
-                                if (!firstAuthor && meta.authors && meta.authors.length) firstAuthor = meta.authors.join(', ');
-                                if (firstIcon && firstAuthor) break;
-                            }
-                            if (isbnCount === 1) {
-                                // Show as before, but with group info
-                                const item = items[0];
-                                const isbn = Object.keys(item)[0];
-                                const meta = item[isbn] || {};
-                                const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
-                                const iconUrl = meta.icon_url || '';
-                                html += `
-                                <div class="isbn-item">
-                                    <div class="isbn-info">
-                                        <div class="book-title">
-                                            ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
-                                            ${title}
-                                        </div>
-                                        <div class="isbn-number">
-                                            <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
-                                            ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
-                                        </div>
-                                        <div class="book-meta">
-                                            ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
-                                            ${meta.year ? ' • ' + meta.year : ''}
-                                        </div>
-                                    </div>
-                                    <div class="isbn-actions">
-                                        <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
-                                        <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
-                                    </div>
-                                </div>
-                                `;
-                            } else {
-                                // Dropdown group styled like isbn-item
-                                const groupId = 'group-' + btoa(title).replace(/[^a-zA-Z0-9]/g, '');
-                                html += `
-                                <div class="isbn-group" style="margin-bottom: 18px;">
-                                    <div class="isbn-group-header isbn-item" onclick="toggleIsbnGroup('${groupId}', this)" style="cursor:pointer; display:flex; align-items:center; background:#fff; border-radius:8px; box-shadow:0 1px 3px #e0e0e0; padding:15px 10px; border:1px solid #e0e0e0; margin-bottom:0; transition:box-shadow 0.2s;">
-                                        ${firstIcon ? `<img src="${firstIcon}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:10px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:10px;color:#bdbdbd;'>menu_book</i>`}
-                                        <span style="font-size:1.2em;font-weight:500;">${title}</span>
-                                        <span style="margin-left:10px;color:#666;">${firstAuthor ? 'by ' + firstAuthor : ''}</span>
-                                        <span class="new badge blue white-text" data-badge-caption="ISBNs" style="margin-left:auto;">${isbnCount}</span>
-                                        <i class="material-icons group-chevron" style="margin-left:10px;transition:transform 0.2s;">expand_more</i>
-                                    </div>
-                                    <div class="isbn-group-list" id="${groupId}" style="display:none; background:#fafbfc; border-radius:0 0 8px 8px; border:1px solid #e0e0e0; border-top:none;">
-                                `;
-                                items.forEach(item => {
-                                    const isbn = Object.keys(item)[0];
-                                    const meta = item[isbn] || {};
-                                    const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
-                                    const iconUrl = meta.icon_url || '';
-                                    html += `
-                                    <div class="isbn-item isbn-item-subgroup" style="background:#f0f2f6; max-width:92%; margin-left:5%; border-left:5px solid #667eea; border-radius:6px; box-shadow:0 1px 2px #e0e0e0; padding:13px 10px; margin-bottom:10px; transition:background 0.2s;">
-                                        <div class="isbn-info">
-                                            <div class="book-title">
-                                                ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
-                                                ${title}
-                                            </div>
-                                            <div class="isbn-number">
-                                                <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
-                                                ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
-                                            </div>
-                                            <div class="book-meta">
-                                                ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
-                                                ${meta.year ? ' • ' + meta.year : ''}
-                                            </div>
-                                        </div>
-                                        <div class="isbn-actions">
-                                            <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
-                                            <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
-                                        </div>
-                                    </div>
-                                    `;
-                                });
-                                html += `</div></div>`;
-                            }
-                        });
-                        isbnList.innerHTML = html;
-                    } else {
-                        isbnList.innerHTML = '<div class="grey-text">No ISBNs found</div>';
-                    }
-                } else {
-                    // Handle non-200 responses
-                    const errorText = await response.text();
-                    console.error('API Error:', response.status, errorText);
-                    isbnList.innerHTML = '<div class="red-text">Error loading ISBNs</div>';
+                // Load books and grades data
+                const [booksResponse, gradesResponse] = await Promise.all([
+                    fetch('/api/books'),
+                    fetch('/api/grades')
+                ]);
+                
+                if (!booksResponse.ok || !gradesResponse.ok) {
+                    throw new Error('Failed to load data');
                 }
+                
+                const booksData = await booksResponse.json();
+                const gradesData = await gradesResponse.json();
+                
+                isbnCount.textContent = Object.keys(booksData).length.toString();
+                
+                // Organize books by grade level
+                const gradeMapping = {
+                    'Kindergarten': 'kindergarten-list',
+                    '1st Grade': 'grade-1-list',
+                    '2nd Grade': 'grade-2-list',
+                    '3rd Grade': 'grade-3-list',
+                    '4th Grade': 'grade-4-list',
+                    '5th Grade': 'grade-5-list',
+                    '6th Grade': 'grade-6-list',
+                    '7th Grade': 'grade-7-list',
+                    '8th Grade': 'grade-8-list',
+                    '9th Grade': 'grade-9-list',
+                    '10th Grade': 'grade-10-list',
+                    '11th Grade': 'grade-11-list',
+                    '12th Grade': 'grade-12-list'
+                };
+                
+                // Create reverse mapping to find which grade a book belongs to
+                const bookToGrade = {};
+                for (const [gradeName, bookList] of Object.entries(gradesData)) {
+                    bookList.forEach(bookTitle => {
+                        bookToGrade[bookTitle] = gradeName;
+                    });
+                }
+                
+                // Clear all containers
+                gradeContainers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = '';
+                    }
+                });
+                
+                // Organize and display books
+                if (booksData && Object.keys(booksData).length > 0) {
+                    Object.entries(booksData).forEach(([title, items]) => {
+                        const assignedGrade = bookToGrade[title];
+                        const containerId = assignedGrade ? gradeMapping[assignedGrade] : 'unassigned-list';
+                        const container = document.getElementById(containerId);
+                        
+                        if (container) {
+                            container.innerHTML += generateBookHTML(title, items, assignedGrade);
+                        }
+                    });
+                } else {
+                    // Show empty message for unassigned books
+                    const unassignedContainer = document.getElementById('unassigned-list');
+                    if (unassignedContainer) {
+                        unassignedContainer.innerHTML = '<div class="grey-text">No books found</div>';
+                    }
+                }
+                  // Show empty messages for grade levels with no books
+                gradeContainers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container && container.innerHTML === '') {
+                        container.innerHTML = '<div class="grey-text">No books assigned to this grade level</div>';
+                    }
+                });
+                  // Reinitialize dropdowns for the newly added content
+                var dropdownEls = document.querySelectorAll('.dropdown-trigger');
+                M.Dropdown.init(dropdownEls, {
+                    constrainWidth: false,
+                    coverTrigger: false,
+                    closeOnClick: true,
+                    alignment: 'right'
+                });
+                
             } catch (error) {
                 console.error('Error loading ISBNs:', error);
-                isbnList.innerHTML = '<div class="red-text">Failed to load ISBNs. Please check the console for details.</div>';
+                gradeContainers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = '<div class="red-text">Failed to load books. Please check the console for details.</div>';
+                    }
+                });
+            }
+        }
+
+        // Generate HTML for a book (single ISBN or group)
+        function generateBookHTML(title, items, currentGrade) {
+            // Find first icon and author for the group
+            let firstIcon = '';
+            let firstAuthor = '';
+            let isbnCount = items.length;
+            
+            for (let i = 0; i < items.length; i++) {
+                const meta = items[i][Object.keys(items[i])[0]] || {};
+                if (!firstIcon && meta.icon_url) firstIcon = meta.icon_url;
+                if (!firstAuthor && meta.authors && meta.authors.length) firstAuthor = meta.authors.join(', ');
+                if (firstIcon && firstAuthor) break;
+            }
+            
+            const gradeDropdownId = `grade-dropdown-${btoa(title).replace(/[^a-zA-Z0-9]/g, '')}`;
+            
+            if (isbnCount === 1) {
+                // Single ISBN display
+                const item = items[0];
+                const isbn = Object.keys(item)[0];
+                const meta = item[isbn] || {};
+                const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
+                const iconUrl = meta.icon_url || '';
+                
+                return `
+                <div class="isbn-item" data-book-title="${title}">
+                    <div class="isbn-info">
+                        <div class="book-title">
+                            ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
+                            ${title}
+                        </div>
+                        <div class="isbn-number">
+                            <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
+                            ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
+                        </div>
+                        <div class="book-meta">
+                            ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
+                            ${meta.year ? ' • ' + meta.year : ''}
+                        </div>
+                    </div>
+                    <div class="isbn-actions">
+                        <a class='dropdown-trigger btn-flat grey-text' href='#' data-target='${gradeDropdownId}' title='Move to Grade'>
+                            <i class='material-icons'>school</i>
+                        </a>
+                        <ul id='${gradeDropdownId}' class='dropdown-content'>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', null)">Remove from Grades</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', 'Kindergarten')">Kindergarten</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '1st Grade')">1st Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '2nd Grade')">2nd Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '3rd Grade')">3rd Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '4th Grade')">4th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '5th Grade')">5th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '6th Grade')">6th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '7th Grade')">7th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '8th Grade')">8th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '9th Grade')">9th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '10th Grade')">10th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '11th Grade')">11th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '12th Grade')">12th Grade</a></li>
+                        </ul>
+                        <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
+                        <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
+                    </div>
+                </div>
+                `;
+            } else {
+                // Multiple ISBNs (group display)
+                const groupId = 'group-' + btoa(title).replace(/[^a-zA-Z0-9]/g, '');
+                let html = `
+                <div class="isbn-group" style="margin-bottom: 18px;" data-book-title="${title}">
+                    <div class="isbn-group-header isbn-item" onclick="toggleIsbnGroup('${groupId}', this)" style="cursor:pointer; display:flex; align-items:center; background:#fff; border-radius:8px; box-shadow:0 1px 3px #e0e0e0; padding:15px 10px; border:1px solid #e0e0e0; margin-bottom:0; transition:box-shadow 0.2s;">
+                        ${firstIcon ? `<img src="${firstIcon}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:10px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:10px;color:#bdbdbd;'>menu_book</i>`}
+                        <span style="font-size:1.2em;font-weight:500;">${title}</span>
+                        <span style="margin-left:10px;color:#666;">${firstAuthor ? 'by ' + firstAuthor : ''}</span>
+                        <span class="new badge blue white-text" data-badge-caption="ISBNs" style="margin-left:auto;">${isbnCount}</span>
+                        <a class='dropdown-trigger btn-flat grey-text' href='#' data-target='${gradeDropdownId}' title='Move to Grade' onclick="event.stopPropagation();" style="margin-left:10px;">
+                            <i class='material-icons'>school</i>
+                        </a>
+                        <ul id='${gradeDropdownId}' class='dropdown-content'>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', null)">Remove from Grades</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', 'Kindergarten')">Kindergarten</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '1st Grade')">1st Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '2nd Grade')">2nd Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '3rd Grade')">3rd Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '4th Grade')">4th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '5th Grade')">5th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '6th Grade')">6th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '7th Grade')">7th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '8th Grade')">8th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '9th Grade')">9th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '10th Grade')">10th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '11th Grade')">11th Grade</a></li>
+                            <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '12th Grade')">12th Grade</a></li>
+                        </ul>
+                        <i class="material-icons group-chevron" style="margin-left:10px;transition:transform 0.2s;">expand_more</i>
+                    </div>
+                    <div class="isbn-group-list" id="${groupId}" style="display:none; background:#fafbfc; border-radius:0 0 8px 8px; border:1px solid #e0e0e0; border-top:none;">
+                `;
+                
+                items.forEach(item => {
+                    const isbn = Object.keys(item)[0];
+                    const meta = item[isbn] || {};
+                    const googleBooksUrl = isbn ? `https://www.google.com/search?tbm=bks&q=isbn:${isbn}` : '#';
+                    const iconUrl = meta.icon_url || '';
+                    html += `
+                    <div class="isbn-item isbn-item-subgroup" style="background:#f0f2f6; max-width:92%; margin-left:5%; border-left:5px solid #667eea; border-radius:6px; box-shadow:0 1px 2px #e0e0e0; padding:13px 10px; margin-bottom:10px; transition:background 0.2s;">
+                        <div class="isbn-info">
+                            <div class="book-title">
+                                ${iconUrl ? `<img src="${iconUrl}" alt="cover" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 3px #bbb;">` : `<i class='material-icons' style='vertical-align:middle;margin-right:8px;color:#bdbdbd;'>menu_book</i>`}
+                                ${title}
+                            </div>
+                            <div class="isbn-number">
+                                <a href="${googleBooksUrl}" target="_blank" rel="noopener" style="font-weight:bold; color:#1976d2; text-decoration:underline;">${isbn}</a>
+                                ${!iconUrl ? `<button class='btn-flat blue-text' style='margin-left:8px;font-size:1em;padding:0 8px;min-width:0;' title='Load Google Books Icon' onclick='loadGoogleBooksIcon("${title.replace(/'/g, "\\'")}", "${isbn}", this)'><i class='material-icons'>image_search</i></button>` : ''}
+                            </div>
+                            <div class="book-meta">
+                                ${meta.authors && meta.authors.length ? 'by ' + meta.authors.join(', ') : ''}
+                                ${meta.year ? ' • ' + meta.year : ''}
+                            </div>
+                        </div>
+                        <div class="isbn-actions">
+                            <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
+                            <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
+                        </div>
+                    </div>
+                    `;
+                });
+                html += `</div></div>`;
+                return html;
+            }
+        }
+
+        // Move book to a specific grade level
+        async function moveBookToGrade(bookTitle, grade) {
+            try {
+                let apiUrl, requestBody, successMessage;
+                
+                if (grade === null) {
+                    // Remove from all grades
+                    apiUrl = '/api/grades/remove_all';
+                    requestBody = { book: bookTitle };
+                    successMessage = `Removed "${bookTitle}" from all grade levels`;
+                } else {
+                    // Move to specific grade
+                    apiUrl = '/api/grades/move';
+                    requestBody = { book: bookTitle, grade: grade };
+                    successMessage = `Moved "${bookTitle}" to ${grade}`;
+                }
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    M.toast({ html: successMessage, classes: 'green' });
+                    // Reload books to update the display
+                    loadISBNs();
+                } else {
+                    M.toast({ html: data.error || 'Failed to move book', classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error moving book to grade:', error);
+                M.toast({ html: 'Error moving book to grade', classes: 'red' });
             }
         }
 
