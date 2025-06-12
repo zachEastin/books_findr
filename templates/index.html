@@ -333,43 +333,12 @@
         </div>
         {% endif %}
 
-        <!-- ISBNs Being Tracked -->
-        {% if books %}
-        <div class="card">
-            <div class="card-content">
-                <span class="card-title">
-                    <i class="material-icons left">format_list_numbered</i>
-                    Tracked ISBNs
-                </span>
-                <div class="row">
-                    {% for title, isbn_list in books.items() %}
-                    <div class="col s12 m6 l4">
-                        <div class="chip" style="display:block;">
-                            <strong>{{ title }}</strong>
-                            <ul>
-                            {% for item in isbn_list %}
-                                {% for isbn, meta in item.items() %}
-                                <li>{{ isbn }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
     </div>
 
     <!-- Footer -->
     <footer class="page-footer header-color" style="margin-top: 3rem;">
         <div class="container">
             <div class="row">
-                <div class="col s12 center-align">
-                    <p class="white-text">Book Price Tracker - Built with Flask & Material Design</p>
-                </div>
             </div>
         </div>
     </footer>
