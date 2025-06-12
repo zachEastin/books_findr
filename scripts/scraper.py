@@ -21,11 +21,14 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import re  # for clean_price
-from typing import Optional
+from typing import Optional, Dict
 import os
 import stat
 import subprocess
 import threading
+import queue
+import atexit
+from contextlib import contextmanager
 
 from .logger import scraper_logger, log_scrape_result, log_task_start, log_task_complete
 import json
@@ -38,6 +41,11 @@ PRICES_CSV = DATA_DIR / "prices.csv"
 TIMEOUT = 15  # seconds
 MAX_CONCURRENT_SCRAPERS = 3  # Limit concurrent scrapers to be respectful
 
+# Browser Pool Configuration
+BROWSER_POOL_SIZE = 4  # Number of persistent browser sessions
+BROWSER_SESSION_TIMEOUT = 300  # 5 minutes - restart browsers after this time
+BROWSER_IDLE_TIMEOUT = 60  # 1 minute - return browser to pool after idle time
+
 # Shared thread pool for running blocking Selenium calls
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_SCRAPERS)
 
@@ -45,6 +53,377 @@ executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_SCRA
 _chromedriver_path = None
 _chromedriver_lock = threading.Lock()
 _chromedriver_initialized = False
+
+# Global Browser Pool Management
+_browser_pool = None
+_browser_pool_lock = threading.Lock()
+
+
+class BrowserSession:
+    """Represents a single browser session with lifecycle management"""
+    def __init__(self, browser_id: str):
+        self.browser_id = browser_id
+        self.driver = None
+        self.created_at = time.time()
+        self.last_used = time.time()
+        self.use_count = 0
+        self.is_healthy = True
+        self._lock = threading.Lock()
+    
+    def create_driver(self) -> bool:
+        """Create a new Chrome driver instance with optimized settings"""
+        try:
+            driver_path = _initialize_chromedriver_once()
+            if not driver_path:
+                raise Exception("ChromeDriver initialization failed")
+            
+            # Configure Chrome options for optimal headless performance
+            chrome_options = Options()
+            
+            # Headless mode - run in background
+            chrome_options.add_argument("--headless=new")  # Use new headless mode
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            
+            # GPU and WebGL optimizations for better performance
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--disable-gpu-sandbox")
+            chrome_options.add_argument("--disable-software-rasterizer")
+            chrome_options.add_argument("--disable-webgl")
+            chrome_options.add_argument("--disable-webgl2")
+            chrome_options.add_argument("--disable-3d-apis")
+            chrome_options.add_argument("--disable-accelerated-2d-canvas")
+            chrome_options.add_argument("--disable-accelerated-video-decode")
+            chrome_options.add_argument("--disable-accelerated-video-encode")
+            chrome_options.add_argument("--disable-accelerated-mjpeg-decode")
+            chrome_options.add_argument("--disable-hardware-acceleration")
+            
+            # Memory and performance optimizations
+            chrome_options.add_argument("--memory-pressure-off")
+            chrome_options.add_argument("--max_old_space_size=4096")
+            chrome_options.add_argument("--disable-background-timer-throttling")
+            chrome_options.add_argument("--disable-backgrounding-occluded-windows")
+            chrome_options.add_argument("--disable-renderer-backgrounding")
+            chrome_options.add_argument("--disable-features=TranslateUI")
+            chrome_options.add_argument("--disable-ipc-flooding-protection")
+            
+            # Resource optimizations (but keep JS enabled for modern sites)
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--disable-extensions")
+            chrome_options.add_argument("--disable-plugins")
+            chrome_options.add_argument("--disable-default-apps")
+            chrome_options.add_argument("--disable-sync")
+            
+            # User agent for better compatibility
+            chrome_options.add_argument(
+                "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
+            
+            # Anti-detection measures
+            chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            chrome_options.add_experimental_option('useAutomationExtension', False)
+            
+            # Create service using the pre-initialized ChromeDriver path
+            service = Service(executable_path=driver_path)
+            
+            # Create the WebDriver instance
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            self.driver.set_page_load_timeout(TIMEOUT)
+            
+            # Hide automation indicators
+            self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            
+            self.created_at = time.time()
+            self.last_used = time.time()
+            self.is_healthy = True
+            
+            scraper_logger.info(f"Created browser session {self.browser_id}")
+            return True
+            
+        except Exception as e:
+            scraper_logger.error(f"Failed to create browser session {self.browser_id}: {e}")
+            self.is_healthy = False
+            return False
+    
+    def is_expired(self) -> bool:
+        """Check if browser session has expired and needs restart"""
+        age = time.time() - self.created_at
+        idle_time = time.time() - self.last_used
+        return (age > BROWSER_SESSION_TIMEOUT or 
+                idle_time > BROWSER_IDLE_TIMEOUT or 
+                not self.is_healthy or 
+                self.driver is None)
+    
+    def restart(self) -> bool:
+        """Restart the browser session"""
+        with self._lock:
+            self.cleanup()
+            return self.create_driver()
+    
+    def cleanup(self):
+        """Clean up browser resources"""
+        if self.driver:
+            try:
+                self.driver.quit()
+                scraper_logger.debug(f"Cleaned up browser session {self.browser_id}")
+            except Exception as e:
+                scraper_logger.warning(f"Error cleaning up browser session {self.browser_id}: {e}")
+            finally:
+                self.driver = None
+                self.is_healthy = False
+    
+    def mark_used(self):
+        """Mark the session as recently used"""
+        self.last_used = time.time()
+        self.use_count += 1
+    
+    def get_driver(self) -> Optional[webdriver.Chrome]:
+        """Get the driver instance if healthy"""
+        with self._lock:
+            if self.is_expired():
+                if not self.restart():
+                    return None
+            self.mark_used()
+            return self.driver
+
+
+class BrowserPool:
+    """Manages a pool of persistent browser sessions"""
+    
+    def __init__(self, pool_size: int = BROWSER_POOL_SIZE):
+        self.pool_size = pool_size
+        self.sessions: Dict[str, BrowserSession] = {}
+        self.available_sessions: queue.Queue = queue.Queue()
+        self.all_sessions_created = False
+        self._lock = threading.Lock()
+        self._shutdown = False
+        
+        # Register cleanup function
+        atexit.register(self.shutdown)
+    
+    def _create_session(self, session_id: str) -> BrowserSession:
+        """Create a new browser session"""
+        session = BrowserSession(session_id)
+        if session.create_driver():
+            return session
+        else:
+            session.cleanup()
+            raise Exception(f"Failed to create browser session {session_id}")
+    
+    def _ensure_pool_initialized(self):
+        """Ensure the browser pool is fully initialized"""
+        if self.all_sessions_created or self._shutdown:
+            return
+            
+        with self._lock:
+            if self.all_sessions_created or self._shutdown:
+                return
+                
+            scraper_logger.info(f"Initializing browser pool with {self.pool_size} sessions...")
+            
+            # Create all browser sessions
+            created_sessions = []
+            for i in range(self.pool_size):
+                session_id = f"browser_session_{i+1}"
+                try:
+                    session = self._create_session(session_id)
+                    self.sessions[session_id] = session
+                    self.available_sessions.put(session_id)
+                    created_sessions.append(session_id)
+                    scraper_logger.debug(f"Created browser session {session_id}")
+                except Exception as e:
+                    scraper_logger.error(f"Failed to create browser session {session_id}: {e}")
+            
+            self.all_sessions_created = True
+            scraper_logger.info(f"Browser pool initialized with {len(created_sessions)} sessions")
+    
+    @contextmanager
+    def get_browser(self, timeout: float = 30.0):
+        """Get a browser from the pool (context manager)"""
+        if self._shutdown:
+            raise Exception("Browser pool is shutdown")
+            
+        self._ensure_pool_initialized()
+        
+        session_id = None
+        session = None
+        
+        try:
+            # Get an available session
+            session_id = self.available_sessions.get(timeout=timeout)
+            session = self.sessions.get(session_id)
+            
+            if not session:
+                raise Exception(f"Session {session_id} not found in pool")
+            
+            # Get the driver (this will restart if expired)
+            driver = session.get_driver()
+            if not driver:
+                raise Exception(f"Failed to get healthy driver from session {session_id}")
+            
+            scraper_logger.debug(f"Acquired browser session {session_id} (used {session.use_count} times)")
+            yield driver
+            
+        except queue.Empty:
+            raise Exception(f"No browser available within {timeout} seconds - pool may be exhausted")
+        except Exception as e:
+            scraper_logger.error(f"Error getting browser from pool: {e}")
+            raise
+        finally:
+            # Return session to pool
+            if session_id and not self._shutdown:
+                try:
+                    # Check if session is still healthy before returning to pool
+                    if session and session.is_healthy and not session.is_expired():
+                        self.available_sessions.put(session_id)
+                        scraper_logger.debug(f"Returned browser session {session_id} to pool")
+                    else:
+                        # Session is unhealthy, try to restart it
+                        if session:
+                            scraper_logger.warning(f"Browser session {session_id} is unhealthy, attempting restart...")
+                            if session.restart():
+                                self.available_sessions.put(session_id)
+                                scraper_logger.info(f"Restarted and returned browser session {session_id} to pool")
+                            else:
+                                scraper_logger.error(f"Failed to restart browser session {session_id}, removing from pool")
+                                # Don't put it back in the queue
+                except Exception as e:
+                    scraper_logger.error(f"Error returning browser session {session_id} to pool: {e}")
+    
+    def get_pool_stats(self) -> Dict:
+        """Get statistics about the browser pool"""
+        stats = {
+            'pool_size': self.pool_size,
+            'total_sessions': len(self.sessions),
+            'available_sessions': self.available_sessions.qsize(),
+            'sessions_detail': {}
+        }
+        
+        for session_id, session in self.sessions.items():
+            stats['sessions_detail'][session_id] = {
+                'use_count': session.use_count,
+                'age': time.time() - session.created_at,
+                'idle_time': time.time() - session.last_used,
+                'is_healthy': session.is_healthy,
+                'is_expired': session.is_expired()
+            }
+        
+        return stats
+    
+    def restart_all_sessions(self):
+        """Restart all browser sessions in the pool"""
+        scraper_logger.info("Restarting all browser sessions...")
+        
+        with self._lock:
+            # Clear the available queue
+            while not self.available_sessions.empty():
+                try:
+                    self.available_sessions.get_nowait()
+                except queue.Empty:
+                    break
+            
+            # Restart all sessions
+            restarted = 0
+            for session_id, session in self.sessions.items():
+                if session.restart():
+                    self.available_sessions.put(session_id)
+                    restarted += 1
+                else:
+                    scraper_logger.error(f"Failed to restart session {session_id}")
+            
+            scraper_logger.info(f"Restarted {restarted}/{len(self.sessions)} browser sessions")
+    
+    def shutdown(self):
+        """Shutdown the browser pool and clean up all sessions"""
+        if self._shutdown:
+            return
+            
+        scraper_logger.info("Shutting down browser pool...")
+        self._shutdown = True
+        
+        with self._lock:
+            for session_id, session in self.sessions.items():
+                session.cleanup()
+            
+            self.sessions.clear()
+            
+            # Clear the queue
+            while not self.available_sessions.empty():
+                try:
+                    self.available_sessions.get_nowait()
+                except queue.Empty:
+                    break
+        
+        scraper_logger.info("Browser pool shutdown complete")
+
+
+def get_browser_pool() -> BrowserPool:
+    """Get the global browser pool instance (singleton)"""
+    global _browser_pool
+    
+    if _browser_pool is None:
+        with _browser_pool_lock:
+            if _browser_pool is None:
+                _browser_pool = BrowserPool(BROWSER_POOL_SIZE)
+    
+    return _browser_pool
+
+
+def initialize_browser_pool(pool_size: int = BROWSER_POOL_SIZE) -> bool:
+    """
+    Initialize the browser pool with the specified size.
+    Call this once at the start of your scraping session for optimal performance.
+    
+    Args:
+        pool_size: Number of browser sessions to create in the pool
+        
+    Returns:
+        bool: True if initialization was successful, False otherwise
+    """
+    global _browser_pool
+    
+    try:
+        # First ensure ChromeDriver is initialized
+        if not initialize_chromedriver_session():
+            scraper_logger.error("Failed to initialize ChromeDriver session")
+            return False
+        
+        # Create the browser pool
+        with _browser_pool_lock:
+            if _browser_pool is not None:
+                scraper_logger.info("Browser pool already initialized, shutting down existing pool...")
+                _browser_pool.shutdown()
+            
+            _browser_pool = BrowserPool(pool_size)
+            _browser_pool._ensure_pool_initialized()
+        
+        scraper_logger.info(f"Browser pool initialized successfully with {pool_size} sessions")
+        return True
+        
+    except Exception as e:
+        scraper_logger.error(f"Failed to initialize browser pool: {e}")
+        return False
+
+
+def get_browser_pool_stats() -> Dict:
+    """Get statistics about the current browser pool"""
+    pool = get_browser_pool()
+    return pool.get_pool_stats()
+
+
+def restart_browser_pool():
+    """Restart all browser sessions in the pool"""
+    pool = get_browser_pool()
+    pool.restart_all_sessions()
+
+
+def shutdown_browser_pool():
+    """Shutdown the browser pool"""
+    global _browser_pool
+    if _browser_pool:
+        _browser_pool.shutdown()
+        _browser_pool = None
 
 
 def _fix_chromedriver_permissions_windows(driver_path: str) -> bool:
@@ -295,7 +674,7 @@ def get_search_strategies(isbn_data: dict) -> list[tuple[str, str]]:
 
 
 def _scrape_bookscouter_sync(search_term: str, url: str) -> dict:
-    """Synchronous helper function for BookScouter scraping"""
+    """Synchronous helper function for BookScouter scraping using browser pool"""
     result_update = {
         "price": None,
         "title": None,
@@ -303,50 +682,50 @@ def _scrape_bookscouter_sync(search_term: str, url: str) -> dict:
         "success": False,
     }
 
-    driver = None
     try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping BookScouter for term: {search_term}")
+        pool = get_browser_pool()
+        with pool.get_browser() as driver:
+            scraper_logger.info(f"Scraping BookScouter for term: {search_term}")
 
-        driver.get(url)
+            driver.get(url)
 
-        # Wait for page to load
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # Wait for page to load
+            WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
+            # Wait 5 seconds for dynamic content to load
+            time.sleep(5)
 
-        # Try to find book title
-        try:
-            title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
-            result_update["title"] = title_element.text.strip()
-        except NoSuchElementException:
-            scraper_logger.warning(f"Could not find title for term `{search_term}` on BookScouter")
+            # Try to find book title
+            try:
+                title_element = driver.find_element(By.CSS_SELECTOR, "h1, .BookDetailsTitle_bdlrv61")
+                result_update["title"] = title_element.text.strip()
+            except NoSuchElementException:
+                scraper_logger.warning(f"Could not find title for term `{search_term}` on BookScouter")
 
-        # Try to find the lowest price
-        try:
-            # Look for price elements (BookScouter typically shows prices in a table)
-            price_elements = driver.find_elements(
-                By.CSS_SELECTOR,
-                "[class^='BestVendorPrice'], [class*='BestVendorPrice']",
-            )
+            # Try to find the lowest price
+            try:
+                # Look for price elements (BookScouter typically shows prices in a table)
+                price_elements = driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "[class^='BestVendorPrice'], [class*='BestVendorPrice']",
+                )
 
-            prices = []
-            for element in price_elements:
-                price_text = element.text.strip()
-                price_value = clean_price(price_text)
-                if price_value and price_value > 0:
-                    prices.append(price_value)
+                prices = []
+                for element in price_elements:
+                    price_text = element.text.strip()
+                    price_value = clean_price(price_text)
+                    if price_value and price_value > 0:
+                        prices.append(price_value)
 
-            if prices:
-                result_update["price"] = min(prices)  # Get lowest selling price
-                result_update["success"] = True
-                result_update["notes"] = f"Found {len(prices)} prices, showing lowest: ${result_update['price']:.2f}"
-            else:
-                result_update["notes"] = "No valid prices found"
+                if prices:
+                    result_update["price"] = min(prices)  # Get lowest selling price
+                    result_update["success"] = True
+                    result_update["notes"] = f"Found {len(prices)} prices, showing lowest: ${result_update['price']:.2f}"
+                else:
+                    result_update["notes"] = "No valid prices found"
 
-        except NoSuchElementException:
-            result_update["notes"] = "Price elements not found"
+            except NoSuchElementException:
+                result_update["notes"] = "Price elements not found"
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
@@ -357,15 +736,12 @@ def _scrape_bookscouter_sync(search_term: str, url: str) -> dict:
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
         scraper_logger.error(f"Unexpected error scraping BookScouter for term {search_term}: {e}")
-    finally:
-        if driver:
-            driver.quit()
 
     return result_update
 
 
 def _scrape_christianbook_sync(search_term: str, search_url: str) -> dict:
-    """Synchronous helper function for Christianbook scraping"""
+    """Synchronous helper function for Christianbook scraping using browser pool"""
     result_update = {
         "price": None,
         "title": None,
@@ -374,72 +750,72 @@ def _scrape_christianbook_sync(search_term: str, search_url: str) -> dict:
         "success": False,
     }
 
-    driver = None
     try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping Christianbook for term: {search_term}")
+        pool = get_browser_pool()
+        with pool.get_browser() as driver:
+            scraper_logger.info(f"Scraping Christianbook for term: {search_term}")
 
-        driver.get(search_url)
+            driver.get(search_url)
 
-        # Wait for search results
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # Wait for search results
+            WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
+            # Wait 5 seconds for dynamic content to load
+            time.sleep(5)
 
-        # Look for the first search result
-        try:
-            # Find product title
-            title_selectors = [".CB-ProductListItem-Title"]
+            # Look for the first search result
+            try:
+                # Find product title
+                title_selectors = [".CB-ProductListItem-Title"]
 
-            title_element = None
-            for selector in title_selectors:
-                try:
-                    title_element = driver.find_element(By.CSS_SELECTOR, selector)
-                    break
-                except NoSuchElementException:
-                    continue
+                title_element = None
+                for selector in title_selectors:
+                    try:
+                        title_element = driver.find_element(By.CSS_SELECTOR, selector)
+                        break
+                    except NoSuchElementException:
+                        continue
 
-            if title_element:
-                result_update["title"] = title_element.text.strip()
-                # Update URL to specific product page
-                href = title_element.get_attribute("href")
-                if href:
-                    result_update["url"] = href
+                if title_element:
+                    result_update["title"] = title_element.text.strip()
+                    # Update URL to specific product page
+                    href = title_element.get_attribute("href")
+                    if href:
+                        result_update["url"] = href
 
-            # Find price
-            price_selectors = [
-                ".price .sale-price",
-                ".price .our-price",
-                ".CBD-ProductDetailActionPrice",
-                ".CBD-ProductDetailActionPrice span .sr-only",
-                ".sale-price",
-                ".our-price",
-                "[class*='price']",
-            ]
+                # Find price
+                price_selectors = [
+                    ".price .sale-price",
+                    ".price .our-price",
+                    ".CBD-ProductDetailActionPrice",
+                    ".CBD-ProductDetailActionPrice span .sr-only",
+                    ".sale-price",
+                    ".our-price",
+                    "[class*='price']",
+                ]
 
-            price_element = None
-            for selector in price_selectors:
-                try:
-                    price_element = driver.find_element(By.CSS_SELECTOR, selector)
-                    break
-                except NoSuchElementException:
-                    continue
+                price_element = None
+                for selector in price_selectors:
+                    try:
+                        price_element = driver.find_element(By.CSS_SELECTOR, selector)
+                        break
+                    except NoSuchElementException:
+                        continue
 
-            if price_element:
-                price_text = price_element.text.strip()
-                price_value = clean_price(price_text)
-                if price_value and price_value > 0:
-                    result_update["price"] = price_value
-                    result_update["success"] = True
-                    result_update["notes"] = "Found price in search results"
+                if price_element:
+                    price_text = price_element.text.strip()
+                    price_value = clean_price(price_text)
+                    if price_value and price_value > 0:
+                        result_update["price"] = price_value
+                        result_update["success"] = True
+                        result_update["notes"] = "Found price in search results"
+                    else:
+                        result_update["notes"] = f"Invalid price format: {price_text}"
                 else:
-                    result_update["notes"] = f"Invalid price format: {price_text}"
-            else:
-                result_update["notes"] = "No price element found"
+                    result_update["notes"] = "No price element found"
 
-        except NoSuchElementException:
-            result_update["notes"] = "No search results found"
+            except NoSuchElementException:
+                result_update["notes"] = "No search results found"
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
@@ -450,15 +826,12 @@ def _scrape_christianbook_sync(search_term: str, search_url: str) -> dict:
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
         scraper_logger.error(f"Unexpected error scraping Christianbook for term {search_term}: {e}")
-    finally:
-        if driver:
-            driver.quit()
 
     return result_update
 
 
 def _scrape_rainbowresource_sync(search_term: str, search_url: str) -> dict:
-    """Synchronous helper function for RainbowResource scraping"""
+    """Synchronous helper function for RainbowResource scraping using browser pool"""
     result_update = {
         "price": None,
         "title": None,
@@ -467,64 +840,64 @@ def _scrape_rainbowresource_sync(search_term: str, search_url: str) -> dict:
         "success": False,
     }
 
-    driver = None
     try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping RainbowResource for term: {search_term}")
+        pool = get_browser_pool()
+        with pool.get_browser() as driver:
+            scraper_logger.info(f"Scraping RainbowResource for term: {search_term}")
 
-        driver.get(search_url)
+            driver.get(search_url)
 
-        # Wait for search results
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # Wait for search results
+            WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-        # Wait 5 seconds for dynamic content to load
-        time.sleep(5)
+            # Wait 5 seconds for dynamic content to load
+            time.sleep(5)
 
-        # Look for search results
-        try:
-            # Find product title
-            title_selectors = [".hawk-results__item-name"]
+            # Look for search results
+            try:
+                # Find product title
+                title_selectors = [".hawk-results__item-name"]
 
-            title_element = None
-            for selector in title_selectors:
-                try:
-                    title_element = driver.find_element(By.CSS_SELECTOR, selector)
-                    break
-                except NoSuchElementException:
-                    continue
+                title_element = None
+                for selector in title_selectors:
+                    try:
+                        title_element = driver.find_element(By.CSS_SELECTOR, selector)
+                        break
+                    except NoSuchElementException:
+                        continue
 
-            if title_element:
-                result_update["title"] = title_element.text.strip()
-                # Update URL to specific product page if available
-                href = title_element.get_attribute("href")
-                if href:
-                    result_update["url"] = href
+                if title_element:
+                    result_update["title"] = title_element.text.strip()
+                    # Update URL to specific product page if available
+                    href = title_element.get_attribute("href")
+                    if href:
+                        result_update["url"] = href
 
-            # Find price
-            price_selectors = [".special-price", "[class*='price']"]
+                # Find price
+                price_selectors = [".special-price", "[class*='price']"]
 
-            price_element = None
-            for selector in price_selectors:
-                try:
-                    price_element = driver.find_element(By.CSS_SELECTOR, selector)
-                    break
-                except NoSuchElementException:
-                    continue
+                price_element = None
+                for selector in price_selectors:
+                    try:
+                        price_element = driver.find_element(By.CSS_SELECTOR, selector)
+                        break
+                    except NoSuchElementException:
+                        continue
 
-            if price_element:
-                price_text = price_element.text.strip()
-                price_value = clean_price(price_text)
-                if price_value and price_value > 0:
-                    result_update["price"] = price_value
-                    result_update["success"] = True
-                    result_update["notes"] = "Found price in search results"
+                if price_element:
+                    price_text = price_element.text.strip()
+                    price_value = clean_price(price_text)
+                    if price_value and price_value > 0:
+                        result_update["price"] = price_value
+                        result_update["success"] = True
+                        result_update["notes"] = "Found price in search results"
+                    else:
+                        result_update["notes"] = f"Invalid price format: {price_text}"
                 else:
-                    result_update["notes"] = f"Invalid price format: {price_text}"
-            else:
-                result_update["notes"] = "No price element found"
+                    result_update["notes"] = "No price element found"
 
-        except NoSuchElementException:
-            result_update["notes"] = "No search results found"
+            except NoSuchElementException:
+                result_update["notes"] = "No search results found"
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
@@ -535,15 +908,12 @@ def _scrape_rainbowresource_sync(search_term: str, search_url: str) -> dict:
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
         scraper_logger.error(f"Unexpected error scraping RainbowResource for term {search_term}: {e}")
-    finally:
-        if driver:
-            driver.quit()
 
     return result_update
 
 
 def _scrape_abebooks_sync(search_term: str, search_url: str) -> dict:
-    """Synchronous helper function for AbeBooks scraping"""
+    """Synchronous helper function for AbeBooks scraping using browser pool"""
     result_update = {
         "price": None,
         "title": None,
@@ -552,60 +922,60 @@ def _scrape_abebooks_sync(search_term: str, search_url: str) -> dict:
         "success": False,
     }
 
-    driver = None
     try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping AbeBooks for term: {search_term}")
+        pool = get_browser_pool()
+        with pool.get_browser() as driver:
+            scraper_logger.info(f"Scraping AbeBooks for term: {search_term}")
 
-        driver.get(search_url)
+            driver.get(search_url)
 
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-        time.sleep(5)
+            WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            time.sleep(5)
 
-        result_items = driver.find_elements(By.CSS_SELECTOR, "div.result-data")
+            result_items = driver.find_elements(By.CSS_SELECTOR, "div.result-data")
 
-        lowest_price = float("inf")
-        best_title = None
-        best_url = None
+            lowest_price = float("inf")
+            best_title = None
+            best_url = None
 
-        for item in result_items:
-            try:
-                price_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group p.item-price")
-                price_text = price_elem.text.strip()
-                price_value = clean_price(price_text)
-                if not price_value or price_value <= 0:
+            for item in result_items:
+                try:
+                    price_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group p.item-price")
+                    price_text = price_elem.text.strip()
+                    price_value = clean_price(price_text)
+                    if not price_value or price_value <= 0:
+                        continue
+
+                    # Get Shipping and add to Price
+                    shipping_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group span")
+                    shipping_text = shipping_elem.text.strip()
+                    shipping_value = clean_price(shipping_text)
+                    if shipping_value and shipping_value > 0:
+                        price_value += shipping_value
+
+                    title_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a span")
+                    title_text = title_elem.text.strip()
+                    url_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a")
+                    href = url_elem.get_attribute("href")
+
+                    if price_value < lowest_price:
+                        lowest_price = price_value
+                        best_title = title_text
+                        best_url = href
+
+                except NoSuchElementException:
                     continue
 
-                # Get Shipping and add to Price
-                shipping_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.buy-box-data div.item-price-group span")
-                shipping_text = shipping_elem.text.strip()
-                shipping_value = clean_price(shipping_text)
-                if shipping_value and shipping_value > 0:
-                    price_value += shipping_value
-
-                title_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a span")
-                title_text = title_elem.text.strip()
-                url_elem = item.find_element(By.CSS_SELECTOR, "div.cf div.result-detail h2.title a")
-                href = url_elem.get_attribute("href")
-
-                if price_value < lowest_price:
-                    lowest_price = price_value
-                    best_title = title_text
-                    best_url = href
-
-            except NoSuchElementException:
-                continue
-
-        if lowest_price != float("inf"):
-            result_update.update({
-                "price": lowest_price,
-                "title": best_title,
-                "url": best_url or search_url,
-                "success": True,
-                "notes": "Found price in search results",
-            })
-        else:
-            result_update["notes"] = "No valid prices found"
+            if lowest_price != float("inf"):
+                result_update.update({
+                    "price": lowest_price,
+                    "title": best_title,
+                    "url": best_url or search_url,
+                    "success": True,
+                    "notes": "Found price in search results",
+                })
+            else:
+                result_update["notes"] = "No valid prices found"
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
@@ -616,15 +986,12 @@ def _scrape_abebooks_sync(search_term: str, search_url: str) -> dict:
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
         scraper_logger.error(f"Unexpected error scraping AbeBooks for term {search_term}: {e}")
-    finally:
-        if driver:
-            driver.quit()
 
     return result_update
 
 
 def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
-    """Synchronous helper function for CamelCamelCamel scraping"""
+    """Synchronous helper function for CamelCamelCamel scraping using browser pool"""
     result_update = {
         "price": None,
         "title": None,
@@ -633,54 +1000,54 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
         "success": False,
     }
 
-    driver = None
     try:
-        driver = get_chrome_driver()
-        scraper_logger.info(f"Scraping CamelCamelCamel for ISBN: {isbn}")
+        pool = get_browser_pool()
+        with pool.get_browser() as driver:
+            scraper_logger.info(f"Scraping CamelCamelCamel for ISBN: {isbn}")
 
-        driver.get(search_url)
+            driver.get(search_url)
 
-        # Wait for search results
-        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # Wait for search results
+            WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-        # Look for search results
-        try:
-            # Find first search result
-            search_results = driver.find_elements(By.CSS_SELECTOR, ".search_item, .product")
+            # Look for search results
+            try:
+                # Find first search result
+                search_results = driver.find_elements(By.CSS_SELECTOR, ".search_item, .product")
 
-            if search_results:
-                first_result = search_results[0]
+                if search_results:
+                    first_result = search_results[0]
 
-                # Get title
-                try:
-                    title_element = first_result.find_element(By.CSS_SELECTOR, "a")
-                    result_update["title"] = title_element.text.strip()
-                    href = title_element.get_attribute("href")
-                    if href:
-                        result_update["url"] = href
-                except NoSuchElementException:
-                    pass
+                    # Get title
+                    try:
+                        title_element = first_result.find_element(By.CSS_SELECTOR, "a")
+                        result_update["title"] = title_element.text.strip()
+                        href = title_element.get_attribute("href")
+                        if href:
+                            result_update["url"] = href
+                    except NoSuchElementException:
+                        pass
 
-                # Get current Amazon price
-                try:
-                    price_element = first_result.find_element(
-                        By.CSS_SELECTOR, ".price, .amazon_price, [class*='price']"
-                    )
-                    price_text = price_element.text.strip()
-                    price_value = clean_price(price_text)
-                    if price_value and price_value > 0:
-                        result_update["price"] = price_value
-                        result_update["success"] = True
-                        result_update["notes"] = "Current Amazon price from CamelCamelCamel"
-                    else:
-                        result_update["notes"] = f"Invalid price format: {price_text}"
-                except NoSuchElementException:
-                    result_update["notes"] = "No price found in search result"
-            else:
-                result_update["notes"] = "No search results found"
+                    # Get current Amazon price
+                    try:
+                        price_element = first_result.find_element(
+                            By.CSS_SELECTOR, ".price, .amazon_price, [class*='price']"
+                        )
+                        price_text = price_element.text.strip()
+                        price_value = clean_price(price_text)
+                        if price_value and price_value > 0:
+                            result_update["price"] = price_value
+                            result_update["success"] = True
+                            result_update["notes"] = "Current Amazon price from CamelCamelCamel"
+                        else:
+                            result_update["notes"] = f"Invalid price format: {price_text}"
+                    except NoSuchElementException:
+                        result_update["notes"] = "No price found in search result"
+                else:
+                    result_update["notes"] = "No search results found"
 
-        except NoSuchElementException:
-            result_update["notes"] = "No search results container found"
+            except NoSuchElementException:
+                result_update["notes"] = "No search results container found"
 
     except TimeoutException:
         result_update["notes"] = "Page load timeout"
@@ -691,9 +1058,6 @@ def _scrape_camelcamelcamel_sync(isbn: str, search_url: str) -> dict:
     except Exception as e:
         result_update["notes"] = f"Unexpected error: {str(e)}"
         scraper_logger.error(f"Unexpected error scraping CamelCamelCamel for ISBN {isbn}: {e}")
-    finally:
-        if driver:
-            driver.quit()
 
     return result_update
 
@@ -1144,7 +1508,7 @@ async def scrape_multiple_isbns(
     isbns: list[tuple[str, str, dict]], batch_size: int = MAX_CONCURRENT_SCRAPERS
 ) -> list[dict]:
     """
-    Async scrape multiple ISBNs with controlled concurrency
+    Async scrape multiple ISBNs with controlled concurrency using browser pool
 
     Args:
         isbns: List of ISBNs to scrape
@@ -1158,12 +1522,10 @@ async def scrape_multiple_isbns(
     )
     start_time = time.time()
     
-    # Ensure ChromeDriver session is initialized for batch processing
-    if not _chromedriver_initialized:
-        scraper_logger.info("Initializing ChromeDriver session for batch processing...")
-        if not initialize_chromedriver_session():
-            scraper_logger.error("Failed to initialize ChromeDriver session for batch processing")
-            return []
+    # Initialize browser pool for batch processing
+    if not initialize_browser_pool(BROWSER_POOL_SIZE):
+        scraper_logger.error("Failed to initialize browser pool for batch processing")
+        return []
 
     all_results = []
 
@@ -1198,6 +1560,10 @@ async def scrape_multiple_isbns(
     successful_results = len([r for r in all_results if r.get("success", False)])
     log_task_complete(scraper_logger, f"Async bulk scraping for {len(isbns)} ISBNs", duration)
     scraper_logger.info(f"Async bulk scraping completed: {successful_results}/{len(all_results)} successful scrapes")
+
+    # Log browser pool statistics
+    pool_stats = get_browser_pool_stats()
+    scraper_logger.info(f"Browser pool statistics: {pool_stats['available_sessions']}/{pool_stats['total_sessions']} sessions available")
 
     return all_results
 
@@ -1284,7 +1650,7 @@ def load_isbns_from_file(filepath: str = None) -> list[tuple[str, str, dict]]:
 
 async def scrape_all_isbns_async(isbn_file: str = None) -> None:
     """
-    Async scrape all ISBNs from file across all sources with improved performance
+    Async scrape all ISBNs from file across all sources with browser pool for improved performance
 
     Args:
         isbn_file: Path to ISBNs file (optional)
@@ -1292,10 +1658,10 @@ async def scrape_all_isbns_async(isbn_file: str = None) -> None:
     log_task_start(scraper_logger, "Starting async full ISBN scraping job")
     start_time = time.time()
     
-    # Initialize ChromeDriver session once at the start
-    scraper_logger.info("Initializing ChromeDriver session for bulk scraping...")
-    if not initialize_chromedriver_session():
-        scraper_logger.error("Failed to initialize ChromeDriver session, aborting scraping")
+    # Initialize browser pool once at the start
+    scraper_logger.info("Initializing browser pool for bulk scraping...")
+    if not initialize_browser_pool(BROWSER_POOL_SIZE):
+        scraper_logger.error("Failed to initialize browser pool, aborting scraping")
         return
 
     # Load ISBNs
@@ -1305,7 +1671,7 @@ async def scrape_all_isbns_async(isbn_file: str = None) -> None:
         scraper_logger.warning("No ISBNs to scrape")
         return
 
-    # Scrape all ISBNs concurrently with controlled batching
+    # Scrape all ISBNs concurrently with controlled batching using browser pool
     all_results = await scrape_multiple_isbns(isbns)
 
     # Save all results at once
@@ -1318,8 +1684,16 @@ async def scrape_all_isbns_async(isbn_file: str = None) -> None:
     successful_results = len([r for r in all_results if r.get("success", False)])
     total_attempts = len(all_results)
 
+    # Log final browser pool statistics
+    pool_stats = get_browser_pool_stats()
+    scraper_logger.info(f"Final browser pool statistics: {pool_stats}")
+
     log_task_complete(scraper_logger, "Async full ISBN scraping job", duration)
     scraper_logger.info(f"Async scraping completed: {successful_results}/{total_attempts} successful scrapes")
+    
+    # Optional: Shutdown browser pool after bulk operation
+    # Uncomment the next line if you want to clean up the pool immediately after bulk scraping
+    # shutdown_browser_pool()
 
 
 # Remove the sync wrapper and make scrape_all_isbns async
@@ -1375,42 +1749,65 @@ scrape_all_sources = scrape_all_sources_sync
 
 
 if __name__ == "__main__":
-    # Test the async scrapers
-    test_isbn = "9780134685991"  # Effective Java
+    # Test the async scrapers with browser pool
+    test_isbn = {"isbn13": "9780134685991", "title": "Effective Java"}  # Test with proper metadata structure
 
     async def test_async_scrapers():
-        print("Testing async scraper functions...")
+        print("Testing async scraper functions with browser pool...")
         
-        # Initialize ChromeDriver session once at the start of testing
-        print("\n0. Initializing ChromeDriver session...")
-        if initialize_chromedriver_session():
-            print("   ✅ ChromeDriver session initialized successfully")
+        # Test 1: Initialize browser pool
+        print("\n1. Initializing browser pool...")
+        if initialize_browser_pool(BROWSER_POOL_SIZE):
+            print(f"   ✅ Browser pool initialized successfully with {BROWSER_POOL_SIZE} sessions")
         else:
-            print("   ❌ Failed to initialize ChromeDriver session")
+            print("   ❌ Failed to initialize browser pool")
             return
 
-        # Test individual scrapers        
-        print("\n1. Testing async BookScouter...")
+        # Test 2: Test individual scrapers        
+        print("\n2. Testing async BookScouter...")
         result = await scrape_bookscouter_async(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n2. Testing async Christianbook...")
+        print("\n3. Testing async Christianbook...")
         result = await scrape_christianbook_async(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n3. Testing async RainbowResource...")
+        print("\n4. Testing async RainbowResource...")
         result = await scrape_rainbowresource_async(test_isbn)
         print(f"   Result: {result}")
 
-        print("\n4. Testing async all sources (concurrent)...")
+        print("\n5. Testing async all sources (concurrent)...")
         all_results = await scrape_all_sources_async(test_isbn)
         save_results_to_csv(all_results)
         print(f"   Saved {len(all_results)} results to CSV")
 
-        print("\n5. Testing multiple ISBNs async...")
-        test_isbns = [test_isbn, "9780132350884"]  # Add another test ISBN
+        # Test 3: Check browser pool stats
+        print("\n6. Browser pool statistics:")
+        stats = get_browser_pool_stats()
+        print(f"   Pool size: {stats['pool_size']}")
+        print(f"   Available sessions: {stats['available_sessions']}")
+        print(f"   Total sessions: {stats['total_sessions']}")
+        
+        # Test 4: Multiple ISBNs
+        print("\n7. Testing multiple ISBNs async...")
+        test_isbns = [
+            ("Effective Java", "9780134685991", test_isbn),
+            ("Clean Code", "9780132350884", {"isbn13": "9780132350884", "title": "Clean Code"})
+        ]
         multiple_results = await scrape_multiple_isbns(test_isbns, batch_size=2)
         print(f"   Processed {len(test_isbns)} ISBNs, got {len(multiple_results)} total results")
+
+        # Test 5: Final browser pool stats
+        print("\n8. Final browser pool statistics:")
+        final_stats = get_browser_pool_stats()
+        for session_id, details in final_stats['sessions_detail'].items():
+            print(f"   {session_id}: used {details['use_count']} times, age {details['age']:.1f}s, idle {details['idle_time']:.1f}s")
+
+        print("\n9. Shutting down browser pool...")
+        shutdown_browser_pool()
+        print("   ✅ Browser pool shutdown complete")
+
+        print("\n✅ All tests completed successfully!")
 
     # Run the async test
     asyncio.run(test_async_scrapers())
