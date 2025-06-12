@@ -1153,25 +1153,7 @@
             }
         }
     ],
-    "Test Book for Grade Level": [
-        {
-            "9780000000001": {
-                "isbn_input": "9780000000001",
-                "isbn13": "9780000000002",
-                "isbn10": "0000000000",
-                "title": "Ecos De Paris",
-                "authors": [
-                    "E\u00e7a De Queiroz"
-                ],
-                "publisher": "Clube de Autores",
-                "year": "2021",
-                "success": true,
-                "error": null,
-                "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=wlssEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
-            }
-        }
-    ],
+    "Test Book for Grade Level": [],
     "The Great Gatsby": [
         {
             "9789389647365": {
@@ -1239,6 +1221,63 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=Hz49zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Trumpet of the Swan": [
+        {
+            "0064408671": {
+                "isbn_input": "0064408671",
+                "isbn13": "9780064408677",
+                "isbn10": "0064408671",
+                "title": "The Trumpet of the Swan",
+                "authors": [
+                    "E. B. White"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2000",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Y_IRoO5nMi4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Peter Rabbit Tales": [],
+    "The Cricket in Times Square": [
+        {
+            "0374390401": {
+                "isbn_input": "0374390401",
+                "isbn13": "9780374390402",
+                "isbn10": "0374390401",
+                "title": "The Cricket in Times Square",
+                "authors": [
+                    "George Selden"
+                ],
+                "publisher": "Chester Cricket and His Friend",
+                "year": "2022",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=nQdlEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "New American Cursive I": [
+        {
+            "9780979767807": {
+                "isbn_input": "9780979767807",
+                "isbn13": "9780979767807",
+                "isbn10": "0979767806",
+                "title": "New American Cursive I",
+                "authors": [
+                    "Iris Hatfield"
+                ],
+                "publisher": null,
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books"
             }
         }
     ],

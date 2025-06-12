@@ -243,7 +243,9 @@ def add_book_isbn():
             if already_tracked:
                 break
         if already_tracked:
-            return jsonify({"error": "ISBN already tracked"}), 400
+            # Show which title the ISBN is tracked under
+            tracked_title = title or original_title or isbn_input or 'this book'
+            return jsonify({"error": f"ISBN is already tracked in '{tracked_title}'!"}), 400
 
         isbn_dict = {}
         
@@ -349,7 +351,6 @@ def add_book_isbn():
         if added:
             books_file.write_text(json.dumps(books, indent=4))
             logger.info(f"Added {added} ISBNs under {title}")
-            
             # Assign to grade level if specified
             if grade:
                 try:
@@ -364,8 +365,11 @@ def add_book_isbn():
                 except Exception as e:
                     logger.error(f"Error assigning book to grade: {e}")
                     # Don't fail the entire operation if grade assignment fails
-            
-            return jsonify({"message": f"Added {added} ISBN(s)"})
+            # Custom message: single or multiple ISBNs
+            if added == 1:
+                return jsonify({"message": f"Added '{title}'!"})
+            else:
+                return jsonify({"message": f"Added '{title}' and {added-1} Related ISBNs!"})
         else:
             return jsonify({"error": "No ISBNs added"}), 400
 

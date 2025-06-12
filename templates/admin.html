@@ -521,6 +521,7 @@
                 });
                 const data = await response.json();
                 if (response.ok) {
+                    // The backend message now includes the book title and related ISBNs as needed
                     M.toast({ html: data.message, classes: 'green' });
                     // Clear input fields but preserve grade level selection
                     if (mode === 'isbn') {
