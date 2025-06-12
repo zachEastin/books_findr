@@ -19,7 +19,9 @@ from urllib.parse import urlparse
 import os
 
 from .logger import scraper_logger
-from .scraper import get_chrome_driver, clean_price
+from .scraper import get_chrome_driver, clean_price, _initialize_chromedriver_once
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 # Configuration
 BASE_DIR = Path(__file__).parent.parent
@@ -28,6 +30,53 @@ TIMEOUT = 15
 
 # Ensure images directory exists
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def get_chrome_driver_with_images() -> webdriver.Chrome:
+    """
+    Create and configure Chrome WebDriver with images enabled specifically for image downloading.
+    This ensures that images can be loaded when manually requested.
+    """
+    try:
+        # Get the pre-initialized ChromeDriver path
+        driver_path = _initialize_chromedriver_once()
+        if not driver_path:
+            raise Exception("ChromeDriver initialization failed")
+        
+        # Configure Chrome options
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Run in background
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument(
+            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        )
+        # Explicitly ENABLE images for image downloading
+        chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 1})
+        
+        # Additional options to avoid detection
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        
+        # Create service using the pre-initialized ChromeDriver path
+        service = Service(executable_path=driver_path)
+        
+        # Create the WebDriver instance
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(TIMEOUT)
+        
+        # Hide automation indicators
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        scraper_logger.info("Created Chrome driver with images enabled for image downloading")
+        return driver
+        
+    except Exception as e:
+        scraper_logger.error(f"Failed to create Chrome driver with images: {e}")
+        raise
 
 
 def get_image_filename(isbn: str, source: str) -> str:
@@ -124,7 +173,7 @@ def download_bookscouter_image(isbn: str, url: str) -> Dict[str, Any]:
             })
             return result
         
-        driver = get_chrome_driver()
+        driver = get_chrome_driver_with_images()
         driver.get(url)
         
         # Wait for page to load
@@ -194,7 +243,7 @@ def download_christianbook_image(isbn: str, url: str) -> Dict[str, Any]:
             })
             return result
         
-        driver = get_chrome_driver()
+        driver = get_chrome_driver_with_images()
         driver.get(url)
         
         # Wait for page to load
@@ -264,7 +313,7 @@ def download_rainbowresource_image(isbn: str, url: str) -> Dict[str, Any]:
             })
             return result
         
-        driver = get_chrome_driver()
+        driver = get_chrome_driver_with_images()
         driver.get(url)
         
         # Wait for page to load
@@ -348,7 +397,7 @@ def download_abebooks_image(isbn: str, url: str) -> Dict[str, Any]:
             })
             return result
 
-        driver = get_chrome_driver()
+        driver = get_chrome_driver_with_images()
         driver.get(url)
 
         wait = WebDriverWait(driver, TIMEOUT)

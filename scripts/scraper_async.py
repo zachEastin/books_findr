@@ -176,8 +176,7 @@ def get_chrome_driver() -> webdriver.Chrome:
         driver_path = _initialize_chromedriver_once()
         if not driver_path:
             raise Exception("ChromeDriver initialization failed")
-        
-        # Configure Chrome options
+          # Configure Chrome options
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Run in background
         chrome_options.add_argument("--no-sandbox")
@@ -187,6 +186,10 @@ def get_chrome_driver() -> webdriver.Chrome:
         chrome_options.add_argument(
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         )
+        # Disable image loading to improve performance and prevent automatic image scraping
+        chrome_options.add_argument("--blink-settings=imagesEnabled=false")
+        chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+        # Additional options to avoid detection
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
