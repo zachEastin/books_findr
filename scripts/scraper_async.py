@@ -161,7 +161,6 @@ def _initialize_chromedriver_once() -> Optional[str]:
             
         except Exception as e:
             scraper_logger.error(f"Failed to initialize ChromeDriver: {e}")
-            _chromedriver_initialized = True  # Mark as attempted to avoid repeated failures
             _chromedriver_path = None
             return None
 
