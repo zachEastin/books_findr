@@ -23,6 +23,7 @@ This document provides comprehensive information about the book cover image func
 - **Supported Sources**:
   - **ChristianBook** (`christianbook`) 
   - **RainbowResource** (`rainbowresource`)
+  - **AbeBooks** (`abebooks`)
 
 ### 3. Admin Interface Integration
 - **Location**: Admin page (`/admin`)
