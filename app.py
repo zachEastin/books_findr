@@ -1748,6 +1748,40 @@ def add_book_manual():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/books/<title>/<isbn>", methods=["PUT", "PATCH"])
+def update_isbn_metadata(title, isbn):
+    """Update metadata for a specific ISBN under a book title"""
+    try:
+        books_file = BASE_DIR / "books.json"
+        if not books_file.exists():
+            return jsonify({"error": "No books file found"}), 404
+        books = json.loads(books_file.read_bytes())
+        if title not in books:
+            return jsonify({"error": "Book title not found"}), 404
+        isbn_list = books[title]
+        found = False
+        for item in isbn_list:
+            if isbn in item:
+                found = True
+                metadata = item[isbn]
+                data = request.json or {}
+                # Only update allowed fields
+                for field in ["title", "authors", "publisher", "year", "icon_url", "notes"]:
+                    if field in data:
+                        metadata[field] = data[field]
+                # If authors is a string, convert to list
+                if isinstance(metadata.get("authors"), str):
+                    metadata["authors"] = [a.strip() for a in metadata["authors"].split(",") if a.strip()]
+                break
+        if not found:
+            return jsonify({"error": "ISBN not found"}), 404
+        books_file.write_text(json.dumps(books, indent=4))
+        return jsonify({"message": f"ISBN {isbn} updated for {title}"})
+    except Exception as e:
+        logger.error(f"Error updating ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     logger.info("Starting Book Price Tracker Flask app")
 

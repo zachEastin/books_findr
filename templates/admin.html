@@ -500,6 +500,7 @@
     <script>        
         // Global variables
         let currentSearchQuery = '';
+        var editIsbnContext = { title: '', isbn: '' };
         
         // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
@@ -873,6 +874,7 @@
                             <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '11th Grade')">11th Grade</a></li>
                             <li><a href="#!" onclick="moveBookToGrade('${title.replace(/'/g, "\\'")}', '12th Grade')">12th Grade</a></li>
                         </ul>
+                        <button class="btn-flat blue-text" onclick="openEditIsbnModal('${title.replace(/'/g, "\\'")}', '${isbn}', decodeURIComponent('${encodeURIComponent(JSON.stringify(meta))}'))" title="Edit"><i class="material-icons">edit</i></button>
                         <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
                         <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
                     </div>
@@ -935,6 +937,7 @@
                             </div>
                         </div>
                         <div class="isbn-actions">
+                            <button class="btn-flat blue-text" onclick="openEditIsbnModal('${title.replace(/'/g, "\\'")}', '${isbn}', decodeURIComponent('${encodeURIComponent(JSON.stringify(meta))}'))" title="Edit"><i class="material-icons">edit</i></button>
                             <button class="btn-flat red-text" onclick="removeISBN('${title.replace(/'/g, "\\'")}', '${isbn}')" title="Remove"><i class="material-icons">delete</i></button>
                             <button class="btn-flat blue-text" onclick="scrapeISBN('${isbn}')" title="Scrape"><i class="material-icons">sync</i></button>
                         </div>
@@ -1522,6 +1525,67 @@
                 });
             }
         });
+        
+        // Edit ISBN metadata modal functions
+        function openEditIsbnModal(title, isbn, metaStr) {
+            let meta;
+            try {
+                meta = JSON.parse(metaStr);
+            } catch (e) {
+                meta = {};
+            }
+            editIsbnContext = { title, isbn };
+            document.getElementById('edit-title').value = meta.title || '';
+            document.getElementById('edit-authors').value = (meta.authors && Array.isArray(meta.authors)) ? meta.authors.join(', ') : (meta.authors || '');
+            document.getElementById('edit-publisher').value = meta.publisher || '';
+            document.getElementById('edit-year').value = meta.year || '';
+            document.getElementById('edit-icon-url').value = meta.icon_url || '';
+            document.getElementById('edit-notes').value = meta.notes || '';
+            M.updateTextFields();
+            const modal = M.Modal.getInstance(document.getElementById('edit-isbn-modal'));
+            modal.open();
+        }
+        async function submitEditIsbn() {
+            const title = editIsbnContext.title;
+            const isbn = editIsbnContext.isbn;
+            const data = {
+                title: document.getElementById('edit-title').value.trim(),
+                authors: document.getElementById('edit-authors').value.trim(),
+                publisher: document.getElementById('edit-publisher').value.trim(),
+                year: document.getElementById('edit-year').value.trim(),
+                icon_url: document.getElementById('edit-icon-url').value.trim(),
+                notes: document.getElementById('edit-notes').value.trim(),
+            };
+            // Convert authors to array if not empty
+            if (data.authors) {
+                data.authors = data.authors.split(',').map(a => a.trim()).filter(Boolean);
+            }
+            try {
+                const response = await fetch(`/api/books/${encodeURIComponent(title)}/${isbn}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    M.toast({ html: result.message, classes: 'green' });
+                    const modal = M.Modal.getInstance(document.getElementById('edit-isbn-modal'));
+                    modal.close();
+                    loadISBNs();
+                } else {
+                    M.toast({ html: result.error || 'Failed to update ISBN', classes: 'red' });
+                }
+            } catch (error) {
+                console.error('Error updating ISBN:', error);
+                M.toast({ html: 'Error updating ISBN', classes: 'red' });
+            }
+        }
+        
+        // Materialize modal initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            var editModalEl = document.getElementById('edit-isbn-modal');
+            if (editModalEl) M.Modal.init(editModalEl);
+        });
     </script>
 
     <!-- Manual Book Entry Modal -->
@@ -1609,6 +1673,51 @@
             <button type="button" class="waves-effect waves-green btn blue" onclick="submitManualEntry()">
                 <i class="material-icons left">save</i>Add Book
             </button>
+        </div>
+    </div>
+
+    <!-- Edit ISBN Modal -->
+    <div id="edit-isbn-modal" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4>Edit ISBN Metadata</h4>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="edit-title" type="text" class="validate" required>
+                    <label for="edit-title">Book Title <span class="red-text">*</span></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="edit-authors" type="text" class="validate">
+                    <label for="edit-authors">Authors (comma-separated)</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="edit-publisher" type="text" class="validate">
+                    <label for="edit-publisher">Publisher</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="edit-year" type="text" class="validate">
+                    <label for="edit-year">Year</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="edit-icon-url" type="url" class="validate">
+                    <label for="edit-icon-url">Icon URL</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="edit-notes" type="text" class="validate">
+                    <label for="edit-notes">Notes</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close btn-flat">Cancel</button>
+            <button class="btn blue" onclick="submitEditIsbn()"><i class="material-icons left">save</i>Save Changes</button>
         </div>
     </div>
 </body>
