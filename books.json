@@ -3284,5 +3284,302 @@
                 "icon_url": "http://books.google.com/books/content?id=rxxVECt0WN8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         }
+    ],
+    "The Story of Civilization": [
+        {
+            "1505105749": {
+                "isbn_input": "1505105749",
+                "isbn13": "9781505105742",
+                "isbn10": "1505105749",
+                "title": "The Story of Civilization",
+                "authors": [
+                    "Phillip Campbell"
+                ],
+                "publisher": null,
+                "year": "2017",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=aEzyugEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Our Island Story": [
+        {
+            "1495294617": {
+                "isbn_input": "1495294617",
+                "isbn13": "9781495294617",
+                "isbn10": "1495294617",
+                "title": "Our Island Story",
+                "authors": [
+                    "H. E. Marshall"
+                ],
+                "publisher": "Createspace Independent Publishing Platform",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=OtmQoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Stories of Beowulf Told to Children": [
+        {
+            "1495295001": {
+                "isbn_input": "1495295001",
+                "isbn13": "9781495295003",
+                "isbn10": "1495295001",
+                "title": "Stories of Beowulf Told to Children",
+                "authors": [
+                    "H. E. Marshall"
+                ],
+                "publisher": "Createspace Independent Publishing Platform",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Gp9engEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "A Single Shard": [
+        {
+            "9780547534268": {
+                "isbn_input": "9780547534268",
+                "isbn13": "9780547534268",
+                "isbn10": "0547534264",
+                "title": "A Single Shard",
+                "authors": [
+                    "Linda Sue Park"
+                ],
+                "publisher": "Clarion Books",
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=rK3aoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Door in the Wall": [
+        {
+            "0440227798": {
+                "isbn_input": "0440227798",
+                "isbn13": "9780440227793",
+                "isbn10": "0440227798",
+                "title": "The Door in the Wall",
+                "authors": [
+                    "Marguerite de Angeli"
+                ],
+                "publisher": "Laurel Leaf",
+                "year": "1998",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=iJsP-5bXlX4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Otto of the Silver Hand": [
+        {
+            "0486217841": {
+                "isbn_input": "0486217841",
+                "isbn13": "9780486217840",
+                "isbn10": "0486217841",
+                "title": "Otto of the Silver Hand",
+                "authors": [
+                    "Howard Pyle"
+                ],
+                "publisher": "Courier Corporation",
+                "year": "1967",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=gmr8AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Magician's Nephew (rack)": [
+        {
+            "0064471101": {
+                "isbn_input": "0064471101",
+                "isbn13": "9780064471107",
+                "isbn10": "0064471101",
+                "title": "The Magician's Nephew (rack)",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "The Horse and His Boy (rack)": [
+        {
+            "0064471063": {
+                "isbn_input": "0064471063",
+                "isbn13": "9780064471060",
+                "isbn10": "0064471063",
+                "title": "The Horse and His Boy (rack)",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=SERYVCZW0kUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Robinson Crusoe": [
+        {
+            "1853260452": {
+                "isbn_input": "1853260452",
+                "isbn13": "9781853260452",
+                "isbn10": "1853260452",
+                "title": "Robinson Crusoe",
+                "authors": [
+                    "Daniel Defoe"
+                ],
+                "publisher": "Wordsworth Editions",
+                "year": "1995",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=QmILRT7Y7aQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Well-Ordered Language Level 2A (CAP)": [
+        {
+            "9781600513039": {
+                "title": "Well-Ordered Language Level 2A (CAP)",
+                "isbn13": "9781600513039",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "Classical Academic Press",
+                "year": "2017",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://pictures.abebooks.com/isbn/9781600513039-us.jpg"
+            }
+        }
+    ],
+    "Well-Ordered Language Level 2B (CAP)": [
+        {
+            "9781600513107": {
+                "title": "Well-Ordered Language Level 2B (CAP)",
+                "isbn13": "9781600513107",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "Classical Academic Press",
+                "year": "2017",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://pictures.abebooks.com/isbn/9781600513107-us.jpg"
+            }
+        }
+    ],
+    "Writing & Rhetoric Book 4": [
+        {
+            "1600512429": {
+                "isbn_input": "1600512429",
+                "isbn13": "9781600512421",
+                "isbn10": "1600512429",
+                "title": "Writing & Rhetoric Book 4",
+                "authors": [
+                    "Paul Kortepeter"
+                ],
+                "publisher": null,
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Libellus de Historia: Latin History Reader for Use with Latin for Children: Primer B": [
+        {
+            "9781600510106": {
+                "isbn_input": "9781600510106",
+                "isbn13": "9781600510106",
+                "isbn10": "1600510108",
+                "title": "Libellus de Historia: Latin History Reader for Use with Latin for Children: Primer B",
+                "authors": [
+                    "Karen Moore",
+                    "Erin Davis"
+                ],
+                "publisher": null,
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TZChkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Latin for Children, Primer B": [
+        {
+            "9781600510069": {
+                "isbn_input": "9781600510069",
+                "isbn13": "9781600510069",
+                "isbn10": "160051006X",
+                "title": "Latin for Children, Primer B",
+                "authors": [
+                    "Aaron Larsen",
+                    "Christopher Perrin"
+                ],
+                "publisher": null,
+                "year": "2004",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=KQ4CkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Cathedral": [
+        {
+            "9780395316689": {
+                "isbn_input": "9780395316689",
+                "isbn13": "9780395316689",
+                "isbn10": "0395316685",
+                "title": "Cathedral",
+                "authors": [
+                    "David Macaulay"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1973",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=SC9MgfcQIKAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Castle: How It Works": [
+        {
+            "9781626722095": {
+                "isbn_input": "9781626722095",
+                "isbn13": "9781626722095",
+                "isbn10": "1626722099",
+                "title": "Castle: How It Works",
+                "authors": [
+                    "David Macaulay",
+                    "Sheila Keenan"
+                ],
+                "publisher": "Square Fish",
+                "year": "2015",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=zD36oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
     ]
 }
