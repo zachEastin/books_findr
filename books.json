@@ -2936,6 +2936,23 @@
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
+        },
+        {
+            "9780142404157": {
+                "isbn_input": "9780142404157",
+                "isbn13": "9780142404157",
+                "isbn10": "0142404152",
+                "title": "Homer Price (Puffin Modern Classics)",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Penguin",
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
         }
     ],
     "The Incredible Journey": [
@@ -3115,6 +3132,156 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=111E4XseZQUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Children's Homer": [
+        {
+            "9780689868832": {
+                "isbn_input": "9780689868832",
+                "isbn13": "9780689868832",
+                "isbn10": "0689868839",
+                "title": "The Children's Homer",
+                "authors": [
+                    "Padraic Colum"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "2004",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=_ySymvznW8oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The World Jesus Knew": [
+        {
+            "1506455514": {
+                "isbn_input": "1506455514",
+                "isbn13": "9781506455518",
+                "isbn10": "1506455514",
+                "title": "The World Jesus Knew",
+                "authors": [
+                    "Marc Olson"
+                ],
+                "publisher": "Augsburg Fortress Publishers",
+                "year": "2023",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=cBK-EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Golden Goblet": [
+        {
+            "0140303359": {
+                "isbn_input": "0140303359",
+                "isbn13": "9780140303353",
+                "isbn10": "0140303359",
+                "title": "The Golden Goblet",
+                "authors": [
+                    "Eloise Jarvis McGraw"
+                ],
+                "publisher": "Viking Books for Young Readers",
+                "year": "1961",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=kePYCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Detectives in Togas": [
+        {
+            "0152162801": {
+                "isbn_input": "0152162801",
+                "isbn13": "9780152162801",
+                "isbn10": "0152162801",
+                "title": "Detectives in Togas",
+                "authors": [
+                    "Henry Winterfeld"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=2qn6adFcKUYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Roman Diary": [
+        {
+            "0763670537": {
+                "isbn_input": "0763670537",
+                "isbn13": "9780763670535",
+                "isbn10": "0763670537",
+                "title": "Roman Diary",
+                "authors": [
+                    "Richard Platt"
+                ],
+                "publisher": "Candlewick",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=tbZvDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Saturdays": [
+        {
+            "0312375980": {
+                "isbn_input": "0312375980",
+                "isbn13": "9780312375980",
+                "isbn10": "0312375980",
+                "title": "The Saturdays",
+                "authors": [],
+                "publisher": "Macmillan",
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=hnC0CgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "My Side of the Mountain": [
+        {
+            "9780141312422": {
+                "isbn_input": "9780141312422",
+                "isbn13": "9780141312422",
+                "isbn10": "0141312424",
+                "title": "My Side of the Mountain",
+                "authors": [
+                    "Jean Craighead George"
+                ],
+                "publisher": "Penguin",
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=zAQdDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "City": [
+        {
+            "9780395349229": {
+                "isbn_input": "9780395349229",
+                "isbn13": "9780395349229",
+                "isbn10": "0395349222",
+                "title": "City",
+                "authors": [
+                    "David Macaulay"
+                ],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1974",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=rxxVECt0WN8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         }
     ]
