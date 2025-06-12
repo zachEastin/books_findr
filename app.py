@@ -253,8 +253,7 @@ def add_book_isbn():
             if google_books_api.is_available():
                 logger.info(f"Fetching metadata for ISBN {isbn} from Google Books...")
                 metadata_result = google_books_api.fetch_book_metadata(isbn)
-                metadata_result["source"] = "google_books"
-                # Try to fetch Google Books thumbnail/icon
+                metadata_result["source"] = "google_books"                        # Try to fetch Google Books thumbnail/icon
                 if metadata_result.get("success") and "imageLinks" in metadata_result:
                     # Already present (future-proof)
                     pass
@@ -274,6 +273,17 @@ def add_book_isbn():
                                 icon_url = image_links.get("thumbnail") or image_links.get("smallThumbnail")
                                 if icon_url:
                                     metadata_result["icon_url"] = icon_url
+                                    
+                                    # Download the icon and save locally
+                                    try:
+                                        from scripts.image_downloader import download_googlebooks_icon
+                                        download_result = download_googlebooks_icon(isbn, icon_url)
+                                        if download_result["success"]:
+                                            # Add the local path to the metadata
+                                            metadata_result["icon_path"] = download_result["image_path"]
+                                            logger.info(f"Downloaded Google Books icon for ISBN {isbn}")
+                                    except Exception as e:
+                                        logger.warning(f"Failed to download Google Books icon for {isbn}: {e}")
                     except Exception as e:
                         logger.warning(f"Could not fetch Google Books icon for {isbn}: {e}")
             else:
@@ -1703,9 +1713,7 @@ def add_book_manual():
                         return jsonify({"error": f"ISBN {isbn} is already tracked under '{book_title}'"}), 400
 
         # Create book entry
-        isbn_list = books.setdefault(title, [])
-        
-        # Add each ISBN with the same metadata
+        isbn_list = books.setdefault(title, [])            # Add each ISBN with the same metadata
         for isbn in clean_isbns:
             isbn_metadata = {
                 "title": title,
@@ -1718,6 +1726,19 @@ def add_book_manual():
                 "notes": "",
                 "icon_url": icon_url
             }
+            
+            # Download icon if URL is provided
+            if icon_url:
+                try:
+                    from scripts.image_downloader import download_googlebooks_icon
+                    download_result = download_googlebooks_icon(isbn, icon_url)
+                    if download_result["success"]:
+                        # Add the local path to the metadata
+                        isbn_metadata["icon_path"] = download_result["image_path"]
+                        logger.info(f"Downloaded icon for manually added ISBN {isbn}")
+                except Exception as e:
+                    logger.warning(f"Failed to download icon for manually added ISBN {isbn}: {e}")
+            
             isbn_list.append({isbn: isbn_metadata})
 
         # Save to file
@@ -1781,6 +1802,82 @@ def update_isbn_metadata(title, isbn):
         return jsonify({"message": f"ISBN {isbn} updated for {title}"})
     except Exception as e:
         logger.error(f"Error updating ISBN: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/download-all-icons", methods=["POST"])
+def download_all_icons():
+    """Download all book icons from Google Books to local storage"""
+    try:
+        from scripts.image_downloader import download_all_book_icons
+        
+        # Load books data
+        books_file = BASE_DIR / "books.json"
+        if not books_file.exists():
+            return jsonify({"error": "No books file found"}), 404
+            
+        books = json.loads(books_file.read_bytes())
+        
+        # Download all icons
+        result = download_all_book_icons(books)
+        
+        # Save updated book data with icon paths
+        if result["success"] and (result["downloaded"] > 0 or result["already_local"] > 0):
+            books_file.write_text(json.dumps(books, indent=4))
+            logger.info(f"Updated books.json with local icon paths for {result['downloaded']} books")
+        
+        return jsonify({
+            "message": f"Downloaded {result['downloaded']} icons, {result['already_local']} already local, {result['failed']} failed",
+            "result": result
+        })
+            
+    except Exception as e:
+        logger.error(f"Error downloading all icons: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/images/<isbn>/googlebooks", methods=["POST"])
+def download_googlebooks_icon_api(isbn):
+    """Download a Google Books icon from a URL"""
+    try:
+        from scripts.image_downloader import download_googlebooks_icon
+        
+        data = request.json or {}
+        url = data.get("url", "")
+        
+        if not url:
+            return jsonify({"error": "URL is required"}), 400
+            
+        # Download the icon
+        result = download_googlebooks_icon(isbn, url)
+        
+        if not result["success"]:
+            return jsonify({
+                "error": f"Failed to download image: {result.get('error', 'Unknown error')}",
+                "result": result
+            }), 400
+            
+        # Update icon_path in books.json if download was successful
+        books_file = BASE_DIR / "books.json"
+        if books_file.exists():
+            books = json.loads(books_file.read_bytes())
+            # Find the ISBN in the books data
+            for title, isbn_list in books.items():
+                for item in isbn_list:
+                    if isbn in item:
+                        item[isbn]["icon_path"] = result["image_path"]
+                        # Save the updated books data
+                        books_file.write_text(json.dumps(books, indent=4))
+                        logger.info(f"Updated books.json with local icon path for ISBN {isbn}")
+                        break
+        
+        return jsonify({
+            "message": f"Image downloaded successfully for {isbn} from Google Books",
+            "result": result
+        })
+            
+    except Exception as e:
+        logger.error(f"Error downloading Google Books icon for ISBN {isbn}: {e}")
         return jsonify({"error": str(e)}), 500
 
 

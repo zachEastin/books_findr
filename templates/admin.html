@@ -498,6 +498,14 @@
                 </div>
             </div>
         </div>
+
+        <!-- Download all icons button -->
+        <div class="fixed-action-btn" style="bottom: 110px; right: 24px;">
+            <button id="download-all-icons-btn" class="btn-floating btn-large orange darken-1" onclick="downloadAllIcons()">
+                <i class="large material-icons">image</i>
+            </button>
+            <span class="btn-floating mobile-fab-tip">Download All Icons</span>
+        </div>
     </div>
 
     <!-- Material Design JS -->
@@ -1115,8 +1123,7 @@
             btn.innerHTML = '<i class="material-icons">hourglass_top</i>';
             try {
                 // Call Google Books API directly to get the icon
-                const resp = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
-                if (resp.ok) {
+                const resp = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);                if (resp.ok) {
                     const data = await resp.json();
                     if (data.totalItems > 0 && data.items[0].volumeInfo.imageLinks) {
                         const imageLinks = data.items[0].volumeInfo.imageLinks;
@@ -1129,7 +1136,21 @@
                                 body: JSON.stringify({ title: title, isbn: isbn, icon_url: iconUrl, patch_icon: true })
                             });
                             if (patchResp.ok) {
-                                M.toast({ html: 'Icon loaded!', classes: 'green' });
+                                // Download the icon locally
+                                try {
+                                    const downloadResp = await fetch(`/api/images/${isbn}/googlebooks`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ url: iconUrl })
+                                    });
+                                    if (downloadResp.ok) {
+                                        M.toast({ html: 'Icon loaded and saved locally!', classes: 'green' });
+                                    } else {
+                                        M.toast({ html: 'Icon loaded but not saved locally', classes: 'orange' });
+                                    }
+                                } catch (e) {
+                                    console.error('Error saving icon locally:', e);
+                                }
                                 loadISBNs();
                                 return;
                             }
@@ -1591,6 +1612,40 @@
             var editModalEl = document.getElementById('edit-isbn-modal');
             if (editModalEl) M.Modal.init(editModalEl);
         });
+
+        // Function to download all book icons
+            async function downloadAllIcons() {
+                if (!confirm('Download all book icons and save them locally? This might take a while.')) {
+                    return;
+                }
+                
+                const btn = document.getElementById('download-all-icons-btn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="material-icons rotating">sync</i>';
+                M.toast({ html: 'Downloading all book icons...', classes: 'blue' });
+                
+                try {
+                    const response = await fetch('/api/images/download-all-icons', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        M.toast({ html: data.message, classes: 'green' });
+                        // Refresh the page to show updated icons
+                        loadISBNs();
+                    } else {
+                        M.toast({ html: data.error || 'Failed to download icons', classes: 'red' });
+                    }
+                } catch (error) {
+                    console.error('Error downloading icons:', error);
+                    M.toast({ html: 'Error downloading icons', classes: 'red' });
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="large material-icons">image</i>';
+                }
+            }
     </script>
 
     <!-- Manual Book Entry Modal -->

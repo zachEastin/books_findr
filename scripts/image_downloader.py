@@ -373,9 +373,42 @@ def download_abebooks_image(isbn: str, url: str) -> Dict[str, Any]:
     return result
 
 
+def download_googlebooks_icon(isbn: str, url: str) -> Dict[str, Any]:
+    """Download book thumbnail from Google Books API"""
+    result = {
+        "success": False,
+        "isbn": isbn,
+        "source": "googlebooks",
+        "image_url": url,
+        "image_path": None,
+        "error": None
+    }
+    
+    try:
+        # Check if image already exists
+        if image_exists(isbn, "googlebooks"):
+            image_path = get_image_path(isbn, "googlebooks")
+            result.update({
+                "success": True,
+                "image_path": str(image_path.relative_to(BASE_DIR)),
+                "error": "Image already exists"
+            })
+            return result
+        
+        # Download the image directly
+        download_result = asyncio.run(download_image_from_url(url, isbn, "googlebooks"))
+        result.update(download_result)
+        
+    except Exception as e:
+        result["error"] = str(e)
+        scraper_logger.error(f"Error downloading Google Books icon for {isbn}: {e}")
+    
+    return result
+
+
 def get_existing_image_info(isbn: str) -> Dict[str, Any]:
     """Get information about existing images for an ISBN"""
-    sources = ["christianbook", "rainbowresource", "abebooks"]
+    sources = ["christianbook", "rainbowresource", "abebooks", "googlebooks"]
     images = {}
     
     for source in sources:
@@ -403,6 +436,8 @@ def download_image_for_isbn_source(isbn: str, source: str, url: str) -> Dict[str
         return download_rainbowresource_image(isbn, url)
     elif source.lower() == "abebooks":
         return download_abebooks_image(isbn, url)
+    elif source.lower() == "googlebooks":
+        return download_googlebooks_icon(isbn, url)
     else:
         return {
             "success": False,
@@ -436,4 +471,65 @@ def cleanup_old_images(days_old: int = 30) -> Dict[str, Any]:
         result["success"] = False
         result["error"] = str(e)
         
+    return result
+
+
+def download_all_book_icons(books_data: dict) -> Dict[str, Any]:
+    """
+    Download all book icons from remote URLs to local storage
+    
+    Args:
+        books_data: Dictionary of books data from books.json
+        
+    Returns:
+        Dictionary with download statistics
+    """
+    result = {
+        "success": True,
+        "total_books": 0,
+        "total_isbns": 0,
+        "downloaded": 0,
+        "already_local": 0,
+        "failed": 0,
+        "errors": []
+    }
+    
+    try:
+        # Iterate through all books
+        for title, isbn_list in books_data.items():
+            result["total_books"] += 1
+            
+            # Iterate through all ISBNs for this book
+            for isbn_entry in isbn_list:
+                for isbn, metadata in isbn_entry.items():
+                    result["total_isbns"] += 1
+                    
+                    # Check if there's an icon URL to download
+                    icon_url = metadata.get("icon_url", "")
+                    if icon_url and not metadata.get("icon_path", ""):
+                        try:
+                            # Download the icon
+                            scraper_logger.info(f"Downloading Google Books icon for ISBN {isbn}")
+                            download_result = download_googlebooks_icon(isbn, icon_url)
+                            
+                            if download_result["success"]:
+                                # Update metadata with local path
+                                if download_result["error"] == "Image already exists":
+                                    result["already_local"] += 1
+                                else:
+                                    result["downloaded"] += 1
+                                
+                                # Store the local path in the metadata
+                                metadata["icon_path"] = download_result["image_path"]
+                            else:
+                                result["failed"] += 1
+                                result["errors"].append(f"Failed to download icon for ISBN {isbn}: {download_result.get('error', 'Unknown error')}")
+                        except Exception as e:
+                            result["failed"] += 1
+                            result["errors"].append(f"Error processing ISBN {isbn}: {str(e)}")
+    
+    except Exception as e:
+        result["success"] = False
+        result["errors"].append(f"Global error: {str(e)}")
+    
     return result

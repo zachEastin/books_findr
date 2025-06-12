@@ -11,7 +11,8 @@
                 "year": "2008",
                 "source": "google_books",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/51iq--MWmZL._SY445_SX342_PQ88_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/51iq--MWmZL._SY445_SX342_PQ88_.jpg",
+                "icon_path": "static\\images\\books\\1593173350_googlebooks_c8972b41.jpg"
             }
         }
     ],
@@ -27,7 +28,8 @@
                 "year": "1998",
                 "source": "google_books",
                 "notes": "",
-                "icon_url": "http://books.google.com/books/content?id=3lquUzBkVsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=3lquUzBkVsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\1930092849_googlebooks_905e3c75.jpg"
             }
         },
         {
@@ -56,7 +58,8 @@
                 "year": "2020",
                 "source": "google_books",
                 "notes": "",
-                "icon_url": "http://books.google.com/books/content?id=bMRgzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=bMRgzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\188865922X_googlebooks_8d8cd45e.jpg"
             }
         }
     ],
@@ -73,7 +76,8 @@
                 "year": "2019",
                 "source": "google_books",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/51nxh3qUHzL._SY445_SX342_PQ88_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/51nxh3qUHzL._SY445_SX342_PQ88_.jpg",
+                "icon_path": "static\\images\\books\\1629821292_googlebooks_bc0d2539.jpg"
             }
         },
         {
@@ -106,7 +110,8 @@
                 "source": "google_books",
                 "notes": "",
                 "publisher": "",
-                "icon_url": "https://m.media-amazon.com/images/I/212L0PMgV+L._AC_UY218_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/212L0PMgV+L._AC_UY218_.jpg",
+                "icon_path": "static\\images\\books\\9781934470053_googlebooks_0717ef15.jpg"
             }
         }
     ],
@@ -124,7 +129,8 @@
                 "source": "google_books",
                 "notes": "",
                 "publisher": "",
-                "icon_url": "https://pictures.abebooks.com/inventory/md/md32223196600.jpg"
+                "icon_url": "https://pictures.abebooks.com/inventory/md/md32223196600.jpg",
+                "icon_path": "static\\images\\books\\9781934470077_googlebooks_76043d35.jpg"
             }
         }
     ],
@@ -141,7 +147,8 @@
                 "source": "google_books",
                 "notes": "",
                 "publisher": "",
-                "icon_url": "https://m.media-amazon.com/images/I/21AT4579CeL._AC_UY218_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/21AT4579CeL._AC_UY218_.jpg",
+                "icon_path": "static\\images\\books\\9781934470060_googlebooks_ef013d98.jpg"
             }
         }
     ],
@@ -160,7 +167,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=uqUlDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=uqUlDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780451481795_googlebooks_ad06aabe.jpg"
             }
         },
         {
@@ -177,7 +185,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780670059010_googlebooks_df6d0561.jpg"
             }
         },
         {
@@ -212,7 +221,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=AFYuEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=AFYuEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780448482330_googlebooks_047b6760.jpg"
             }
         },
         {
@@ -248,7 +258,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=jJHqDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=jJHqDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780140564396_googlebooks_bce46f99.jpg"
             }
         },
         {
@@ -265,7 +276,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=D3mCEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=D3mCEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780451470515_googlebooks_d6c37550.jpg"
             }
         },
         {
@@ -299,7 +311,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ZJOGngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ZJOGngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781591128052_googlebooks_abc080f7.jpg"
             }
         }
     ],
@@ -318,7 +331,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=R6FnGwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=R6FnGwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780316574075_googlebooks_f9bb56ff.jpg"
             }
         },
         {
@@ -406,7 +420,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=YhhjClaj92AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=YhhjClaj92AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780547350578_googlebooks_51ca9bca.jpg"
             }
         },
         {
@@ -423,7 +438,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=0Yg7qAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=0Yg7qAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395664995_googlebooks_93453dae.jpg"
             }
         },
         {
@@ -440,7 +456,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=lEfLsgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=lEfLsgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780618737567_googlebooks_33af468e.jpg"
             }
         },
         {
@@ -457,7 +474,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=p4w4TpX5jnQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=p4w4TpX5jnQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395861349_googlebooks_83808109.jpg"
             }
         },
         {
@@ -474,7 +492,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=JqKRmAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=JqKRmAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780618256273_googlebooks_df52ee4c.jpg"
             }
         }
     ],
@@ -494,7 +513,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=-yhu2THb0JwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=-yhu2THb0JwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781101643716_googlebooks_e7c55e95.jpg"
             }
         },
         {
@@ -512,7 +532,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=wkmYxHg-OGMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=wkmYxHg-OGMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395588017_googlebooks_890fa8d4.jpg"
             }
         },
         {
@@ -564,7 +585,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=33gCDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=33gCDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780679880837_googlebooks_ff1afa32.jpg"
             }
         },
         {
@@ -581,7 +603,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=1FR6C1GEKAIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=1FR6C1GEKAIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780385752930_googlebooks_8804e1a9.jpg"
             }
         },
         {
@@ -598,7 +621,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=2CeOAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=2CeOAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780307793126_googlebooks_43d71849.jpg"
             }
         },
         {
@@ -633,7 +657,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=PzpCCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=PzpCCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780544332591_googlebooks_600f422c.jpg"
             }
         },
         {
@@ -666,7 +691,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=aYuOocOuWL4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=aYuOocOuWL4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780547350530_googlebooks_b998a4c0.jpg"
             }
         },
         {
@@ -683,7 +709,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=cNJucgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=cNJucgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395630365_googlebooks_1b7addb7.jpg"
             }
         },
         {
@@ -718,7 +745,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ktSr0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ktSr0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9798888180594_googlebooks_6faeb8c4.jpg"
             }
         },
         {
@@ -735,7 +763,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=MRiOngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=MRiOngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781930900684_googlebooks_c9a38084.jpg"
             }
         },
         {
@@ -771,7 +800,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Jjp8lHkos0UC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Jjp8lHkos0UC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781559420280_googlebooks_9eb45e06.jpg"
             }
         }
     ],
@@ -790,7 +820,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=8HTOAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=8HTOAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780888990433_googlebooks_d702b921.jpg"
             }
         },
         {
@@ -807,7 +838,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=jG_hAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=jG_hAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780689503887_googlebooks_c1d2c2ce.jpg"
             }
         }
     ],
@@ -826,7 +858,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=2_YxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=2_YxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781534414280_googlebooks_7290e879.jpg"
             }
         },
         {
@@ -843,7 +876,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=lp1BEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=lp1BEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781534466562_googlebooks_069cc86f.jpg"
             }
         }
     ],
@@ -862,7 +896,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=tKbIuPQsOwwC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=tKbIuPQsOwwC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780373106608_googlebooks_e215b679.jpg"
             }
         },
         {
@@ -879,7 +914,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=27HbmRfR0PoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=27HbmRfR0PoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064432566_googlebooks_f10dfa79.jpg"
             }
         }
     ],
@@ -898,7 +934,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=-nbhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=-nbhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780684191645_googlebooks_3c7feb7e.jpg"
             }
         },
         {
@@ -915,7 +952,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=abkaGQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=abkaGQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781930900356_googlebooks_b02db6c4.jpg"
             }
         },
         {
@@ -932,7 +970,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=v21CYgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=v21CYgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781930900509_googlebooks_29909fe3.jpg"
             }
         }
     ],
@@ -951,7 +990,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=KEmuXFgPB2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=KEmuXFgPB2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395181553_googlebooks_96303e40.jpg"
             }
         },
         {
@@ -968,7 +1008,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=cylPngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=cylPngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780544317178_googlebooks_400ed76d.jpg"
             }
         },
         {
@@ -1017,7 +1058,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=LVohPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=LVohPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781930900349_googlebooks_ae1ffa39.jpg"
             }
         }
     ],
@@ -1036,7 +1078,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=9472EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=9472EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781641706063_googlebooks_d423c639.jpg"
             }
         },
         {
@@ -1053,7 +1096,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ZovHwQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ZovHwQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781795654715_googlebooks_a6838ad7.jpg"
             }
         }
     ],
@@ -1072,7 +1116,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ZFPXNNtVYF0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ZFPXNNtVYF0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781101158937_googlebooks_806f9bd4.jpg"
             }
         },
         {
@@ -1089,7 +1134,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=zyFhDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=zyFhDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780525457237_googlebooks_e3de2006.jpg"
             }
         },
         {
@@ -1106,7 +1152,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=qlYcuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=qlYcuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781719883016_googlebooks_69d0c5d2.jpg"
             }
         },
         {
@@ -1139,7 +1186,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=eSCdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=eSCdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781400336142_googlebooks_780d63fd.jpg"
             }
         }
     ],
@@ -1158,7 +1206,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=tv9yzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=tv9yzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781948959827_googlebooks_e92db6c8.jpg"
             }
         },
         {
@@ -1175,7 +1224,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=dRnhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=dRnhAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780529036360_googlebooks_f3f2781a.jpg"
             }
         }
     ],
@@ -1194,7 +1244,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=4NXVDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=4NXVDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9789389647365_googlebooks_caffbec6.jpg"
             }
         },
         {
@@ -1211,7 +1262,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=2vwoHo3MMpwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=2vwoHo3MMpwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781476755830_googlebooks_e3589c47.jpg"
             }
         },
         {
@@ -1228,7 +1280,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=xmnuDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=xmnuDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781982147709_googlebooks_73fb8711.jpg"
             }
         },
         {
@@ -1245,7 +1298,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Hz49zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Hz49zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781716071522_googlebooks_9525f48e.jpg"
             }
         }
     ],
@@ -1264,7 +1318,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Y_IRoO5nMi4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Y_IRoO5nMi4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064408671_googlebooks_ceb942c3.jpg"
             }
         }
     ],
@@ -1283,7 +1338,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=nQdlEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=nQdlEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0374390401_googlebooks_0d586fba.jpg"
             }
         }
     ],
@@ -1303,7 +1359,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/515HDYhFmNL._SX342_SY445_PQ88_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\9780979767807_googlebooks_f5c1aa68.jpg"
             }
         }
     ],
@@ -1324,7 +1381,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Va5kDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Va5kDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0486214370_googlebooks_1f20070c.jpg"
             }
         }
     ],
@@ -1341,7 +1399,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://www.sonlight.com/media//catalog/product/S/-/S-CH15.jpg"
+                "icon_url": "https://www.sonlight.com/media//catalog/product/S/-/S-CH15.jpg",
+                "icon_path": "static\\images\\books\\1684110149_googlebooks_2be9300f.jpg"
             }
         }
     ],
@@ -1358,7 +1417,8 @@
                 "year": "2023",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://images.isbndb.com/covers/17388213488905.jpg"
+                "icon_url": "https://images.isbndb.com/covers/17388213488905.jpg",
+                "icon_path": "static\\images\\books\\9798867054816_googlebooks_e1b268a7.jpg"
             }
         }
     ],
@@ -1375,7 +1435,8 @@
                 "year": "2015",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/81IzLHmdf0L._SY342_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/81IzLHmdf0L._SY342_.jpg",
+                "icon_path": "static\\images\\books\\9781615386895_googlebooks_a408d5b3.jpg"
             }
         }
     ],
@@ -1393,7 +1454,8 @@
                 "year": "2019",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://www.memoriapress.com/wp-content/uploads/2020/07/Storytime-Treasures-student-3rd-edition.jpg"
+                "icon_url": "https://www.memoriapress.com/wp-content/uploads/2020/07/Storytime-Treasures-student-3rd-edition.jpg",
+                "icon_path": "static\\images\\books\\9781547702442_googlebooks_09727828.jpg"
             }
         }
     ],
@@ -1410,7 +1472,8 @@
                 "year": "2022",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/71MmgMnQhWL._SY342_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/71MmgMnQhWL._SY342_.jpg",
+                "icon_path": "static\\images\\books\\9798839720664_googlebooks_4e26ee5d.jpg"
             }
         }
     ],
@@ -1445,7 +1508,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TS_1lRapD88C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TS_1lRapD88C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064440042_googlebooks_e595664b.jpg"
             }
         },
         {
@@ -1462,7 +1526,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=bT0LAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=bT0LAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780694017027_googlebooks_2a9c7a55.jpg"
             }
         },
         {
@@ -1479,7 +1544,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780066236889_googlebooks_1a799a02.jpg"
             }
         },
         {
@@ -1496,7 +1562,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=HLG-wAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=HLG-wAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780694017010_googlebooks_3935ef62.jpg"
             }
         }
     ],
@@ -1531,7 +1598,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=4KSkNAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=4KSkNAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781559942355_googlebooks_9277c4e9.jpg"
             }
         },
         {
@@ -1548,7 +1616,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780066236889_googlebooks_1a799a02.jpg"
             }
         },
         {
@@ -1616,7 +1685,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ZB0sfvF5EJoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ZB0sfvF5EJoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780060242411_googlebooks_b5924c67.jpg"
             }
         },
         {
@@ -1633,7 +1703,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=bIioPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=bIioPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780694016884_googlebooks_116f5769.jpg"
             }
         },
         {
@@ -1650,7 +1721,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=pqrXrPgTRikC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=pqrXrPgTRikC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780060854874_googlebooks_78287c7f.jpg"
             }
         }
     ],
@@ -1669,7 +1741,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=cYCkmu5sq8EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=cYCkmu5sq8EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780060239572_googlebooks_aa7cd665.jpg"
             }
         },
         {
@@ -1686,7 +1759,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=MvOmswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=MvOmswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781559942294_googlebooks_8c14b158.jpg"
             }
         },
         {
@@ -1719,7 +1793,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=3pM8ORGjm2sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=3pM8ORGjm2sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780061974113_googlebooks_05e30b4c.jpg"
             }
         },
         {
@@ -1736,7 +1811,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Qblk6xogACsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Qblk6xogACsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780061974106_googlebooks_719864e3.jpg"
             }
         }
     ],
@@ -1755,7 +1831,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=oBh3R5UWHWkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=oBh3R5UWHWkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780062009111_googlebooks_6f2aae3c.jpg"
             }
         },
         {
@@ -1772,7 +1849,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=kjI6swEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=kjI6swEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781536406009_googlebooks_806d3b34.jpg"
             }
         },
         {
@@ -1789,7 +1867,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=aEgdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=aEgdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780062134479_googlebooks_3dccbb81.jpg"
             }
         },
         {
@@ -1822,7 +1901,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=0jROtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=0jROtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780061215124_googlebooks_21267c48.jpg"
             }
         }
     ],
@@ -1841,7 +1921,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=8DlcEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=8DlcEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780140564341_googlebooks_708cc4ee.jpg"
             }
         },
         {
@@ -1858,7 +1939,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780670059010_googlebooks_df6d0561.jpg"
             }
         },
         {
@@ -1891,7 +1973,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=e5htDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=e5htDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781101997956_googlebooks_cc54f24a.jpg"
             }
         }
     ],
@@ -1908,7 +1991,8 @@
                 "year": "1978",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://images.booksense.com/images/141/440/9780064440141.jpg"
+                "icon_url": "https://images.booksense.com/images/141/440/9780064440141.jpg",
+                "icon_path": "static\\images\\books\\9780064440141_googlebooks_1f8a5720.jpg"
             }
         }
     ],
@@ -1927,7 +2011,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TzFsEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TzFsEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780689711039_googlebooks_d43bb58e.jpg"
             }
         },
         {
@@ -1960,7 +2045,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=fbtbygEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=fbtbygEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781534457126_googlebooks_5ceeabcb.jpg"
             }
         },
         {
@@ -1978,7 +2064,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=QW5oPgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=QW5oPgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781553193210_googlebooks_0a5a8855.jpg"
             }
         }
     ],
@@ -1997,7 +2084,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=QC0EtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=QC0EtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781599150048_googlebooks_0a9dfea5.jpg"
             }
         }
     ],
@@ -2014,7 +2102,8 @@
                 "year": "1990",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/91CPH48eypL._SL1500_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/91CPH48eypL._SL1500_.jpg",
+                "icon_path": "static\\images\\books\\9780316367950_googlebooks_f86afe3a.jpg"
             }
         }
     ],
@@ -2031,7 +2120,8 @@
                 "year": "2021",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/71Rw8JjenBL._SY342_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/71Rw8JjenBL._SY342_.jpg",
+                "icon_path": "static\\images\\books\\9798462996856_googlebooks_f10700fb.jpg"
             }
         }
     ],
@@ -2051,7 +2141,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/81xh95E0spL._SY342_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\9798810991656_googlebooks_1ac9a1de.jpg"
             }
         }
     ],
@@ -2070,7 +2161,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TgnY9L8sPMkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TgnY9L8sPMkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064440591_googlebooks_c69eae69.jpg"
             }
         }
     ],
@@ -2089,7 +2181,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=sRjry-VDvioC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=sRjry-VDvioC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064440219_googlebooks_a0e50218.jpg"
             }
         }
     ],
@@ -2108,7 +2201,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=yR5NcfHpj-gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=yR5NcfHpj-gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064440346_googlebooks_f7e7b3eb.jpg"
             }
         }
     ],
@@ -2127,7 +2221,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=K5OXct9ve_sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=K5OXct9ve_sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064440943_googlebooks_56c770bf.jpg"
             }
         }
     ],
@@ -2146,7 +2241,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=PuglK712xkMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=PuglK712xkMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064440133_googlebooks_cfe21c98.jpg"
             }
         }
     ],
@@ -2165,7 +2261,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=-bmSN_eTAe8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=-bmSN_eTAe8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064440417_googlebooks_3f35b8d7.jpg"
             }
         }
     ],
@@ -2184,7 +2281,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=o51fpYTBLYkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=o51fpYTBLYkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780064441551_googlebooks_1975dac1.jpg"
             }
         }
     ],
@@ -2203,7 +2301,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=vRNeNyi59hIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=vRNeNyi59hIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780060513184_googlebooks_88025cfd.jpg"
             }
         }
     ],
@@ -2222,7 +2321,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Z9Y_ePdrrVQC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Z9Y_ePdrrVQC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0689715404_googlebooks_eb07e9e4.jpg"
             }
         }
     ],
@@ -2241,7 +2341,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=QKCGx4zI1VMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=QKCGx4zI1VMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064441342_googlebooks_8f7fd324.jpg"
             }
         }
     ],
@@ -2260,7 +2361,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=k6ZGIAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=k6ZGIAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064441008_googlebooks_0b487514.jpg"
             }
         }
     ],
@@ -2279,7 +2381,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=W3fy7KoHc2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=W3fy7KoHc2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064441989_googlebooks_cb5756b3.jpg"
             }
         }
     ],
@@ -2298,7 +2401,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=aCThAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=aCThAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0060206683_googlebooks_f84efd6f.jpg"
             }
         }
     ],
@@ -2317,7 +2421,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ULPrPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ULPrPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0689716087_googlebooks_f6674223.jpg"
             }
         }
     ],
@@ -2336,7 +2441,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=mCqLHbrrfwoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=mCqLHbrrfwoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064421325_googlebooks_c4dc75b1.jpg"
             }
         }
     ],
@@ -2356,7 +2462,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/61Fz73RFHkL._SX445_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\9780979767890_googlebooks_5f6bf0cf.jpg"
             }
         },
         {
@@ -2408,7 +2515,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/61zMsT4LUQL._SY342_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\1608266036_googlebooks_0ba962be.jpg"
             }
         }
     ],
@@ -2423,7 +2531,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--MGXBIoYK--/c_fit,w_505,h_518/ws0ot8sepeov5oyvjmo6.jpg"
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--MGXBIoYK--/c_fit,w_505,h_518/ws0ot8sepeov5oyvjmo6.jpg",
+                "icon_path": "static\\images\\books\\9781935027041_googlebooks_756dbf77.jpg"
             }
         }
     ],
@@ -2442,7 +2551,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ihSDswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ihSDswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\192572915X_googlebooks_01152e3e.jpg"
             }
         }
     ],
@@ -2462,7 +2572,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "https://m.media-amazon.com/images/I/81cmFB8p2rL._SY342_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/81cmFB8p2rL._SY342_.jpg",
+                "icon_path": "static\\images\\books\\096438034X_googlebooks_81811356.jpg"
             }
         }
     ],
@@ -2482,7 +2593,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/71FYhcQJQcL._SY342_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\1893103161_googlebooks_57e4209b.jpg"
             }
         }
     ],
@@ -2501,7 +2613,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=xc8tDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=xc8tDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0140385045_googlebooks_dde035a3.jpg"
             }
         }
     ],
@@ -2520,7 +2633,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=mDiM4A1Kz3EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=mDiM4A1Kz3EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781442468580_googlebooks_021a1414.jpg"
             }
         }
     ],
@@ -2539,7 +2653,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=BoubDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=BoubDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0140309241_googlebooks_753f67ca.jpg"
             }
         }
     ],
@@ -2559,7 +2674,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/51j75u1aOqL._SY445_SX342_PQ88_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\1603865764_googlebooks_ef3b5715.jpg"
             }
         }
     ],
@@ -2578,7 +2694,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Zbo80AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Zbo80AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9916987041_googlebooks_9535c018.jpg"
             }
         }
     ],
@@ -2597,7 +2714,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=b66QtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=b66QtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1840227613_googlebooks_05d1b2cd.jpg"
             }
         }
     ],
@@ -2616,7 +2734,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=-m-_oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=-m-_oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0544439562_googlebooks_aeec2ed2.jpg"
             }
         }
     ],
@@ -2635,7 +2754,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=brlRYMM_JiIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=brlRYMM_JiIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780547542164_googlebooks_8dfd66a1.jpg"
             }
         }
     ],
@@ -2655,7 +2775,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TDrDNtv6hwUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TDrDNtv6hwUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0876144547_googlebooks_885c2ab0.jpg"
             }
         }
     ],
@@ -2674,7 +2795,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=cmaFuAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=cmaFuAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1887840400_googlebooks_50767256.jpg"
             }
         }
     ],
@@ -2694,7 +2816,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/71K8Vvtk4FL._SY342_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\188784001X_googlebooks_bc5f6abc.jpg"
             }
         }
     ],
@@ -2713,7 +2836,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=H5mr-qP0oMgC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=H5mr-qP0oMgC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0689716052_googlebooks_c6aeee0f.jpg"
             }
         }
     ],
@@ -2732,7 +2856,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=2gt4hQwGJOcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=2gt4hQwGJOcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0689716044_googlebooks_4ca3e248.jpg"
             }
         }
     ],
@@ -2751,7 +2876,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=w0HVoQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=w0HVoQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0062399527_googlebooks_6fad36b8.jpg"
             }
         }
     ],
@@ -2770,7 +2896,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=OzuHs9nueBMC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=OzuHs9nueBMC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064400557_googlebooks_19bb444d.jpg"
             }
         }
     ],
@@ -2789,7 +2916,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=lwT7OgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=lwT7OgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0516263307_googlebooks_37501be2.jpg"
             }
         }
     ],
@@ -2809,7 +2937,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/91jsOzK+K1L._SY342_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\0064400018_googlebooks_3ddebb89.jpg"
             }
         }
     ],
@@ -2828,7 +2957,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Qbd_NcKC9CUC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Qbd_NcKC9CUC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064400034_googlebooks_0cf26507.jpg"
             }
         }
     ],
@@ -2847,7 +2977,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=ThUxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=ThUxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0140363130_googlebooks_d3a81559.jpg"
             }
         }
     ],
@@ -2866,7 +2997,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TSwwzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TSwwzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1419757261_googlebooks_749a8755.jpg"
             }
         }
     ],
@@ -2885,7 +3017,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=bteVpF9oeMYC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=bteVpF9oeMYC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0316286125_googlebooks_5a3e055f.jpg"
             }
         }
     ],
@@ -2904,7 +3037,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=oFyra5byczkC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=oFyra5byczkC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0590436287_googlebooks_1146fa1c.jpg"
             }
         }
     ],
@@ -2924,7 +3058,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/51ZsV-phSoL._SY445_SX342_PQ88_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\9780064471046_googlebooks_bab44dd8.jpg"
             }
         }
     ],
@@ -2943,7 +3078,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=8YngAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=8YngAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0152006060_googlebooks_cfbc79d8.jpg"
             }
         }
     ],
@@ -2962,7 +3098,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0142404152_googlebooks_324b6d45.jpg"
             }
         },
         {
@@ -2979,7 +3116,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780142404157_googlebooks_9b76c129.jpg"
             }
         }
     ],
@@ -2998,7 +3136,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=eluTEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=eluTEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0440413249_googlebooks_6f8b7eea.jpg"
             }
         }
     ],
@@ -3013,7 +3152,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/987326.jpg"
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/987326.jpg",
+                "icon_path": "static\\images\\books\\9781935027058_googlebooks_3126f64e.jpg"
             }
         }
     ],
@@ -3034,7 +3174,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/71jFN+do3+L._AC_UY327_FMwebp_QL65_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\160051443X_googlebooks_da24c9f8.jpg"
             }
         }
     ],
@@ -3052,7 +3193,8 @@
                 "year": "2016",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/773805.jpg"
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/773805.jpg",
+                "icon_path": "static\\images\\books\\1600512917_googlebooks_1bc70544.jpg"
             }
         }
     ],
@@ -3072,7 +3214,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/71TOlQzep3L._AC_UY327_FMwebp_QL65_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\160051216X_googlebooks_8c030c28.jpg"
             }
         }
     ],
@@ -3092,7 +3235,8 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "https://m.media-amazon.com/images/I/71y36cI1J+L._AC_UY327_FMwebp_QL65_.jpg",
-                "notes": ""
+                "notes": "",
+                "icon_path": "static\\images\\books\\1600512186_googlebooks_c33b9229.jpg"
             }
         }
     ],
@@ -3112,7 +3256,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Dq21kQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Dq21kQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1600510000_googlebooks_e60e41b4.jpg"
             }
         }
     ],
@@ -3131,7 +3276,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=NnSqkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=NnSqkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1600510043_googlebooks_a8df0991.jpg"
             }
         }
     ],
@@ -3148,7 +3294,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=xg8fSbRUxqwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=xg8fSbRUxqwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0395273994_googlebooks_ff870bf1.jpg"
             }
         }
     ],
@@ -3165,7 +3312,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=111E4XseZQUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=111E4XseZQUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\039554534X_googlebooks_723b4d74.jpg"
             }
         }
     ],
@@ -3184,7 +3332,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=_ySymvznW8oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=_ySymvznW8oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780689868832_googlebooks_58c74312.jpg"
             }
         }
     ],
@@ -3203,7 +3352,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=cBK-EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=cBK-EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\1506455514_googlebooks_006b8080.jpg"
             }
         }
     ],
@@ -3222,7 +3372,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=kePYCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=kePYCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0140303359_googlebooks_c25054f8.jpg"
             }
         }
     ],
@@ -3241,7 +3392,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=2qn6adFcKUYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=2qn6adFcKUYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0152162801_googlebooks_67329fa3.jpg"
             }
         }
     ],
@@ -3260,7 +3412,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=tbZvDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=tbZvDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0763670537_googlebooks_9c9e63fe.jpg"
             }
         }
     ],
@@ -3277,7 +3430,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=hnC0CgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=hnC0CgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0312375980_googlebooks_6237aac7.jpg"
             }
         }
     ],
@@ -3296,7 +3450,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=zAQdDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=zAQdDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780141312422_googlebooks_ab2b8c82.jpg"
             }
         }
     ],
@@ -3315,7 +3470,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=rxxVECt0WN8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=rxxVECt0WN8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395349229_googlebooks_bad02ae9.jpg"
             }
         }
     ],
@@ -3334,7 +3490,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=aEzyugEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=aEzyugEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1505105749_googlebooks_ab83f714.jpg"
             }
         }
     ],
@@ -3353,7 +3510,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=OtmQoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=OtmQoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1495294617_googlebooks_d7923210.jpg"
             }
         }
     ],
@@ -3372,7 +3530,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Gp9engEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Gp9engEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1495295001_googlebooks_5a4656c9.jpg"
             }
         }
     ],
@@ -3391,7 +3550,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=rK3aoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=rK3aoAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780547534268_googlebooks_d7dcacde.jpg"
             }
         }
     ],
@@ -3410,7 +3570,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=iJsP-5bXlX4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=iJsP-5bXlX4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0440227798_googlebooks_8b3e6307.jpg"
             }
         }
     ],
@@ -3429,7 +3590,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=gmr8AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=gmr8AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0486217841_googlebooks_cc411f7d.jpg"
             }
         }
     ],
@@ -3466,7 +3628,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=SERYVCZW0kUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=SERYVCZW0kUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064471063_googlebooks_606168d3.jpg"
             }
         }
     ],
@@ -3485,7 +3648,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=QmILRT7Y7aQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=QmILRT7Y7aQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\1853260452_googlebooks_7b66fd0d.jpg"
             }
         }
     ],
@@ -3500,7 +3664,8 @@
                 "year": "2017",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://pictures.abebooks.com/isbn/9781600513039-us.jpg"
+                "icon_url": "https://pictures.abebooks.com/isbn/9781600513039-us.jpg",
+                "icon_path": "static\\images\\books\\9781600513039_googlebooks_43ec243a.jpg"
             }
         }
     ],
@@ -3515,7 +3680,8 @@
                 "year": "2017",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://pictures.abebooks.com/isbn/9781600513107-us.jpg"
+                "icon_url": "https://pictures.abebooks.com/isbn/9781600513107-us.jpg",
+                "icon_path": "static\\images\\books\\9781600513107_googlebooks_84223c47.jpg"
             }
         }
     ],
@@ -3553,7 +3719,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=TZChkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=TZChkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781600510106_googlebooks_cd1cf6b3.jpg"
             }
         }
     ],
@@ -3573,7 +3740,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=KQ4CkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=KQ4CkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781600510069_googlebooks_0601ceb9.jpg"
             }
         }
     ],
@@ -3592,7 +3760,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=SC9MgfcQIKAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=SC9MgfcQIKAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780395316689_googlebooks_d40705d4.jpg"
             }
         }
     ],
@@ -3612,7 +3781,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=zD36oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=zD36oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781626722095_googlebooks_1b80fad1.jpg"
             }
         }
     ],
@@ -3631,7 +3801,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=m1T6DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=m1T6DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\162979306X_googlebooks_448cd6d2.jpg"
             }
         }
     ],
@@ -3650,7 +3821,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=1GCjChsFL-IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=1GCjChsFL-IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\1581824394_googlebooks_f0b34a85.jpg"
             }
         }
     ],
@@ -3669,7 +3841,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=odnLjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=odnLjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0528015346_googlebooks_02cc4d66.jpg"
             }
         }
     ],
@@ -3688,7 +3861,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=5O9ZEQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=5O9ZEQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1426373430_googlebooks_d0700fa3.jpg"
             }
         }
     ],
@@ -3708,7 +3882,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=vV-0AAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=vV-0AAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780806919560_googlebooks_80833f3f.jpg"
             }
         }
     ],
@@ -3725,7 +3900,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Ce1XAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Ce1XAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0385320566_googlebooks_970032b8.jpg"
             }
         }
     ],
@@ -3744,7 +3920,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=Ue-koAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=Ue-koAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\098517014X_googlebooks_c7355f99.jpg"
             }
         },
         {
@@ -3761,7 +3938,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=rS0-tAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=rS0-tAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0997244240_googlebooks_335dbec6.jpg"
             }
         },
         {
@@ -3778,7 +3956,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=o-pEvgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=o-pEvgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0996566090_googlebooks_57d2fda3.jpg"
             }
         }
     ],
@@ -3797,7 +3976,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=pb_hDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=pb_hDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0689710682_googlebooks_78ac2999.jpg"
             }
         }
     ],
@@ -3816,7 +3996,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=VvRDrruxC7IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=VvRDrruxC7IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064471055_googlebooks_2f66cb7a.jpg"
             }
         }
     ],
@@ -3835,7 +4016,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=5zXYAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=5zXYAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064405028_googlebooks_d75381a6.jpg"
             }
         }
     ],
@@ -3854,7 +4036,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=MwGBewTScTkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=MwGBewTScTkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0064471098_googlebooks_015d246c.jpg"
             }
         }
     ],
@@ -3871,7 +4054,8 @@
                 "year": "2021",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://pictures.abebooks.com/isbn/9798749478112-us.jpg"
+                "icon_url": "https://pictures.abebooks.com/isbn/9798749478112-us.jpg",
+                "icon_path": "static\\images\\books\\9798749478112_googlebooks_f37a0259.jpg"
             }
         }
     ],
@@ -3890,7 +4074,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=b-wtcmjMCY0C&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=b-wtcmjMCY0C&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780141321592_googlebooks_6ebf9275.jpg"
             }
         }
     ],
@@ -3923,7 +4108,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KYIXs-EX--/c_fit,w_505,h_518/rhifkjai97zydynuzyd7.jpg"
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KYIXs-EX--/c_fit,w_505,h_518/rhifkjai97zydynuzyd7.jpg",
+                "icon_path": "static\\images\\books\\9781600516924_googlebooks_b9d95c8c.jpg"
             }
         }
     ],
@@ -3970,7 +4156,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KTePZBON--/c_fit,w_505,h_518/98eeecd78d322ca6133a7de4fdbc8a256b10fb66.jpg"
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KTePZBON--/c_fit,w_505,h_518/98eeecd78d322ca6133a7de4fdbc8a256b10fb66.jpg",
+                "icon_path": "static\\images\\books\\9781600513183_googlebooks_59ac3773.jpg"
             }
         }
     ],
@@ -3985,7 +4172,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--OfmKVnYe--/c_fit,w_505,h_518/870ae4114e77a7add6dc21906cc6ef21bbc14522.jpg"
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--OfmKVnYe--/c_fit,w_505,h_518/870ae4114e77a7add6dc21906cc6ef21bbc14522.jpg",
+                "icon_path": "static\\images\\books\\9781600513411_googlebooks_056a4485.jpg"
             }
         }
     ],
@@ -4005,7 +4193,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=H2dHkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=H2dHkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781600510120_googlebooks_27a4691c.jpg"
             }
         }
     ],
@@ -4025,7 +4214,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=zOsMkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=zOsMkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781600510168_googlebooks_ded557e7.jpg"
             }
         }
     ],
@@ -4044,7 +4234,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=bEuQPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=bEuQPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1597313521_googlebooks_25a53351.jpg"
             }
         }
     ],
@@ -4063,7 +4254,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=mjcgKQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=mjcgKQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1597313513_googlebooks_3b610509.jpg"
             }
         }
     ],
@@ -4082,7 +4274,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=m-7crEM3A0AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=m-7crEM3A0AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780393320978_googlebooks_efc107ff.jpg"
             }
         }
     ],
@@ -4101,7 +4294,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=K4uMEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=K4uMEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9780141321011_googlebooks_db03557e.jpg"
             }
         }
     ],
@@ -4120,7 +4314,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=htUqEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=htUqEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0358652979_googlebooks_e6086c0c.jpg"
             }
         }
     ],
@@ -4137,7 +4332,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://pictures.abebooks.com/isbn/9780374479824-us.jpg"
+                "icon_url": "https://pictures.abebooks.com/isbn/9780374479824-us.jpg",
+                "icon_path": "static\\images\\books\\0374479828_googlebooks_a4dac71b.jpg"
             }
         }
     ],
@@ -4156,7 +4352,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=t0mjDAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=t0mjDAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0062565419_googlebooks_298a0e12.jpg"
             }
         }
     ],
@@ -4175,7 +4372,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=RCr_SE1DNoUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=RCr_SE1DNoUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0898702682_googlebooks_2b6dd636.jpg"
             }
         }
     ],
@@ -4194,7 +4392,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=m9et0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=m9et0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0743477103_googlebooks_b7d474c1.jpg"
             }
         }
     ],
@@ -4209,7 +4408,8 @@
                 "year": "",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://m.media-amazon.com/images/I/71UDl7MSscL._SL1000_.jpg"
+                "icon_url": "https://m.media-amazon.com/images/I/71UDl7MSscL._SL1000_.jpg",
+                "icon_path": "static\\images\\books\\9781600513084_googlebooks_ffa4047a.jpg"
             }
         }
     ],
@@ -4247,7 +4447,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=9g0tAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=9g0tAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\0877849226_googlebooks_69f0dc3f.jpg"
             }
         }
     ],
@@ -4268,7 +4469,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=avDTkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=avDTkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\9781600510335_googlebooks_6483a6d6.jpg"
             }
         }
     ],
@@ -4287,7 +4489,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=irO7hAQLmsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=irO7hAQLmsMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "icon_path": "static\\images\\books\\0060660430_googlebooks_adc1719f.jpg"
             }
         }
     ],
@@ -4306,7 +4509,8 @@
                 "success": true,
                 "error": null,
                 "source": "google_books",
-                "icon_url": "http://books.google.com/books/content?id=BhDSwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+                "icon_url": "http://books.google.com/books/content?id=BhDSwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+                "icon_path": "static\\images\\books\\1581348142_googlebooks_c66c25f3.jpg"
             }
         }
     ],
@@ -4321,7 +4525,8 @@
                 "year": "2017",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/513374.jpg"
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/513374.jpg",
+                "icon_path": "static\\images\\books\\9781600513374_googlebooks_bc367d86.jpg"
             }
         }
     ],
@@ -4338,7 +4543,8 @@
                 "year": "2019",
                 "source": "manual",
                 "notes": "",
-                "icon_url": "https://g.christianbook.com/dg/product/web/f400/513780.jpg"
+                "icon_url": "https://g.christianbook.com/dg/product/web/f400/513780.jpg",
+                "icon_path": "static\\images\\books\\9781600513770_googlebooks_91caed2a.jpg"
             }
         }
     ]

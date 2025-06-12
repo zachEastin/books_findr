@@ -697,9 +697,13 @@
                 let iconUrl = '';
                 let isbns = [];
                 if (bookMeta && bookMeta.length > 0) {
-                    isbns = bookMeta.map(item => Object.keys(item)[0]);
-                    const meta = bookMeta[0][isbns[0]];
-                    if (meta && meta.icon_url) iconUrl = meta.icon_url;
+                    isbns = bookMeta.map(item => Object.keys(item)[0]);                const meta = bookMeta[0][isbns[0]];
+                    // First check for a local icon_path, then fall back to icon_url
+                    if (meta && meta.icon_path) {
+                        iconUrl = '/' + meta.icon_path;
+                    } else if (meta && meta.icon_url) {
+                        iconUrl = meta.icon_url;
+                    }
                 }
                 // Try to get icon_url from price data if not in meta
                 if (!iconUrl && pricesData[title] && pricesData[title].icon_url) {
@@ -1022,10 +1026,10 @@
         const imageElement = document.getElementById(imageId);
         const imageActionsId = `image-actions-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
         const imageActions = document.getElementById(imageActionsId);
-        if (!imageElement) return;
-
-        // First try the icon_url from books.json
+        if (!imageElement) return;        // First try the icon_path (local) or icon_url (remote) from books.json
         if (iconUrl && iconUrl.trim() !== "") {
+            // Check if it's a local path or remote URL
+            const isLocalPath = iconUrl.startsWith('/static/') || iconUrl.startsWith('static/');
             imageElement.innerHTML = `<img src="${iconUrl}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
             if (imageActions) imageActions.style.display = 'none';
             return;
