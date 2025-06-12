@@ -2342,6 +2342,38 @@
                 "error": null,
                 "source": "google_books"
             }
+        },
+        {
+            "9780979767876": {
+                "isbn_input": "9780979767876",
+                "isbn13": "9780979767876",
+                "isbn10": "0979767873",
+                "title": "New American Cursive Penmanship",
+                "authors": [
+                    "Iris Hatfield"
+                ],
+                "publisher": null,
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781737473107": {
+                "isbn_input": "9781737473107",
+                "isbn13": "9781737473107",
+                "isbn10": "1737473100",
+                "title": "New American Cursive Penmanship",
+                "authors": [
+                    "Iris Hatfield"
+                ],
+                "publisher": null,
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
         }
     ],
     "Jack and Jill Student Workbook": [
@@ -2393,6 +2425,696 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=ihSDswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "George Washington's World": [
+        {
+            "096438034X": {
+                "isbn_input": "096438034X",
+                "isbn13": "9780964380349",
+                "isbn10": "096438034X",
+                "title": "George Washington's World",
+                "authors": [
+                    "Genevieve Foster",
+                    "Joanna Foster"
+                ],
+                "publisher": "Legion Publishing Corporation",
+                "year": "1997",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Abraham Lincoln's World": [
+        {
+            "1893103161": {
+                "isbn_input": "1893103161",
+                "isbn13": "9781893103160",
+                "isbn10": "1893103161",
+                "title": "Abraham Lincoln's World",
+                "authors": [
+                    "Genevieve Foster"
+                ],
+                "publisher": null,
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Children of the Longhouse": [
+        {
+            "0140385045": {
+                "isbn_input": "0140385045",
+                "isbn13": "9780140385045",
+                "isbn10": "0140385045",
+                "title": "Children of the Longhouse",
+                "authors": [
+                    "Joseph Bruchac"
+                ],
+                "publisher": "Penguin",
+                "year": "1998",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=xc8tDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Caddie Woodlawn": [
+        {
+            "9781442468580": {
+                "isbn_input": "9781442468580",
+                "isbn13": "9781442468580",
+                "isbn10": "1442468580",
+                "title": "Caddie Woodlawn",
+                "authors": [
+                    "Carol Ryrie Brink"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "2012",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=mDiM4A1Kz3EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Blue Willow": [
+        {
+            "0140309241": {
+                "isbn_input": "0140309241",
+                "isbn13": "9780140309249",
+                "isbn10": "0140309241",
+                "title": "Blue Willow",
+                "authors": [
+                    "Doris Gates"
+                ],
+                "publisher": "Penguin",
+                "year": "1976",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=BoubDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Understood Betsy": [
+        {
+            "1603865764": {
+                "isbn_input": "1603865764",
+                "isbn13": "9781603865760",
+                "isbn10": "1603865764",
+                "title": "Understood Betsy",
+                "authors": [
+                    "Dorothy Canfield Fisher"
+                ],
+                "publisher": null,
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Peter Pan (Illustrated)": [
+        {
+            "9916987041": {
+                "isbn_input": "9916987041",
+                "isbn13": "9789916987049",
+                "isbn10": "9916987041",
+                "title": "Peter Pan (Illustrated)",
+                "authors": [
+                    "J. M. Barrie"
+                ],
+                "publisher": null,
+                "year": "2023",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Zbo80AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Black Beauty": [
+        {
+            "1840227613": {
+                "isbn_input": "1840227613",
+                "isbn13": "9781840227611",
+                "isbn10": "1840227613",
+                "title": "Black Beauty",
+                "authors": [
+                    "Anna Sewell"
+                ],
+                "publisher": "Wordsworth Editions",
+                "year": "2018",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=b66QtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Mary Poppins": [
+        {
+            "0544439562": {
+                "isbn_input": "0544439562",
+                "isbn13": "9780544439566",
+                "isbn10": "0544439562",
+                "title": "Mary Poppins",
+                "authors": [
+                    "Pamela Lyndon Travers"
+                ],
+                "publisher": "Clarion Books",
+                "year": "2015",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=-m-_oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Miracles on Maple Hill": [
+        {
+            "9780547542164": {
+                "isbn_input": "9780547542164",
+                "isbn13": "9780547542164",
+                "isbn10": "054754216X",
+                "title": "Miracles on Maple Hill",
+                "authors": [
+                    "Virginia Sorensen"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=brlRYMM_JiIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Keep the Lights Burning, Abbie": [
+        {
+            "0876144547": {
+                "isbn_input": "0876144547",
+                "isbn13": "9780876144541",
+                "isbn10": "0876144547",
+                "title": "Keep the Lights Burning, Abbie",
+                "authors": [
+                    "Connie Roop",
+                    "Peter Roop"
+                ],
+                "publisher": "First Avenue Editions",
+                "year": "1985",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TDrDNtv6hwUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Riding the Pony Express": [
+        {
+            "1887840400": {
+                "isbn_input": "1887840400",
+                "isbn13": "9781887840408",
+                "isbn10": "1887840400",
+                "title": "Riding the Pony Express",
+                "authors": [
+                    "Clyde Robert Bulla"
+                ],
+                "publisher": null,
+                "year": "2000",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=cmaFuAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Hero Over Here": [
+        {
+            "188784001X": {
+                "isbn_input": "188784001X",
+                "isbn13": "9781887840019",
+                "isbn10": "188784001X",
+                "title": "Hero Over Here",
+                "authors": [
+                    "Kathleen V. Kudlinski"
+                ],
+                "publisher": null,
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Blaze and the Forest Fire": [
+        {
+            "0689716052": {
+                "isbn_input": "0689716052",
+                "isbn13": "9780689716058",
+                "isbn10": "0689716052",
+                "title": "Blaze and the Forest Fire",
+                "authors": [
+                    "C.W. Anderson"
+                ],
+                "publisher": "Aladdin",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=H5mr-qP0oMgC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Bears on Hemlock Mountain": [
+        {
+            "0689716044": {
+                "isbn_input": "0689716044",
+                "isbn13": "9780689716041",
+                "isbn10": "0689716044",
+                "title": "The Bears on Hemlock Mountain",
+                "authors": [
+                    "Alice Dalgliesh"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=2gt4hQwGJOcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Sarah, Plain and Tall": [
+        {
+            "0062399527": {
+                "isbn_input": "0062399527",
+                "isbn13": "9780062399526",
+                "isbn10": "0062399527",
+                "title": "Sarah, Plain and Tall",
+                "authors": [
+                    "Patricia MacLachlan"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2015",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=w0HVoQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Charlotte's Web Book and Charm": [
+        {
+            "0064400557": {
+                "isbn_input": "0064400557",
+                "isbn13": "9780060845940",
+                "isbn10": "0060845945",
+                "title": "Charlotte's Web Book and Charm",
+                "authors": [
+                    "E. B. White"
+                ],
+                "publisher": "HarperFestival",
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=OzuHs9nueBMC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Milton Hershey": [
+        {
+            "0516263307": {
+                "isbn_input": "0516263307",
+                "isbn13": "9780516263304",
+                "isbn10": "0516263307",
+                "title": "Milton Hershey",
+                "authors": [
+                    "Charnan Simon"
+                ],
+                "publisher": "Children's Press",
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=lwT7OgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Little House in the Big Woods": [
+        {
+            "0064400018": {
+                "isbn_input": "0064400018",
+                "isbn13": "9780064400015",
+                "isbn10": "0064400018",
+                "title": "Little House in the Big Woods",
+                "authors": [
+                    "Laura Ingalls Wilder"
+                ],
+                "publisher": null,
+                "year": "1932",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Farmer Boy": [
+        {
+            "0064400034": {
+                "isbn_input": "0064400034",
+                "isbn13": "9780064400039",
+                "isbn10": "0064400034",
+                "title": "Farmer Boy",
+                "authors": [
+                    "Laura Ingalls Wilder"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Qbd_NcKC9CUC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Corn Grows Ripe": [
+        {
+            "0140363130": {
+                "isbn_input": "0140363130",
+                "isbn13": "9780140363135",
+                "isbn10": "0140363130",
+                "title": "The Corn Grows Ripe",
+                "authors": [
+                    "Dorothy Rhoads"
+                ],
+                "publisher": "Penguin",
+                "year": "1993",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ThUxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "One Dead Spy": [
+        {
+            "1419757261": {
+                "isbn_input": "1419757261",
+                "isbn13": "9781419757266",
+                "isbn10": "1419757261",
+                "title": "One Dead Spy",
+                "authors": [
+                    "Nathan Hale"
+                ],
+                "publisher": "Amulet Books",
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TSwwzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "By the Great Horn Spoon!": [
+        {
+            "0316286125": {
+                "isbn_input": "0316286125",
+                "isbn13": "9780316286121",
+                "isbn10": "0316286125",
+                "title": "By the Great Horn Spoon!",
+                "authors": [
+                    "Sid Fleischman"
+                ],
+                "publisher": "Little, Brown Books for Young Readers",
+                "year": "1988",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=bteVpF9oeMYC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Freedom Train": [
+        {
+            "0590436287": {
+                "isbn_input": "0590436287",
+                "isbn13": "9780590436281",
+                "isbn10": "0590436287",
+                "title": "Freedom Train",
+                "authors": [
+                    "Dorothy Sterling"
+                ],
+                "publisher": "Scholastic Paperbacks",
+                "year": "1954",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=oFyra5byczkC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Lion, the Witch and the Wardrobe (rack)": [
+        {
+            "9780064471046": {
+                "isbn_input": "9780064471046",
+                "isbn13": "9780064471046",
+                "isbn10": "0064471047",
+                "title": "The Lion, the Witch and the Wardrobe (rack)",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=BTX5GX3QYpkC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Timmy O'Dowd and the Big Ditch": [
+        {
+            "0152006060": {
+                "isbn_input": "0152006060",
+                "isbn13": "9780152006068",
+                "isbn10": "0152006060",
+                "title": "Timmy O'Dowd and the Big Ditch",
+                "authors": [
+                    "Len Hilts"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1988",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=8YngAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Homer Price (Puffin Modern Classics)": [
+        {
+            "0142404152": {
+                "isbn_input": "0142404152",
+                "isbn13": "9780142404157",
+                "isbn10": "0142404152",
+                "title": "Homer Price (Puffin Modern Classics)",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Penguin",
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=chMgEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Incredible Journey": [
+        {
+            "0440413249": {
+                "isbn_input": "0440413249",
+                "isbn13": "9780440413240",
+                "isbn10": "0440413249",
+                "title": "The Incredible Journey",
+                "authors": [
+                    "Sheila Burnford"
+                ],
+                "publisher": "Yearling",
+                "year": "1997",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=eluTEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "WriteShop Primary Book C Activity Pack": [
+        {
+            "9781935027058": {
+                "title": "WriteShop Primary Book C Activity Pack",
+                "isbn13": "9781935027058",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/987326.jpg"
+            }
+        }
+    ],
+    "Well-ordered Language": [
+        {
+            "160051443X": {
+                "isbn_input": "160051443X",
+                "isbn13": "9781600514432",
+                "isbn10": "160051443X",
+                "title": "Well-ordered Language",
+                "authors": [
+                    "Tammy Peters",
+                    "Daniel Coupland"
+                ],
+                "publisher": null,
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "1600512917": [
+        {
+            "1600512917": {
+                "title": "1600512917",
+                "isbn13": "",
+                "isbn10": "1600512917",
+                "authors": [
+                    "Tammy Peters",
+                    "Dr. Dan Coupland"
+                ],
+                "publisher": "Classical Academic Press",
+                "year": "2016",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://g.christianbook.com/dg/product/cbd/f400/773805.jpg"
+            }
+        }
+    ],
+    "Writing and Rhetoric Book 1: Fable": [
+        {
+            "160051216X": {
+                "isbn_input": "160051216X",
+                "isbn13": "9781600512162",
+                "isbn10": "160051216X",
+                "title": "Writing and Rhetoric Book 1: Fable",
+                "authors": [
+                    "Fable Stu Ed"
+                ],
+                "publisher": null,
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Writing and Rhetoric Book 2: Narrative 1": [
+        {
+            "1600512186": {
+                "isbn_input": "1600512186",
+                "isbn13": "9781600512186",
+                "isbn10": "1600512186",
+                "title": "Writing and Rhetoric Book 2: Narrative 1",
+                "authors": [
+                    "Narrative Stu"
+                ],
+                "publisher": null,
+                "year": "2013",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Latin for Children, Primer A": [
+        {
+            "1600510000": {
+                "isbn_input": "1600510000",
+                "isbn13": "9781600510007",
+                "isbn10": "1600510000",
+                "title": "Latin for Children, Primer A",
+                "authors": [
+                    "Aaron Larsen",
+                    "Christopher Perrin"
+                ],
+                "publisher": null,
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Dq21kQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Latin History Reader for Use with Latin for Children: Primer A": [
+        {
+            "1600510043": {
+                "isbn_input": "1600510043",
+                "isbn13": "9781600510045",
+                "isbn10": "1600510043",
+                "title": "Latin History Reader for Use with Latin for Children: Primer A",
+                "authors": [
+                    "Karen Moore"
+                ],
+                "publisher": null,
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=NnSqkQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Minn of the Mississippi": [
+        {
+            "0395273994": {
+                "isbn_input": "0395273994",
+                "isbn13": "9780395273999",
+                "isbn10": "0395273994",
+                "title": "Minn of the Mississippi",
+                "authors": [],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1951",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=xg8fSbRUxqwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Tree in the Trail": [
+        {
+            "039554534X": {
+                "isbn_input": "039554534X",
+                "isbn13": "9780395545348",
+                "isbn10": "039554534X",
+                "title": "Tree in the Trail",
+                "authors": [],
+                "publisher": "Houghton Mifflin Harcourt",
+                "year": "1942",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=111E4XseZQUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
             }
         }
     ]
