@@ -42,7 +42,7 @@
             color: white;
         }
 
-        .source-bookscouter {
+        .source-abebooks {
             background-color: #3182ce;
         }
 
@@ -56,10 +56,6 @@
 
         .source-camelcamelcamel {
             background-color: #ed8936;
-        }
-
-        .source-abebooks {
-            background-color: #a0a0a0;
         }
 
         .status-success {
@@ -128,7 +124,7 @@
             background-color: #f0f0f0 !important;
         }
 
-        .source-badge.source-bookscouter {
+        .source-badge.source-abebooks {
             background-color: #3182ce;
         }
 
@@ -753,7 +749,7 @@
                                 <i class="material-icons tiny">image</i> Get Image
                             </div>
                             <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
-                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'bookscouter')">BookScouter</a></li>
+                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'abebooks')">AbeBooks</a></li>
                                 <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
                                 <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
                             </ul>

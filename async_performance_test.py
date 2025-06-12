@@ -10,13 +10,13 @@ from typing import List
 from scripts.scraper import (
     scrape_all_sources_async,  # Async version 
     scrape_multiple_isbns,  # New async function for multiple ISBNs
-    scrape_bookscouter_async,
+    scrape_abebooks_async,
     scrape_christianbook_async,
     scrape_rainbowresource_async
 )
 from scripts.scraper_original import (
     scrape_all_sources as sync_scrape_all_sources,
-    scrape_bookscouter as sync_scrape_bookscouter,
+    scrape_abebooks as sync_scrape_abebooks,
     scrape_christianbook as sync_scrape_christianbook,
     scrape_rainbowresource as sync_scrape_rainbowresource
 )
@@ -116,7 +116,7 @@ async def test_individual_scrapers():
     # Test concurrent individual scrapers
     start_time = time.time()
       tasks = [
-        scrape_bookscouter_async(isbn),
+        scrape_abebooks_async(isbn),
         scrape_christianbook_async(isbn),
         scrape_rainbowresource_async(isbn)
     ]
@@ -140,7 +140,7 @@ def test_individual_sync_scrapers():
     start_time = time.time()
     
     results = []
-    results.append(sync_scrape_bookscouter(isbn))
+    # results.append(scrape_abebooks_async(isbn))
     results.append(sync_scrape_christianbook(isbn))
     results.append(sync_scrape_rainbowresource(isbn))
     
