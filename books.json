@@ -1333,5 +1333,625 @@
                 "icon_url": "https://images.isbndb.com/covers/17388213488905.jpg"
             }
         }
+    ],
+    "First Start Reading Book E": [
+        {
+            "9781615386895": {
+                "title": "First Start Reading Book E",
+                "isbn13": "9781615386895",
+                "isbn10": "",
+                "authors": [
+                    "Michelle Tefertiller"
+                ],
+                "publisher": "Memoria Press",
+                "year": "2015",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/81IzLHmdf0L._SY342_.jpg"
+            }
+        }
+    ],
+    "StoryTime Treasures Student Guide, Third Edition": [
+        {
+            "9781547702442": {
+                "title": "StoryTime Treasures Student Guide, Third Edition",
+                "isbn13": "9781547702442",
+                "isbn10": "",
+                "authors": [
+                    "Mary Lynn Ross",
+                    "Tessa Tiemann"
+                ],
+                "publisher": "Memoria Press",
+                "year": "2019",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://www.memoriapress.com/wp-content/uploads/2020/07/Storytime-Treasures-student-3rd-edition.jpg"
+            }
+        }
+    ],
+    "The Burgess Animal Book": [
+        {
+            "9798839720664": {
+                "title": "The Burgess Animal Book",
+                "isbn13": "9798839720664",
+                "isbn10": "",
+                "authors": [
+                    "Thornton Burgess"
+                ],
+                "publisher": "Independently published",
+                "year": "2022",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/71MmgMnQhWL._SY342_.jpg"
+            }
+        }
+    ],
+    "Little Bear": [
+        {
+            "9798897225507": {
+                "isbn_input": "9798897225507",
+                "isbn13": "9798897225507",
+                "isbn10": null,
+                "title": "Little Bear Book Set",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": null,
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780064440042": {
+                "isbn_input": "9780064440042",
+                "isbn13": "9780064440042",
+                "isbn10": "0064440044",
+                "title": "Little Bear",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1985",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TS_1lRapD88C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780694017027": {
+                "isbn_input": "9780694017027",
+                "isbn13": "9780694017027",
+                "isbn10": "0694017027",
+                "title": "Maurice Sendak's Little Bear: Get Well Soon, Little Bear!",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperFestival",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=bT0LAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780066236889": {
+                "isbn_input": "9780066236889",
+                "isbn13": "9780066236889",
+                "isbn10": "0066236886",
+                "title": "Maurice Sendak's Little Bear: Little Bear's New Friend",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780694017010": {
+                "isbn_input": "9780694017010",
+                "isbn13": "9780694017010",
+                "isbn10": "0694017019",
+                "title": "Maurice Sendak's Little Bear: Little Bear's Picture",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperFestival",
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=HLG-wAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Little Bear's Friend": [
+        {
+            "9780784800195": {
+                "isbn_input": "9780784800195",
+                "isbn13": "9780784800195",
+                "isbn10": "0784800197",
+                "title": "Little Bear's Friend",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "Everbind",
+                "year": "2009",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781559942355": {
+                "isbn_input": "9781559942355",
+                "isbn13": "9781559942355",
+                "isbn10": "1559942355",
+                "title": "Little Bear's Friend Book and Tape",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperFestival",
+                "year": "1990",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=4KSkNAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780066236889": {
+                "isbn_input": "9780066236889",
+                "isbn13": "9780066236889",
+                "isbn10": "0066236886",
+                "title": "Maurice Sendak's Little Bear: Little Bear's New Friend",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=4tPQwAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9789577622587": {
+                "isbn_input": "9789577622587",
+                "isbn13": "9789577622587",
+                "isbn10": "9577622585",
+                "title": "\u5c0f\u718a\u7684\u597d\u670b\u53cb",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "Shang Yi Publishing Company/Tsai Fong Books",
+                "year": "2001",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Little Bear's Visit": [
+        {
+            "9780749712334": {
+                "isbn_input": "9780749712334",
+                "isbn13": "9780749712334",
+                "isbn10": "0749712333",
+                "title": "Little Bear's Visit",
+                "authors": [
+                    "Else Holmelund Minarik",
+                    "Maurice Sendak"
+                ],
+                "publisher": null,
+                "year": "1962",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780603558771": {
+                "isbn_input": "9780603558771",
+                "isbn13": "9780603558771",
+                "isbn10": "0603558771",
+                "title": "Little Bear S Visit Tape",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": null,
+                "year": "1996",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780060242411": {
+                "isbn_input": "9780060242411",
+                "isbn13": "9780060242411",
+                "isbn10": "0060242418",
+                "title": "Little Bear",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ZB0sfvF5EJoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780694016884": {
+                "isbn_input": "9780694016884",
+                "isbn13": "9780694016884",
+                "isbn10": "0694016888",
+                "title": "Maurice Sendak's Little Bear: To Grandmother's House",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "HarperFestival",
+                "year": "2002",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=bIioPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780060854874": {
+                "isbn_input": "9780060854874",
+                "isbn13": "9780060854874",
+                "isbn10": "0060854871",
+                "title": "Little Bear and the Marco Polo",
+                "authors": [
+                    "Else Holmelund Minarik"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2010",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=pqrXrPgTRikC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Frog and Toad are Friends": [
+        {
+            "9780060239572": {
+                "isbn_input": "9780060239572",
+                "isbn13": "9780060239572",
+                "isbn10": "0060239573",
+                "title": "Frog and Toad Are Friends",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1970",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=cYCkmu5sq8EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781559942294": {
+                "isbn_input": "9781559942294",
+                "isbn13": "9781559942294",
+                "isbn10": "1559942290",
+                "title": "Frog and Toad Are Friends Book and Tape",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "HarperFestival",
+                "year": "1990",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=MvOmswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780437960191": {
+                "isbn_input": "9780437960191",
+                "isbn13": "9780437960191",
+                "isbn10": "0437960196",
+                "title": "Frog and Toad and Friends",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": null,
+                "year": "1970",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780061974113": {
+                "isbn_input": "9780061974113",
+                "isbn13": "9780061974113",
+                "isbn10": "0061974110",
+                "title": "Frog and Toad Together",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=3pM8ORGjm2sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780061974106": {
+                "isbn_input": "9780061974106",
+                "isbn13": "9780061974106",
+                "isbn10": "0061974102",
+                "title": "Frog and Toad Are Friends",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Qblk6xogACsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Caps for Sale": [
+        {
+            "9780062009111": {
+                "isbn_input": "9780062009111",
+                "isbn13": "9780062009111",
+                "isbn10": "0062009117",
+                "title": "Caps for Sale",
+                "authors": [
+                    "Esphyr Slobodkina"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=oBh3R5UWHWkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781536406009": {
+                "isbn_input": "9781536406009",
+                "isbn13": "9781536406009",
+                "isbn10": "1536406007",
+                "title": "More Caps for Sale",
+                "authors": [
+                    "Esphyr Slobodkina"
+                ],
+                "publisher": "Harper, and",
+                "year": "2015",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=kjI6swEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780062134479": {
+                "isbn_input": "9780062134479",
+                "isbn13": "9780062134479",
+                "isbn10": "0062134477",
+                "title": "Caps for Sale",
+                "authors": [
+                    "Esphyr Slobodkina"
+                ],
+                "publisher": "HarperCollins",
+                "year": "2011",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=aEgdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780064433136": {
+                "isbn_input": "9780064433136",
+                "isbn13": "9780064433136",
+                "isbn10": "0064433137",
+                "title": "Caps for Sale Big Book",
+                "authors": [
+                    "Esphyr Slobodkina"
+                ],
+                "publisher": "HarperFestival",
+                "year": "1996",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9780061215124": {
+                "isbn_input": "9780061215124",
+                "isbn13": "9780061215124",
+                "isbn10": "0061215120",
+                "title": "Caps for Sale Book and CD",
+                "authors": [
+                    "Esphyr Slobodkina"
+                ],
+                "publisher": "HarperFestival",
+                "year": "2006",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=0jROtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Make Way for Ducklings": [
+        {
+            "9780140564341": {
+                "isbn_input": "9780140564341",
+                "isbn13": "9780140564341",
+                "isbn10": "0140564349",
+                "title": "Make Way for Ducklings",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Penguin",
+                "year": "1999",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=8DlcEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9780670059010": {
+                "isbn_input": "9780670059010",
+                "isbn13": "9780670059010",
+                "isbn10": "0670059013",
+                "title": "A Robert McCloskey Collection",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Viking Juvenile",
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=OWeAPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9780670451517": {
+                "isbn_input": "9780670451517",
+                "isbn13": "9780670451517",
+                "isbn10": "0670451517",
+                "title": "Make Way for Ducklings",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Live Oak Media",
+                "year": "1976",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781101997956": {
+                "isbn_input": "9781101997956",
+                "isbn13": "9781101997956",
+                "isbn10": "1101997958",
+                "title": "Make Way for Ducklings 75th Anniversary Edition",
+                "authors": [
+                    "Robert McCloskey"
+                ],
+                "publisher": "Penguin",
+                "year": "2016",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=e5htDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Father Bear Comes Home": [
+        {
+            "9780064440141": {
+                "title": "Father Bear Comes Home",
+                "isbn13": "9780064440141",
+                "isbn10": "",
+                "authors": [
+                    "Marcia Brown"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1978",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://images.booksense.com/images/141/440/9780064440141.jpg"
+            }
+        }
+    ],
+    "Stone Soup": [
+        {
+            "9780689711039": {
+                "isbn_input": "9780689711039",
+                "isbn13": "9780689711039",
+                "isbn10": "0689711034",
+                "title": "Stone Soup",
+                "authors": [
+                    "Marcia Brown"
+                ],
+                "publisher": "Simon and Schuster",
+                "year": "1947",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TzFsEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        },
+        {
+            "9781435206618": {
+                "isbn_input": "9781435206618",
+                "isbn13": "9781435206618",
+                "isbn10": "1435206614",
+                "title": "Stone soup: an old tale",
+                "authors": [
+                    "Marcia Brown"
+                ],
+                "publisher": null,
+                "year": null,
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        },
+        {
+            "9781534457126": {
+                "isbn_input": "9781534457126",
+                "isbn13": "9781534457126",
+                "isbn10": "1534457127",
+                "title": "Stone Soup",
+                "authors": [
+                    "Marcia Brown"
+                ],
+                "publisher": "Atheneum Books for Young Readers",
+                "year": "2020",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=fbtbygEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        },
+        {
+            "9781553193210": {
+                "isbn_input": "9781553193210",
+                "isbn13": "9781553193210",
+                "isbn10": "1553193210",
+                "title": "A Literature Kit for Stone Soup by Marcia Brown",
+                "authors": [
+                    "Marie-Helen Goyetche",
+                    "Marcia Brown"
+                ],
+                "publisher": "Classroom Complete Press",
+                "year": "2007",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=QW5oPgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
     ]
 }
