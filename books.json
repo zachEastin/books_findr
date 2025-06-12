@@ -3581,5 +3581,370 @@
                 "icon_url": "http://books.google.com/books/content?id=zD36oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         }
+    ],
+    "Answering the Cry for Freedom": [
+        {
+            "162979306X": {
+                "isbn_input": "162979306X",
+                "isbn13": "9781629793061",
+                "isbn10": "162979306X",
+                "title": "Answering the Cry for Freedom",
+                "authors": [
+                    "Gretchen Woelfle"
+                ],
+                "publisher": "Astra Publishing House",
+                "year": "2016",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=m1T6DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Courage and Character of Theodore Roosevelt": [
+        {
+            "1581824394": {
+                "isbn_input": "1581824394",
+                "isbn13": "9781581824391",
+                "isbn10": "1581824394",
+                "title": "The Courage and Character of Theodore Roosevelt",
+                "authors": [
+                    "George Grant"
+                ],
+                "publisher": "Cumberland House Publishing",
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=1GCjChsFL-IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Atlas of American History": [
+        {
+            "0528015346": {
+                "isbn_input": "0528015346",
+                "isbn13": "9780528015342",
+                "isbn10": "0528015346",
+                "title": "Atlas of American History",
+                "authors": [
+                    "Rand McNally"
+                ],
+                "publisher": null,
+                "year": "2016",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=odnLjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "National Geographic Student World Atlas, 6th Edition": [
+        {
+            "1426373430": {
+                "isbn_input": "1426373430",
+                "isbn13": "9781426373435",
+                "isbn10": "1426373430",
+                "title": "National Geographic Student World Atlas, 6th Edition",
+                "authors": [
+                    "National Geographic"
+                ],
+                "publisher": "Random House",
+                "year": "2022",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=5O9ZEQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "A Treasury of Poetry for Young People": [
+        {
+            "9780806919560": {
+                "isbn_input": "9780806919560",
+                "isbn13": "9780806919560",
+                "isbn10": "0806919566",
+                "title": "A Treasury of Poetry for Young People",
+                "authors": [
+                    "Frances Schoonmaker",
+                    "Frances Schoonmaker Bolin"
+                ],
+                "publisher": "Sterling Publishing (NY)",
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=vV-0AAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "William Shakespeare's The Tempest": [
+        {
+            "0385320566": {
+                "isbn_input": "0385320566",
+                "isbn13": "9780385320566",
+                "isbn10": "0385320566",
+                "title": "William Shakespeare's The Tempest",
+                "authors": [],
+                "publisher": "Doubleday Books for Young Readers",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Ce1XAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Trivium Tables": [
+        {
+            "098517014X": {
+                "isbn_input": "098517014X",
+                "isbn13": "9780985170141",
+                "isbn10": "098517014X",
+                "title": "Trivium Tables",
+                "authors": [
+                    "Classical Conversations MultiMedia"
+                ],
+                "publisher": null,
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Ue-koAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Mrs. Frisby and the Rats of Nimh": [
+        {
+            "0689710682": {
+                "isbn_input": "0689710682",
+                "isbn13": "9780689710681",
+                "isbn10": "0689710682",
+                "title": "Mrs. Frisby and the Rats of Nimh",
+                "authors": [
+                    "Robert C. O'Brien"
+                ],
+                "publisher": "Aladdin",
+                "year": "1986",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=pb_hDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Prince Caspian (rack)": [
+        {
+            "0064471055": {
+                "isbn_input": "0064471055",
+                "isbn13": "9780064471053",
+                "isbn10": "0064471055",
+                "title": "Prince Caspian (rack)",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=VvRDrruxC7IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Voyage of the Dawn Treader": [
+        {
+            "0064405028": {
+                "isbn_input": "0064405028",
+                "isbn13": "9780064405027",
+                "isbn10": "0064405028",
+                "title": "The Voyage of the Dawn Treader",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "HarperTrophy",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=5zXYAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Silver Chair (rack)": [
+        {
+            "0064471098": {
+                "isbn_input": "0064471098",
+                "isbn13": "9780064471091",
+                "isbn10": "0064471098",
+                "title": "The Silver Chair (rack)",
+                "authors": [
+                    "C. S. Lewis"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1994",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=MwGBewTScTkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Tom Sawyer": [
+        {
+            "9798749478112": {
+                "title": "Tom Sawyer",
+                "isbn13": "9798749478112",
+                "isbn10": "",
+                "authors": [
+                    "Mark Twain"
+                ],
+                "publisher": "Independently published",
+                "year": "2021",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://pictures.abebooks.com/isbn/9798749478112-us.jpg"
+            }
+        }
+    ],
+    "Anne of Green Gables": [
+        {
+            "9780141321592": {
+                "isbn_input": "9780141321592",
+                "isbn13": "9780141321592",
+                "isbn10": "0141321598",
+                "title": "Anne of Green Gables",
+                "authors": [
+                    "L. M. Montgomery"
+                ],
+                "publisher": "Puffin Books",
+                "year": "2008",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=b-wtcmjMCY0C&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Units of Study for Teaching Reading, Grade 4": [
+        {
+            "0547577095": {
+                "isbn_input": "0547577095",
+                "isbn13": "9780547577098",
+                "isbn10": "0547577095",
+                "title": "Units of Study for Teaching Reading, Grade 4",
+                "authors": [
+                    "Lucy Calkins"
+                ],
+                "publisher": null,
+                "year": null,
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Writing & Rhetoric Book 5: Refutation & Confirmation": [
+        {
+            "9781600516924": {
+                "title": "Writing & Rhetoric Book 5: Refutation & Confirmation",
+                "isbn13": "9781600516924",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KYIXs-EX--/c_fit,w_505,h_518/rhifkjai97zydynuzyd7.jpg"
+            }
+        }
+    ],
+    "Writing & Rhetoric": [
+        {
+            "9781600512773": {
+                "isbn_input": "9781600512773",
+                "isbn13": "9781600512773",
+                "isbn10": "1600512771",
+                "title": "Writing & Rhetoric",
+                "authors": [
+                    "Student Edition"
+                ],
+                "publisher": "Classical Academic Press",
+                "year": "2015",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Well-Ordered Language 3A": [
+        {
+            "9781600513183": {
+                "title": "Well-Ordered Language 3A",
+                "isbn13": "9781600513183",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--KTePZBON--/c_fit,w_505,h_518/98eeecd78d322ca6133a7de4fdbc8a256b10fb66.jpg"
+            }
+        }
+    ],
+    "Well-Ordered Language 3B": [
+        {
+            "9781600513411": {
+                "title": "Well-Ordered Language 3B",
+                "isbn13": "9781600513411",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--OfmKVnYe--/c_fit,w_505,h_518/870ae4114e77a7add6dc21906cc6ef21bbc14522.jpg"
+            }
+        }
+    ],
+    "Latin for Children, Primer C": [
+        {
+            "9781600510120": {
+                "isbn_input": "9781600510120",
+                "isbn13": "9781600510120",
+                "isbn10": "1600510124",
+                "title": "Latin for Children, Primer C",
+                "authors": [
+                    "Aaron Larsen",
+                    "Christopher Perrin"
+                ],
+                "publisher": null,
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=H2dHkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Latin for Children, Primer C History Reader": [
+        {
+            "9781600510168": {
+                "isbn_input": "9781600510168",
+                "isbn13": "9781600510168",
+                "isbn10": "1600510167",
+                "title": "Latin for Children, Primer C History Reader",
+                "authors": [
+                    "Karen Moore",
+                    "Erin Davis"
+                ],
+                "publisher": null,
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=zOsMkgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
     ]
 }
