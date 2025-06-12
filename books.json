@@ -73,6 +73,22 @@
                 "source": "google_books",
                 "notes": ""
             }
+        },
+        {
+            "1629821330": {
+                "isbn_input": "1629821330",
+                "isbn13": "9781629821337",
+                "isbn10": "1629821330",
+                "title": "Christian Liberty Nature Reader",
+                "authors": [
+                    "Florence Bass"
+                ],
+                "publisher": null,
+                "year": "2019",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
         }
     ],
     "Fun in the Sun Grd K": [
@@ -1951,6 +1967,432 @@
                 "error": null,
                 "source": "google_books",
                 "icon_url": "http://books.google.com/books/content?id=QW5oPgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Viking Tales": [
+        {
+            "9781599150048": {
+                "isbn_input": "9781599150048",
+                "isbn13": "9781599150048",
+                "isbn10": "1599150042",
+                "title": "Viking Tales",
+                "authors": [
+                    "Jennie Hall"
+                ],
+                "publisher": "Yesterdays Classics",
+                "year": "2005",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=QC0EtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Saint George and the Dragon": [
+        {
+            "9780316367950": {
+                "title": "Saint George and the Dragon",
+                "isbn13": "9780316367950",
+                "isbn10": "",
+                "authors": [
+                    "Margaret Hodges"
+                ],
+                "publisher": "Little, Brown Books for Young Readers",
+                "year": "1990",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/91CPH48eypL._SL1500_.jpg"
+            }
+        }
+    ],
+    "Beautiful Stories from Shakespeare": [
+        {
+            "9798462996856": {
+                "title": "Beautiful Stories from Shakespeare",
+                "isbn13": "9798462996856",
+                "isbn10": "",
+                "authors": [
+                    "Edith Nesbit"
+                ],
+                "publisher": "Independently published",
+                "year": "2021",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://m.media-amazon.com/images/I/71Rw8JjenBL._SY342_.jpg"
+            }
+        }
+    ],
+    "Just So Stories": [
+        {
+            "9798810991656": {
+                "isbn_input": "9798810991656",
+                "isbn13": "9798810991656",
+                "isbn10": null,
+                "title": "Just So Stories",
+                "authors": [
+                    "Rudyard Kipling"
+                ],
+                "publisher": null,
+                "year": "2022",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Frog and Toad All Year": [
+        {
+            "0064440591": {
+                "isbn_input": "0064440591",
+                "isbn13": "9780064440592",
+                "isbn10": "0064440591",
+                "title": "Frog and Toad All Year",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1984",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=TgnY9L8sPMkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Frog and Toad Together": [
+        {
+            "9780064440219": {
+                "isbn_input": "9780064440219",
+                "isbn13": "9780064440219",
+                "isbn10": "0064440214",
+                "title": "Frog and Toad Together",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1979",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=sRjry-VDvioC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Owl at Home": [
+        {
+            "0064440346": {
+                "isbn_input": "0064440346",
+                "isbn13": "9780064440349",
+                "isbn10": "0064440346",
+                "title": "Owl at Home",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1982",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=yR5NcfHpj-gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Grasshopper on the Road": [
+        {
+            "9780064440943": {
+                "isbn_input": "9780064440943",
+                "isbn13": "9780064440943",
+                "isbn10": "006444094X",
+                "title": "Grasshopper on the Road",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1986",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=K5OXct9ve_sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Mouse Tales": [
+        {
+            "0064440133": {
+                "isbn_input": "0064440133",
+                "isbn13": "9780064440134",
+                "isbn10": "0064440133",
+                "title": "Mouse Tales",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1978",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=PuglK712xkMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Mouse Soup": [
+        {
+            "9780064440417": {
+                "isbn_input": "9780064440417",
+                "isbn13": "9780064440417",
+                "isbn10": "0064440419",
+                "title": "Mouse Soup",
+                "authors": [
+                    "Arnold Lobel"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1983",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=-bmSN_eTAe8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Amelia Bedelia": [
+        {
+            "9780064441551": {
+                "isbn_input": "9780064441551",
+                "isbn13": "9780064441551",
+                "isbn10": "0064441555",
+                "title": "Amelia Bedelia",
+                "authors": [
+                    "Peggy Parish"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=o51fpYTBLYkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Prairie School": [
+        {
+            "9780060513184": {
+                "isbn_input": "9780060513184",
+                "isbn13": "9780060513184",
+                "isbn10": "0060513187",
+                "title": "Prairie School",
+                "authors": [
+                    "Avi"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2003",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=vRNeNyi59hIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Courage of Sarah Noble": [
+        {
+            "0689715404": {
+                "isbn_input": "0689715404",
+                "isbn13": "9780689710575",
+                "isbn10": "0689710577",
+                "title": "The Courage of Sarah Noble",
+                "authors": [
+                    "Alice Dalgliesh"
+                ],
+                "publisher": "Simon & Schuster/Paula Wiseman Books",
+                "year": "1954",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=Z9Y_ePdrrVQC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Clara and the Bookwagon": [
+        {
+            "0064441342": {
+                "isbn_input": "0064441342",
+                "isbn13": "9780064441346",
+                "isbn10": "0064441342",
+                "title": "Clara and the Bookwagon",
+                "authors": [
+                    "Nancy Smiler Levinson"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1991",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=QKCGx4zI1VMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "The Long Way to a New Land": [
+        {
+            "0064441008": {
+                "isbn_input": "0064441008",
+                "isbn13": "9780064441001",
+                "isbn10": "0064441008",
+                "title": "The Long Way to a New Land",
+                "authors": [
+                    "Joan Sandin"
+                ],
+                "publisher": "HarperCollins",
+                "year": "1986",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=k6ZGIAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Long Way Westward": [
+        {
+            "0064441989": {
+                "isbn_input": "0064441989",
+                "isbn13": "9780064441988",
+                "isbn10": "0064441989",
+                "title": "The Long Way Westward",
+                "authors": [
+                    "Joan Sandin"
+                ],
+                "publisher": "Harper Collins",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=W3fy7KoHc2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "Wagon Wheels": [
+        {
+            "0060206683": {
+                "isbn_input": "0060206683",
+                "isbn13": "9780060206680",
+                "isbn10": "0060206683",
+                "title": "Wagon Wheels",
+                "authors": [
+                    "Barbara Brenner"
+                ],
+                "publisher": "Harper Trophy",
+                "year": "1978",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=aCThAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "Billy and Blaze": [
+        {
+            "0689716087": {
+                "isbn_input": "0689716087",
+                "isbn13": "9780689716089",
+                "isbn10": "0689716087",
+                "title": "Billy and Blaze",
+                "authors": [
+                    "C.W. Anderson"
+                ],
+                "publisher": "Aladdin",
+                "year": "1992",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ULPrPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        }
+    ],
+    "The Sword in the Tree": [
+        {
+            "0064421325": {
+                "isbn_input": "0064421325",
+                "isbn13": "9780064421324",
+                "isbn10": "0064421325",
+                "title": "The Sword in the Tree",
+                "authors": [
+                    "Clyde Robert Bulla"
+                ],
+                "publisher": "Harper Collins",
+                "year": "2000",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=mCqLHbrrfwoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            }
+        }
+    ],
+    "New American Cursive Penmanship": [
+        {
+            "9780979767890": {
+                "isbn_input": "9780979767890",
+                "isbn13": "9780979767890",
+                "isbn10": "097976789X",
+                "title": "New American Cursive Penmanship",
+                "authors": [
+                    "Iris Hatfield"
+                ],
+                "publisher": null,
+                "year": "2021",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "Jack and Jill Student Workbook": [
+        {
+            "1608266036": {
+                "isbn_input": "1608266036",
+                "isbn13": "9781608266036",
+                "isbn10": "1608266036",
+                "title": "Jack and Jill Student Workbook",
+                "authors": [
+                    "Demme Learning"
+                ],
+                "publisher": "Spelling You See",
+                "year": "2014",
+                "success": true,
+                "error": null,
+                "source": "google_books"
+            }
+        }
+    ],
+    "WriteShop Primary Book B Activity Pack": [
+        {
+            "9781935027041": {
+                "title": "WriteShop Primary Book B Activity Pack",
+                "isbn13": "9781935027041",
+                "isbn10": "",
+                "authors": [],
+                "publisher": "",
+                "year": "",
+                "source": "manual",
+                "notes": "",
+                "icon_url": "https://res.cloudinary.com/hdtsjhzsw/image/upload/s--MGXBIoYK--/c_fit,w_505,h_518/ws0ot8sepeov5oyvjmo6.jpg"
+            }
+        }
+    ],
+    "Home Geography for Primary Grades": [
+        {
+            "192572915X": {
+                "isbn_input": "192572915X",
+                "isbn13": "9781925729153",
+                "isbn10": "192572915X",
+                "title": "Home Geography for Primary Grades",
+                "authors": [
+                    "C. C. Long"
+                ],
+                "publisher": null,
+                "year": "2017",
+                "success": true,
+                "error": null,
+                "source": "google_books",
+                "icon_url": "http://books.google.com/books/content?id=ihSDswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
             }
         }
     ]
