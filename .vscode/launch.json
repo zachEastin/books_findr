@@ -14,9 +14,9 @@
         },
         {
             "type": "chrome",
-            "name": "http://127.0.0.1:5000/admin",
+            "name": "http://0.0.0.0:5000/",
             "request": "launch",
-            "url": "http://127.0.0.1:5000/admin"
+            "url": "http://0.0.0.0:5000/"
         }
     ]
 }
