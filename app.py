@@ -311,62 +311,64 @@ def add_book_isbn():
             return result
 
         added = 0
-        if isbn_input:
-            result = asyncio.run(process_isbn(isbn_input))
-            # If title was not provided, try to get it from metadata
-            if not original_title:
-                title_from_metadata = result["metadata"].get("title") if result["metadata"] else None
-                if title_from_metadata:
-                    title = title_from_metadata.strip()                    # Move the ISBN under the derived title in books.json
-                    isbn_list = books.setdefault(title, [])
-                else:
-                    title = isbn_input  # fallback to ISBN as title
-                    isbn_list = books.setdefault(title, [])
-            
-            if result["success"]:
-                isbn_list.append({isbn_input: result["metadata"]})
-                added = 1
-            else:
-                # Return structured response to trigger manual entry form
-                return jsonify({
-                    "error": result["error"],
-                    "show_manual_form": True,
-                    "prefill_data": {
-                        "title": title if title else "",
-                        "isbn": isbn_input,
-                        "authors": "",
-                        "grade": grade if grade else ""
-                    }
-                }), 400
-            # Require author if adding by title only
-            if not author:
-                return jsonify({"error": "Author is required when adding by title"}), 400
-            google_books_api = GoogleBooksAPI()
-            search_results = google_books_api.search_by_title_and_author(title, author=author, max_results=5)
-            if not search_results:
-                # Return structured response to trigger manual entry form
-                return jsonify({
-                    "error": "No ISBNs found for title and author",
-                    "show_manual_form": True,
-                    "prefill_data": {
-                        "title": title if title else "",
-                        "isbn": "",
-                        "authors": author if author else "",
-                        "grade": grade if grade else ""
-                    }
-                }), 400
-            seen = set()
-            for item in search_results:
-                isbn_candidate = item.get("isbn13") or item.get("isbn10")
-                if not isbn_candidate or isbn_candidate in seen:
-                    continue
-                if any(isbn_candidate in x for x in isbn_list):
-                    continue
-                result = asyncio.run(process_isbn(isbn_candidate))
+        if isbn_input or (title and author):
+            if isbn_input:
+                result = asyncio.run(process_isbn(isbn_input))
+                # If title was not provided, try to get it from metadata
+                if not original_title:
+                    title_from_metadata = result["metadata"].get("title") if result["metadata"] else None
+                    if title_from_metadata:
+                        title = title_from_metadata.strip()                    # Move the ISBN under the derived title in books.json
+                        isbn_list = books.setdefault(title, [])
+                    else:
+                        title = isbn_input  # fallback to ISBN as title
+                        isbn_list = books.setdefault(title, [])
+                
                 if result["success"]:
-                    isbn_list.append({isbn_candidate: result["metadata"]})
-                    added += 1
-                seen.add(isbn_candidate)
+                    isbn_list.append({isbn_input: result["metadata"]})
+                    added = 1
+                else:
+                    # Return structured response to trigger manual entry form
+                    return jsonify({
+                        "error": result["error"],
+                        "show_manual_form": True,
+                        "prefill_data": {
+                            "title": title if title else "",
+                            "isbn": isbn_input,
+                            "authors": "",
+                            "grade": grade if grade else ""
+                        }
+                    }), 400
+            else:
+                # Require author if adding by title only
+                if not author:
+                    return jsonify({"error": "Author is required when adding by title"}), 400
+                google_books_api = GoogleBooksAPI()
+                search_results = google_books_api.search_by_title_and_author(title, author=author, max_results=5)
+                if not search_results:
+                    # Return structured response to trigger manual entry form
+                    return jsonify({
+                        "error": "No ISBNs found for title and author",
+                        "show_manual_form": True,
+                        "prefill_data": {
+                            "title": title if title else "",
+                            "isbn": "",
+                            "authors": author if author else "",
+                            "grade": grade if grade else ""
+                        }
+                    }), 400
+                seen = set()
+                for item in search_results:
+                    isbn_candidate = item.get("isbn13") or item.get("isbn10")
+                    if not isbn_candidate or isbn_candidate in seen:
+                        continue
+                    if any(isbn_candidate in x for x in isbn_list):
+                        continue
+                    result = asyncio.run(process_isbn(isbn_candidate))
+                    if result["success"]:
+                        isbn_list.append({isbn_candidate: result["metadata"]})
+                        added += 1
+                    seen.add(isbn_candidate)
         if added:
             books_file.write_text(json.dumps(books, indent=4))
             logger.info(f"Added {added} ISBNs under {title}")
