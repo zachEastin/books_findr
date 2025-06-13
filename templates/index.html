@@ -291,6 +291,44 @@
             display: none;
         }
 
+        /* Extra mobile improvements for smaller screens */
+        @media only screen and (max-width: 375px) {
+            .container {
+                padding: 0 5px;
+            }
+            
+            .book-card-container {
+                margin-bottom: 0.5rem;
+            }
+            
+            .book-card-container .card-content {
+                padding: 0.5rem !important;
+            }
+            
+            .mobile-book-image .book-image-container {
+                width: 50px;
+                height: 65px;
+                font-size: 8px;
+            }
+            
+            .mobile-book-info .book-title {
+                font-size: 0.85rem !important;
+            }
+            
+            .mobile-stats-collapsible .collapsible-header {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.5rem;
+            }
+            
+            .mobile-stats-grid .col {
+                font-size: 0.7rem;
+            }
+            
+            .mobile-stats-grid strong {
+                font-size: 0.75rem;
+            }
+        }
+
         /* Grade content styling */
         .grade-content {
             padding-top: 20px;
@@ -438,40 +476,111 @@
             font-size: 12px;
             text-align: center;
         }
-        
-        /* Mobile-specific image sizing */
+          /* Mobile-optimized book card layout */
         @media only screen and (max-width: 600px) {
-            .book-image-container {
-                max-width: 80px;
-                height: 100px;
-                font-size: 10px;
+            /* Reduce card margins and padding */
+            .book-card-container {
+                margin-bottom: 0.75rem;
             }
             
-            .book-title {
-                font-size: 1rem !important;
+            .book-card-container .card {
+                margin: 0;
+            }
+            
+            .book-card-container .card-content {
+                padding: 0.75rem !important;
+            }
+            
+            /* Mobile single-column layout */
+            .mobile-book-header {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 0.75rem;
+            }
+            
+            .mobile-book-image {
+                flex-shrink: 0;
+                margin-right: 0.75rem;
+            }
+            
+            .mobile-book-image .book-image-container {
+                width: 60px;
+                height: 80px;
+                font-size: 9px;
+            }
+            
+            .mobile-book-info {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .mobile-book-info .book-title {
+                font-size: 0.95rem !important;
                 line-height: 1.2;
+                margin: 0 0 0.25rem 0;
             }
             
-            .book-stats-grid .col {
-                padding: 0 0.2rem;
+            .mobile-book-info .isbn-code {
+                font-size: 0.8rem;
+                color: #888;
+            }
+            
+            /* Mobile price display */
+            .mobile-price-section {
+                margin-bottom: 0.5rem;
+            }
+            
+            .mobile-price-section .btn-large {
+                width: 100%;
+                font-size: 0.85rem !important;
+                padding: 0.6rem !important;
+                min-height: 48px;
+            }
+            
+            .mobile-price-section .btn-large div {
+                font-size: 1rem !important;
+            }
+            
+            /* Hide detailed stats on mobile by default */
+            .mobile-stats-collapsible {
+                margin-top: 0.5rem;
+            }
+            
+            .mobile-stats-collapsible .collapsible-header {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                min-height: 48px;
+            }
+            
+            .mobile-stats-collapsible .collapsible-body {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .mobile-stats-grid .col {
+                padding: 0 0.15rem;
+                font-size: 0.75rem;
+                text-align: center;
+                margin-bottom: 0.4rem;
+            }
+            
+            .mobile-stats-grid strong {
+                font-size: 0.8rem;
+                display: block;
+            }
+            
+            .mobile-stats-grid small {
+                font-size: 0.65rem;
+                color: #666;
+            }
+            
+            /* Compact ISBN breakdown */
+            .mobile-isbn-breakdown .collapsible-header {
+                padding: 0.4rem 0.75rem;
                 font-size: 0.8rem;
             }
             
-            .book-stats-grid strong {
-                font-size: 0.9rem;
-            }
-            
-            .book-stats-grid small {
-                font-size: 0.7rem;
-            }
-            
-            .btn-large {
-                font-size: 0.9rem !important;
-                padding: 0.5rem !important;
-            }
-            
-            .book-price-section .btn-large div {
-                font-size: 1rem !important;
+            .mobile-isbn-breakdown .collapsible-body {
+                padding: 0.25rem;
             }
         }
         
@@ -482,6 +591,119 @@
         .book-stats-grid .col {
             text-align: center;
             margin-bottom: 0.5rem;
+        }
+        
+        /* CSS Grid layout for book cards containers */
+        .grade-list {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+        
+        /* Responsive grid for book cards */
+        @media (min-width: 600px) {
+            .grade-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .grade-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .grade-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+          /* Book card container adjustments */
+        .book-card-container {
+            width: 100%;
+            max-width: none;
+        }
+        
+        /* Desktop layout styles */
+        .desktop-book-layout {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .desktop-book-image {
+            flex: 0 0 120px;
+            width: 120px;
+        }
+        
+        .desktop-book-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .desktop-book-price {
+            flex: 0 0 180px;
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .desktop-stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .desktop-stats-grid .stat-item {
+            flex: 1 1 calc(33.333% - 0.5rem);
+            min-width: 120px;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 1200px) {
+            .desktop-stats-grid .stat-item {
+                flex: 1 1 calc(50% - 0.5rem);
+            }
+        }
+        
+        /* ISBN grid layout */
+        .isbn-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0;
+        }
+        
+        .isbn-card {
+            flex: 1 1 calc(33.333% - 1rem);
+            min-width: 280px;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .isbn-card {
+                flex: 1 1 calc(50% - 1rem);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .isbn-card {
+                flex: 1 1 100%;
+            }
+        }
+        
+        .isbn-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .isbn-stats .stat-item {
+            flex: 1;
+            text-align: center;
         }
         
         .book-price-section {
@@ -717,7 +939,7 @@
 
                         <!-- Tab Content -->
                         <div id="unassigned-books" class="grade-content">
-                            <div id="unassigned-list">
+                            <div id="unassigned-list" class="grade-list">
                                 <div class="center-align" style="padding: 2rem;">
                                     <div class="preloader-wrapper small active">
                                         <div class="spinner-layer spinner-blue-only">
@@ -738,79 +960,79 @@
                         </div>
 
                         <div id="kindergarten-books" class="grade-content">
-                            <div id="kindergarten-list">
+                            <div id="kindergarten-list" class="grade-list">
                                 <!-- Kindergarten books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-1-books" class="grade-content">
-                            <div id="grade-1-list">
+                            <div id="grade-1-list" class="grade-list">
                                 <!-- 1st grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-2-books" class="grade-content">
-                            <div id="grade-2-list">
+                            <div id="grade-2-list" class="grade-list">
                                 <!-- 2nd grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-3-books" class="grade-content">
-                            <div id="grade-3-list">
+                            <div id="grade-3-list" class="grade-list">
                                 <!-- 3rd grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-4-books" class="grade-content">
-                            <div id="grade-4-list">
+                            <div id="grade-4-list" class="grade-list">
                                 <!-- 4th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-5-books" class="grade-content">
-                            <div id="grade-5-list">
+                            <div id="grade-5-list" class="grade-list">
                                 <!-- 5th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-6-books" class="grade-content">
-                            <div id="grade-6-list">
+                            <div id="grade-6-list" class="grade-list">
                                 <!-- 6th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-7-books" class="grade-content">
-                            <div id="grade-7-list">
+                            <div id="grade-7-list" class="grade-list">
                                 <!-- 7th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-8-books" class="grade-content">
-                            <div id="grade-8-list">
+                            <div id="grade-8-list" class="grade-list">
                                 <!-- 8th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-9-books" class="grade-content">
-                            <div id="grade-9-list">
+                            <div id="grade-9-list" class="grade-list">
                                 <!-- 9th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-10-books" class="grade-content">
-                            <div id="grade-10-list">
+                            <div id="grade-10-list" class="grade-list">
                                 <!-- 10th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-11-books" class="grade-content">
-                            <div id="grade-11-list">
+                            <div id="grade-11-list" class="grade-list">
                                 <!-- 11th grade books will be loaded here -->
                             </div>
                         </div>
 
                         <div id="grade-12-books" class="grade-content">
-                            <div id="grade-12-list">
+                            <div id="grade-12-list" class="grade-list">
                                 <!-- 12th grade books will be loaded here -->
                             </div>
                         </div>
@@ -818,7 +1040,7 @@
                 </div>
             </div>
         </div>
-          <!-- Charts Section -->
+        <!-- Charts Section -->
         {% if charts %}
         <div class="row">
             <!-- Price Comparison Chart -->
@@ -1101,6 +1323,7 @@
                 const containerId = assignedGrade ? gradeMapping[assignedGrade] : 'unassigned-list';
                 const container = document.getElementById(containerId);
                 if (container) {
+                    // Add book card directly without grid wrapper to avoid nested grid conflicts
                     container.innerHTML += generateBookHTML(mergedBookData);
                 }
             });
@@ -1160,18 +1383,19 @@
             });
         } finally {
             loadingIcon.style.display = 'none';
-        }
-    }    // Generate HTML for a single book card using Materialize grid system
+        }    // Generate HTML for a single book card using responsive mobile-first design
+    }
     function generateBookHTML(bookData) {
         const bestPrice = bookData.best_current_price;
         const priceClass = bestPrice > 50 ? 'red' : bestPrice > 25 ? 'orange' : 'green';
-
         let html = `
             <div class="book-card-container">
                 <div class="card hoverable">
                     <div class="card-content">
-                        <div class="row" style="margin-bottom: 0;">                            <!-- Book Image Section -->
-                            <div class="col s3 m4 l3 book-card-image">
+                        <!-- Desktop Layout (hidden on mobile) -->
+                        <div class="desktop-book-layout hide-on-small-only">
+                            <!-- Book Image Section -->
+                            <div class="desktop-book-image">
                                 <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container">
                                     <div class="preloader-wrapper small active">
                                         <div class="spinner-layer spinner-blue-only">
@@ -1194,7 +1418,7 @@
                             </div>
                             
                             <!-- Book Info Section -->
-                            <div class="col s6 m5 l6">
+                            <div class="desktop-book-info">
                                 <h6 class="book-title" style="margin: 0 0 0.5rem 0;">
                                     ${bookData.title}
                                 </h6>
@@ -1203,20 +1427,20 @@
                                 </p>
                                 
                                 <!-- Book Stats Grid -->
-                                <div class="row book-stats-grid" style="margin-top: 1rem; margin-bottom: 0;">
-                                    <div class="col s6 m6 l4">
+                                <div class="desktop-stats-grid">
+                                    <div class="stat-item">
                                         <strong class="blue-text">${bookData.sources.length}</strong>
                                         <br><small>Sources</small>
                                     </div>
-                                    <div class="col s6 m6 l4">
+                                    <div class="stat-item">
                                         <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
                                         <br><small>Success Rate</small>
                                     </div>
-                                    <div class="col s6 m6 l4">
+                                    <div class="stat-item">
                                         <strong class="orange-text">${bookData.current_price_count || 0}</strong>
                                         <br><small>Valid Prices</small>
                                     </div>
-                                    <div class="col s6 m6 l4">
+                                    <div class="stat-item">
                                         ${bookData.avg_current_price ? `
                                             <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
                                             <br><small>Avg Price</small>
@@ -1225,7 +1449,7 @@
                                             <br><small>Avg Price</small>
                                         `}
                                     </div>
-                                    <div class="col s6 m6 l4">
+                                    <div class="stat-item">
                                         ${bookData.lowest_price_ever ? `
                                             <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
                                             <br><small>Lowest Ever</small>
@@ -1234,8 +1458,7 @@
                                             <br><small>Lowest Ever</small>
                                         `}
                                     </div>
-                                    <div class="col s6 m6 l4">
-                                        ${bookData.highest_price_ever ? `
+                                    <div class="stat-item">                                        ${bookData.highest_price_ever ? `
                                             <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
                                             <br><small>Highest Ever</small>
                                         ` : `
@@ -1245,8 +1468,9 @@
                                     </div>
                                 </div>
                             </div>
-                              <!-- Price Section -->
-                            <div class="col s3 m3 l3 book-price-section">
+                              
+                            <!-- Price Section -->
+                            <div class="desktop-book-price">
                                 ${bestPrice ? `
                                     ${bookData.best_price_url ? `
                                         <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
@@ -1280,18 +1504,140 @@
                             </div>
                         </div>
                         
-                        <!-- Collapsible ISBN Breakdown -->
-                        <ul class="collapsible" style="margin-top: 1rem; box-shadow: none;">
+                        <!-- Mobile Layout (visible only on small screens) -->
+                        <div class="hide-on-med-and-up">
+                            <!-- Mobile Book Header -->
+                            <div class="mobile-book-header">
+                                <div class="mobile-book-image">
+                                    <div id="book-image-mobile-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container">
+                                        <div class="preloader-wrapper small active">
+                                            <div class="spinner-layer spinner-blue-only">
+                                                <div class="circle-clipper left"><div class="circle"></div></div>
+                                                <div class="gap-patch"><div class="circle"></div></div>
+                                                <div class="circle-clipper right"><div class="circle"></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mobile-book-info">
+                                    <h6 class="book-title">${bookData.title}</h6>
+                                    <p style="margin: 0;">
+                                        <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Mobile Price Section -->
+                            <div class="mobile-price-section">
+                                ${bestPrice ? `
+                                    ${bookData.best_price_url ? `
+                                        <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="border-radius: 8px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                            <div style="font-size: 1.2rem; font-weight: 600; line-height: 1.2;">
+                                                $${bestPrice.toFixed(2)}
+                                            </div>
+                                            <div style="font-size: 0.75rem; opacity: 0.9;">
+                                                Best Price - Tap to View
+                                            </div>
+                                        </a>
+                                    ` : `
+                                        <div class="btn-large ${priceClass} disabled" style="border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                            <div style="font-size: 1.2rem; font-weight: 600; line-height: 1.2;">
+                                                $${bestPrice.toFixed(2)}
+                                            </div>
+                                            <div style="font-size: 0.75rem; opacity: 0.9;">
+                                                Best Price
+                                            </div>
+                                        </div>
+                                    `}
+                                ` : `
+                                    <div class="btn-large grey disabled" style="border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                        <div style="font-size: 1.1rem; font-weight: 600; line-height: 1.2;">
+                                            N/A
+                                        </div>
+                                        <div style="font-size: 0.75rem; opacity: 0.9;">
+                                            No Price Data
+                                        </div>
+                                    </div>
+                                `}
+                            </div>
+                            
+                            <!-- Mobile Stats Collapsible -->
+                            <ul class="collapsible mobile-stats-collapsible" style="box-shadow: none; margin: 0;">
+                                <li>
+                                    <div class="collapsible-header">
+                                        <i class="material-icons">assessment</i>
+                                        <span>Book Details</span>
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <div class="row mobile-stats-grid" style="margin-bottom: 0;">
+                                            <div class="col s4">
+                                                <strong class="blue-text">${bookData.sources.length}</strong>
+                                                <small>Sources</small>
+                                            </div>
+                                            <div class="col s4">
+                                                <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
+                                                <small>Success</small>
+                                            </div>
+                                            <div class="col s4">
+                                                <strong class="orange-text">${bookData.current_price_count || 0}</strong>
+                                                <small>Valid Prices</small>
+                                            </div>
+                                            <div class="col s4">
+                                                ${bookData.avg_current_price ? `
+                                                    <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
+                                                    <small>Avg Price</small>
+                                                ` : `
+                                                    <strong class="grey-text">N/A</strong>
+                                                    <small>Avg Price</small>
+                                                `}
+                                            </div>
+                                            <div class="col s4">
+                                                ${bookData.lowest_price_ever ? `
+                                                    <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
+                                                    <small>Lowest Ever</small>
+                                                ` : `
+                                                    <strong class="grey-text">N/A</strong>
+                                                    <small>Lowest Ever</small>
+                                                `}
+                                            </div>
+                                            <div class="col s4">
+                                                ${bookData.highest_price_ever ? `
+                                                    <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
+                                                    <small>Highest Ever</small>
+                                                ` : `
+                                                    <strong class="grey-text">N/A</strong>
+                                                    <small>Highest Ever</small>
+                                                `}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <!-- Mobile Image Actions -->
+                            <div id="image-actions-mobile-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions center-align" style="display: none; margin-top: 0.5rem;">
+                                <a class="dropdown-trigger btn-small orange waves-effect waves-light" href="#!" data-target="image-dropdown-mobile-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; min-height: 48px;">
+                                    <i class="material-icons left">image</i>Get Image
+                                </a>
+                                <ul id="image-dropdown-mobile-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'abebooks')">AbeBooks</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- ISBN Breakdown (desktop) -->
+                        <ul class="collapsible hide-on-small-only" style="margin-top: 1rem; box-shadow: none;">
                             <li>
                                 <div class="collapsible-header" style="padding: 0.75rem 1rem; min-height: 48px;">
                                     <i class="material-icons">expand_more</i>
                                     <span style="font-weight: 600;">Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
                                 </div>
                                 <div class="collapsible-body" style="padding: 1rem 0;">
-                                    <div class="row" style="margin-bottom: 0;">
+                                    <div class="isbn-grid">
         `;
 
-        // Add individual ISBN entries using grid
+        // Add individual ISBN entries using flexbox grid
         Object.values(bookData.isbn_details).forEach(isbnData => {
             const isbnBestPrice = isbnData.min_price;
             const isbnPriceClass = isbnBestPrice ? 
@@ -1299,7 +1645,7 @@
                 'grey-text';            
             
             html += `
-                <div class="col s12 m6 l6 xl4" style="margin-bottom: 1rem;">
+                <div class="isbn-card">
                     <div class="card" style="padding: 1rem; border: 1px solid #f0f0f0; height: 100%;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                             <span class="isbn-code" style="font-size: 0.9rem;">${isbnData.isbn}</span>
@@ -1309,14 +1655,14 @@
                                 <span class="grey-text">No Price</span>
                             `}
                         </div>
-                        <div class="row" style="margin-bottom: 0.5rem;">
-                            <div class="col s4">
+                        <div class="isbn-stats">
+                            <div class="stat-item">
                                 <small><strong>${isbnData.sources.length}</strong><br>Sources</small>
                             </div>
-                            <div class="col s4">
+                            <div class="stat-item">
                                 <small><strong>${isbnData.successful_records}/${isbnData.total_records}</strong><br>Success</small>
                             </div>
-                            <div class="col s4">
+                            <div class="stat-item">
                                 <small><strong>${isbnData.price_count || 0}</strong><br>Valid Prices</small>
                             </div>
                         </div>
@@ -1364,7 +1710,7 @@
                         day: 'numeric',
                         year: 'numeric'
                     });
-                  
+                
                 html += `
                     <ul class="collapsible" style="margin: 0.25rem 0; box-shadow: none; border: 1px solid #e9e9e9;">
                         <li class="${isLatest ? 'active' : ''}">
@@ -1437,19 +1783,62 @@
                         </li>
                     </ul>
                 `;
-            });            html += `
-                                    </div>
+            });
+            html += `
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
         });
 
         html += `
                                     </div>
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <!-- Mobile ISBN Breakdown (compact version) -->
+                        <ul class="collapsible mobile-isbn-breakdown hide-on-med-and-up" style="margin-top: 0.5rem; box-shadow: none;">
+                            <li>
+                                <div class="collapsible-header">
+                                    <i class="material-icons">list</i>
+                                    <span>Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
+                                </div>
+                                <div class="collapsible-body">
+        `;
+
+        // Add simplified mobile ISBN entries
+        Object.values(bookData.isbn_details).forEach(isbnData => {
+            const isbnBestPrice = isbnData.min_price;
+            const isbnPriceClass = isbnBestPrice ? 
+                (isbnBestPrice > 50 ? 'price-high' : isbnBestPrice > 25 ? 'price-medium' : 'price-low') : 
+                'grey-text';
+            
+            html += `
+                <div style="padding: 0.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div class="isbn-code" style="font-size: 0.8rem; font-weight: 600;">${isbnData.isbn}</div>
+                        <div style="font-size: 0.7rem; color: #666;">
+                            ${isbnData.sources.length} sources • ${isbnData.successful_records}/${isbnData.total_records} success
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        ${isbnBestPrice ? `
+                            <div class="${isbnPriceClass}" style="font-weight: 600; font-size: 0.9rem;">$${isbnBestPrice.toFixed(2)}</div>
+                        ` : `
+                            <div class="grey-text" style="font-size: 0.8rem;">No Price</div>
+                        `}
+                        ${isbnData.avg_price ? `
+                            <div style="font-size: 0.7rem; color: #888;">Avg: $${isbnData.avg_price.toFixed(2)}</div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
                                 </div>
                             </li>
                         </ul>
@@ -1459,20 +1848,25 @@
         `;
         
         return html;
-    }
-
-    // Load book image for book title using first available ISBN
+    }    // Load book image for book title using first available ISBN
     async function loadBookImageForBook(bookTitle, isbns, iconUrl) {
-        const imageId = `book-image-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const cleanTitle = bookTitle.replace(/[^a-zA-Z0-9]/g, '');
+        const imageId = `book-image-${cleanTitle}`;
+        const mobileImageId = `book-image-mobile-${cleanTitle}`;
         const imageElement = document.getElementById(imageId);
-        const imageActionsId = `image-actions-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const mobileImageElement = document.getElementById(mobileImageId);
+        const imageActionsId = `image-actions-${cleanTitle}`;
+        const mobileImageActionsId = `image-actions-mobile-${cleanTitle}`;
         const imageActions = document.getElementById(imageActionsId);
-        if (!imageElement) return;
+        const mobileImageActions = document.getElementById(mobileImageActionsId);
 
         // First try the icon_path (local) or icon_url (remote) from books.json
         if (iconUrl && iconUrl.trim() !== "") {
-            imageElement.innerHTML = `<img src="${iconUrl}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+            const imageHTML = `<img src="${iconUrl}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+            if (imageElement) imageElement.innerHTML = imageHTML;
+            if (mobileImageElement) mobileImageElement.innerHTML = imageHTML;
             if (imageActions) imageActions.style.display = 'none';
+            if (mobileImageActions) mobileImageActions.style.display = 'none';
             return;
         }
 
@@ -1485,7 +1879,9 @@
                     const data = await response.json();
                     for (const [source, imageInfo] of Object.entries(data.images)) {
                         if (imageInfo.exists) {
-                            imageElement.innerHTML = `<img src="${imageInfo.url}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+                            const imageHTML = `<img src="${imageInfo.url}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+                            if (imageElement) imageElement.innerHTML = imageHTML;
+                            if (mobileImageElement) mobileImageElement.innerHTML = imageHTML;
                             imageFound = true;
                             break;
                         }
@@ -1498,8 +1894,11 @@
         }
 
         if (!imageFound) {
-            imageElement.innerHTML = '<i class="material-icons" style="font-size: 2rem; color: #ccc;">image</i><br><small>No Image</small>';
+            const fallbackHTML = '<i class="material-icons" style="font-size: 1.5rem; color: #ccc;">image</i><br><small>No Image</small>';
+            if (imageElement) imageElement.innerHTML = fallbackHTML;
+            if (mobileImageElement) mobileImageElement.innerHTML = fallbackHTML;
             if (imageActions) imageActions.style.display = 'block';
+            if (mobileImageActions) mobileImageActions.style.display = 'block';
         }
     }
 
