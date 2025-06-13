@@ -414,8 +414,7 @@
                 padding: 0 8px;
             }
         }
-        
-        /* Book card responsive layout */
+          /* Book card responsive layout */
         .book-card-container {
             margin-bottom: 1.5rem;
         }
@@ -438,6 +437,42 @@
             color: #999;
             font-size: 12px;
             text-align: center;
+        }
+        
+        /* Mobile-specific image sizing */
+        @media only screen and (max-width: 600px) {
+            .book-image-container {
+                max-width: 80px;
+                height: 100px;
+                font-size: 10px;
+            }
+            
+            .book-title {
+                font-size: 1rem !important;
+                line-height: 1.2;
+            }
+            
+            .book-stats-grid .col {
+                padding: 0 0.2rem;
+                font-size: 0.8rem;
+            }
+            
+            .book-stats-grid strong {
+                font-size: 0.9rem;
+            }
+            
+            .book-stats-grid small {
+                font-size: 0.7rem;
+            }
+            
+            .btn-large {
+                font-size: 0.9rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            .book-price-section .btn-large div {
+                font-size: 1rem !important;
+            }
         }
         
         .book-stats-grid {
@@ -1135,9 +1170,8 @@
             <div class="book-card-container">
                 <div class="card hoverable">
                     <div class="card-content">
-                        <div class="row" style="margin-bottom: 0;">
-                            <!-- Book Image Section -->
-                            <div class="col s12 m4 l3 book-card-image">
+                        <div class="row" style="margin-bottom: 0;">                            <!-- Book Image Section -->
+                            <div class="col s3 m4 l3 book-card-image">
                                 <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container">
                                     <div class="preloader-wrapper small active">
                                         <div class="spinner-layer spinner-blue-only">
@@ -1160,7 +1194,7 @@
                             </div>
                             
                             <!-- Book Info Section -->
-                            <div class="col s12 m5 l6">
+                            <div class="col s6 m5 l6">
                                 <h6 class="book-title" style="margin: 0 0 0.5rem 0;">
                                     ${bookData.title}
                                 </h6>
@@ -1211,9 +1245,8 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Price Section -->
-                            <div class="col s12 m3 l3 book-price-section">
+                              <!-- Price Section -->
+                            <div class="col s3 m3 l3 book-price-section">
                                 ${bestPrice ? `
                                     ${bookData.best_price_url ? `
                                         <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
