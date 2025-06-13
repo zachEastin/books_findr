@@ -1019,18 +1019,18 @@
                 let mergedBookData;
                 if (bookPriceData) {
                     // Use price data as base, but add icon_url from meta if missing
-                    mergedBookData = { ...bookPriceData };
-                    if (bookMeta && bookMeta.length > 0) {
+                    mergedBookData = { ...bookPriceData };                    if (bookMeta && bookMeta.length > 0) {
                         // Try to get icon_url from first ISBN meta if not present
                         if (!mergedBookData.icon_url) {
-                            const meta = bookMeta[0][Object.keys(bookMeta[0])[0]];
+                            const firstIsbnKey = Object.keys(bookMeta[0])[0];
+                            const meta = bookMeta[0][firstIsbnKey];
                             if (meta && meta.icon_url) mergedBookData.icon_url = meta.icon_url;
                         }
-                    }
-                } else if (bookMeta && bookMeta.length > 0) {
+                    }                } else if (bookMeta && bookMeta.length > 0) {
                     // No price data, but we have meta: build a minimal bookData
                     const isbns = bookMeta.map(item => Object.keys(item)[0]);
-                    const meta = bookMeta[0][isbns[0]];
+                    const firstIsbnKey = Object.keys(bookMeta[0])[0];
+                    const meta = bookMeta[0][firstIsbnKey];
                     mergedBookData = {
                         title: title,
                         isbns: isbns,
@@ -1080,15 +1080,16 @@
 
             // Initialize dropdowns and collapsibles after adding HTML
             M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
-            M.Collapsible.init(document.querySelectorAll('.collapsible'));
-
-            // Load images for each book
+            M.Collapsible.init(document.querySelectorAll('.collapsible'));            // Load images for each book
             allTitles.forEach(title => {
                 const bookMeta = booksData[title];
                 let iconUrl = '';
                 let isbns = [];
                 if (bookMeta && bookMeta.length > 0) {
-                    isbns = bookMeta.map(item => Object.keys(item)[0]);                const meta = bookMeta[0][isbns[0]];
+                    isbns = bookMeta.map(item => Object.keys(item)[0]);
+                    // Correctly access the metadata using the proper structure
+                    const firstIsbnKey = Object.keys(bookMeta[0])[0];
+                    const meta = bookMeta[0][firstIsbnKey];
                     // First check for a local icon_path, then fall back to icon_url
                     if (meta && meta.icon_path) {
                         iconUrl = '/' + meta.icon_path;
@@ -1403,9 +1404,18 @@
                         </li>
                     </ul>
                 `;
-            });
+            });            html += `
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        });
 
-            html += `
+        html += `
                                     </div>
                                 </div>
                             </li>
@@ -1416,7 +1426,6 @@
         `;
         
         return html;
-    });
     }
 
     // Load book image for book title using first available ISBN
