@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search and Filter Test</title>
+    <script>
+        // Test function to verify filter functionality
+        function testFilters() {
+            console.log('Testing search and filter functionality...');
+            
+            // Test data
+            const testBooks = [
+                {
+                    title: 'Harry Potter and the Sorcerer\'s Stone',
+                    authors: ['J.K. Rowling'],
+                    isbns: ['9780439708180'],
+                    assignedGrade: '3rd Grade',
+                    best_current_price: 15.99,
+                    icon_url: 'test.jpg'
+                },
+                {
+                    title: 'The Cat in the Hat',
+                    authors: ['Dr. Seuss'],
+                    isbns: ['9780394800011'],
+                    assignedGrade: 'Kindergarten',
+                    best_current_price: null,
+                    icon_url: ''
+                },
+                {
+                    title: 'Charlotte\'s Web',
+                    authors: ['E.B. White'],
+                    isbns: ['9780064400558'],
+                    assignedGrade: '2nd Grade',
+                    best_current_price: 75.00,
+                    icon_url: 'charlotte.jpg'
+                }
+            ];
+            
+            // Test search filtering
+            function testSearchFilter(searchTerm, expectedCount) {
+                const searchResults = testBooks.filter(book => {
+                    const titleMatch = book.title.toLowerCase().includes(searchTerm.toLowerCase());
+                    const authorMatch = book.authors && book.authors.some(author => 
+                        author.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                    const isbnMatch = book.isbns && book.isbns.some(isbn => 
+                        isbn.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                    return titleMatch || authorMatch || isbnMatch;
+                });
+                
+                console.log(`Search "${searchTerm}": Found ${searchResults.length} books (expected ${expectedCount})`);
+                console.log('Results:', searchResults.map(b => b.title));
+                return searchResults.length === expectedCount;
+            }
+            
+            // Test grade filtering
+            function testGradeFilter(grade, expectedCount) {
+                const gradeResults = testBooks.filter(book => book.assignedGrade === grade);
+                console.log(`Grade "${grade}": Found ${gradeResults.length} books (expected ${expectedCount})`);
+                return gradeResults.length === expectedCount;
+            }
+            
+            // Test price filtering
+            function testPriceFilter(priceRange, expectedCount) {
+                const priceResults = testBooks.filter(book => {
+                    const price = book.best_current_price;
+                    switch (priceRange) {
+                        case 'Low ($0-$25)':
+                            return price !== null && price <= 25;
+                        case 'Medium ($25-$50)':
+                            return price !== null && price > 25 && price <= 50;
+                        case 'High ($50+)':
+                            return price !== null && price > 50;
+                        case 'No Price':
+                            return price === null || price === undefined;
+                        default:
+                            return true;
+                    }
+                });
+                console.log(`Price "${priceRange}": Found ${priceResults.length} books (expected ${expectedCount})`);
+                return priceResults.length === expectedCount;
+            }
+            
+            // Test has image filtering
+            function testImageFilter(expectedCount) {
+                const imageResults = testBooks.filter(book => book.icon_url && book.icon_url.trim() !== '');
+                console.log(`Has Image: Found ${imageResults.length} books (expected ${expectedCount})`);
+                return imageResults.length === expectedCount;
+            }
+            
+            // Run tests
+            let allTestsPassed = true;
+            
+            allTestsPassed &= testSearchFilter('Harry', 1);
+            allTestsPassed &= testSearchFilter('Dr. Seuss', 1);
+            allTestsPassed &= testSearchFilter('9780439708180', 1);
+            allTestsPassed &= testSearchFilter('nonexistent', 0);
+            
+            allTestsPassed &= testGradeFilter('3rd Grade', 1);
+            allTestsPassed &= testGradeFilter('Kindergarten', 1);
+            allTestsPassed &= testGradeFilter('5th Grade', 0);
+            
+            allTestsPassed &= testPriceFilter('Low ($0-$25)', 1);
+            allTestsPassed &= testPriceFilter('High ($50+)', 1);
+            allTestsPassed &= testPriceFilter('No Price', 1);
+            
+            allTestsPassed &= testImageFilter(2);
+            
+            if (allTestsPassed) {
+                console.log('✅ All filter tests passed!');
+            } else {
+                console.log('❌ Some filter tests failed!');
+            }
+            
+            return allTestsPassed;
+        }
+        
+        // Run tests when page loads
+        window.onload = function() {
+            testFilters();
+        };
+    </script>
+</head>
+<body>
+    <h1>Search and Filter Test</h1>
+    <p>Check the browser console for test results.</p>
+    <button onclick="testFilters()">Run Tests</button>
+</body>
+</html>
