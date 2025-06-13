@@ -163,28 +163,179 @@
         .isbn-group-list,
         .grade-content {
             overflow: visible !important;
-        }
-
-        /* Fix for tab content containers */
+        }        /* Fix for tab content containers */
         .tabs .tab-content {
             overflow: visible !important;
+        }        /* Mobile responsive improvements */
+        @media only screen and (max-width: 375px) {
+            .container {
+                padding: 0 5px;
+            }
+            
+            .admin-card {
+                margin: 0.25rem 0;
+            }
+            
+            .card-content {
+                padding: 10px;
+            }
+            
+            .tabs .tab a {
+                font-size: 8px;
+                padding: 0 1px;
+            }
+            
+            .btn, .btn-small {
+                font-size: 11px;
+                padding: 0 8px;
+            }
+            
+            h4 {
+                font-size: 1.6rem;
+            }
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .admin-card {
+                margin: 0.5rem 0;
+            }
+            
+            .card-content {
+                padding: 15px;
+            }
+            
+            .isbn-item {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .isbn-item-subgroup {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .tabs .tab a {
+                font-size: 9px;
+                padding: 0 2px;
+            }
+            
+            /* Ensure touch targets are at least 48px */
+            .btn, .btn-large, .btn-floating, .btn-small {
+                min-height: 48px;
+                min-width: 48px;
+            }
+            
+            .collapsible-header {
+                min-height: 48px;
+                padding: 12px 16px;
+            }
+            
+            .isbn-group-header {
+                min-height: 48px;
+                padding: 12px 10px;
+            }
+            
+            /* Stack form elements vertically on mobile */
+            .input-field {
+                margin-bottom: 1rem;
+            }
+            
+            /* Reduce font sizes for mobile */
+            h4 {
+                font-size: 1.8rem;
+            }
+            
+            h5 {
+                font-size: 1.5rem;
+            }
+            
+            h6 {
+                font-size: 1.2rem;
+            }
+        }        /* Tablet responsive improvements */
+        @media only screen and (min-width: 601px) and (max-width: 992px) {
+            .admin-card {
+                margin: 0.75rem 0;
+            }
+            
+            .isbn-item {
+                padding: 12px;
+            }
+            
+            .tabs .tab a {
+                font-size: 10px;
+                padding: 0 4px;
+            }
+            
+            .card-content {
+                padding: 20px;
+            }
+        }
+
+        /* Desktop improvements */
+        @media only screen and (min-width: 993px) {
+            .isbn-item-subgroup:hover {
+                background: #e3e6ee !important;
+                box-shadow: 0 2px 6px #d0d3db;
+            }
+            
+            .admin-card:hover {
+                transform: translateY(-2px);
+                transition: all 0.3s ease;
+            }
+            
+            .tabs .tab a {
+                font-size: 12px;
+                padding: 0 8px;
+            }
+        }
+        
+        /* Extra large screens */
+        @media only screen and (min-width: 1200px) {
+            .container {
+                max-width: 1200px;
+            }
+            
+            .admin-card {
+                margin: 1rem 0;
+            }
+            
+            .card-content {
+                padding: 24px;
+            }
         }
     </style>
 </head>
 
-<body class="grey lighten-4"></body>
-    <!-- Navigation -->
+<body class="grey lighten-4"></body>    <!-- Navigation -->
     <nav class="blue darken-3">
         <div class="nav-wrapper container">
             <a href="/" class="brand-logo">
                 <i class="material-icons left">trending_up</i>Book Price Tracker
             </a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="/"><i class="material-icons left">dashboard</i>Dashboard</a></li>
                 <li class="active"><a href="/admin"><i class="material-icons left">settings</i>Admin</a></li>
             </ul>
         </div>
     </nav>
+
+    <!-- Mobile Navigation -->
+    <ul class="sidenav" id="mobile-demo">
+        <li><div class="user-view">
+            <div class="background">
+                <div style="background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%); height: 100%;"></div>
+            </div>
+            <a href="/"><span class="white-text name">Book Price Tracker</span></a>
+        </div></li>
+        <li><a href="/"><i class="material-icons">dashboard</i>Dashboard</a></li>
+        <li class="active"><a href="/admin"><i class="material-icons">settings</i>Admin</a></li>
+    </ul>
 
     <div class="container">
         <div class="row">
@@ -197,9 +348,8 @@
         </div>
 
         <!-- Add ISBN Section -->
-        <div class="row">
-            <div class="col s12 m6">
-                <div class="card admin-card">
+        <div class="row">            <div class="col s12 m6">
+                <div class="card admin-card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">add</i>Add New ISBN
@@ -277,11 +427,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Quick Actions -->
+            </div>            <!-- Quick Actions -->
             <div class="col s12 m6">
-                <div class="card admin-card">
+                <div class="card admin-card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">flash_on</i>Quick Actions
@@ -297,12 +445,10 @@
                         </button>                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Book Search Section -->
+        </div>        <!-- Book Search Section -->
         <div class="row">
             <div class="col s12">
-                <div class="card admin-card">
+                <div class="card admin-card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">search</i>Search Books
@@ -346,36 +492,33 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Grade Level Book Organization -->
+        </div>        <!-- Grade Level Book Organization -->
         <div class="row">
             <div class="col s12">
-                <div class="card admin-card">
+                <div class="card admin-card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">school</i>Books by Grade Level
                             <span class="badge blue white-text" id="isbn-count">0</span>
                         </span>
-                        
-                        <!-- Grade Level Tabs -->
+                          <!-- Grade Level Tabs -->
                         <div class="row">
                             <div class="col s12">
                                 <ul class="tabs" id="grade-tabs">
-                                    <li class="tab col"><a href="#unassigned-books">Unassigned</a></li>
-                                    <li class="tab col"><a class="active" href="#kindergarten-books">K</a></li>
-                                    <li class="tab col"><a href="#grade-1-books">1st</a></li>
-                                    <li class="tab col"><a href="#grade-2-books">2nd</a></li>
-                                    <li class="tab col"><a href="#grade-3-books">3rd</a></li>
-                                    <li class="tab col"><a href="#grade-4-books">4th</a></li>
-                                    <li class="tab col"><a href="#grade-5-books">5th</a></li>
-                                    <li class="tab col"><a href="#grade-6-books">6th</a></li>
-                                    <li class="tab col"><a href="#grade-7-books">7th</a></li>
-                                    <li class="tab col"><a href="#grade-8-books">8th</a></li>
-                                    <li class="tab col"><a href="#grade-9-books">9th</a></li>
-                                    <li class="tab col"><a href="#grade-10-books">10th</a></li>
-                                    <li class="tab col"><a href="#grade-11-books">11th</a></li>
-                                    <li class="tab col"><a href="#grade-12-books">12th</a></li>
+                                    <li class="tab col s2 m1 l1"><a href="#unassigned-books" class="truncate">Unassigned</a></li>
+                                    <li class="tab col s1 m1 l1"><a class="active" href="#kindergarten-books">K</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-1-books">1st</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-2-books">2nd</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-3-books">3rd</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-4-books">4th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-5-books">5th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-6-books">6th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-7-books">7th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-8-books">8th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-9-books">9th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-10-books">10th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-11-books">11th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-12-books">12th</a></li>
                                 </ul>
                             </div>
                         </div>

@@ -177,9 +177,7 @@
         }        /* Compact price display */
         .price-compact {
             font-family: monospace;
-        }
-
-        /* Responsive tab styling */
+        }        /* Responsive tab styling */
         .tabs .tab {
             min-width: 60px;
         }
@@ -203,18 +201,278 @@
 
         .grade-content h6 {
             margin-bottom: 15px;
+        }        /* Responsive improvements for all screen sizes */
+        
+        /* Extra small screens (phones, less than 576px) */
+        @media only screen and (max-width: 375px) {
+            .container {
+                padding: 0 8px;
+            }
+            
+            .card-panel {
+                margin: 0.5rem 0;
+                padding: 12px;
+            }
+            
+            .isbn-card {
+                margin-bottom: 1rem !important;
+                padding: 0.75rem !important;
+                min-height: auto !important;
+            }
+            
+            .tabs .tab a {
+                font-size: 8px;
+                padding: 0 1px;
+                line-height: 48px;
+            }
+              .book-title {
+                font-size: 1.1rem !important;
+            }
+        }
+        }
+
+        /* Small screens (phones, 576px and up) */
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .card-panel {
+                margin: 0.5rem 0;
+                padding: 15px;
+            }
+            
+            .isbn-card {
+                margin-bottom: 1rem !important;
+                padding: 0.75rem !important;
+                min-height: auto !important;
+            }
+            
+            .tabs .tab a {
+                font-size: 9px;
+                padding: 0 2px;
+                line-height: 48px;
+            }
+            
+            /* Ensure touch targets are at least 48px */
+            .btn, .btn-large, .btn-floating {
+                min-height: 48px;
+                min-width: 48px;
+            }
+            
+            .collapsible-header {
+                min-height: 48px;
+                padding: 12px 16px;
+            }
+            
+            /* Stack book card content vertically on mobile */
+            .book-card-image {
+                margin-bottom: 1rem;
+            }
+            
+            .book-stats-grid .col {
+                padding: 0 0.25rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Reduce font sizes for mobile */
+            h5 {
+                font-size: 1.8rem;
+            }
+            
+            h6 {
+                font-size: 1.2rem;
+            }
+            
+            .book-title {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        /* Medium screens (tablets, 601px to 992px) */
+        @media only screen and (min-width: 601px) and (max-width: 992px) {
+            .book-stats-grid .col {
+                padding: 0 0.5rem;
+            }
+            
+            .card-panel {
+                margin: 0.75rem 0;
+            }
+            
+            .tabs .tab a {
+                font-size: 11px;
+                padding: 0 6px;
+            }
+        }
+
+        /* Large screens (desktops, 993px and up) */
+        @media only screen and (min-width: 993px) {
+            .isbn-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+            }
+            
+            .tabs .tab a {
+                font-size: 12px;
+                padding: 0 8px;
+            }
+        }
+        
+        /* Book card responsive layout */
+        .book-card-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .book-card-image {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .book-image-container {
+            width: 100%;
+            max-width: 140px;
+            height: 180px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .book-stats-grid {
+            margin-top: 1rem;
+        }
+        
+        .book-stats-grid .col {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .book-price-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+          /* Stats cards responsive */
+        .stats-grid {
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats-grid .card-panel {
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-grid .card-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stats-grid .card-panel i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .stats-grid .card-panel h5 {
+            font-size: 1.6rem;
+            margin: 4px 0;
+            font-weight: 600;
+        }
+        
+        .stats-grid .card-panel p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: #666;
+        }
+        
+        /* Mobile horizontal scrolling for stats */
+        @media only screen and (max-width: 600px) {
+            .stats-grid.row {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                margin: 0 -10px;
+                padding: 0 10px;
+            }
+            
+            .stats-grid .col {
+                flex: 0 0 200px;
+                scroll-snap-align: start;
+                padding: 0 0.5rem;
+            }
+            
+            .stats-grid .card-panel {
+                width: 100%;
+                min-width: 180px;
+                height: 70px;
+            }
+            
+            .stats-grid .card-panel h5 {
+                font-size: 1.4rem;
+            }
+              .stats-grid .card-panel p {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Tablet responsive improvements */
+        @media only screen and (min-width: 601px) and (max-width: 992px) {
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        /* Add subtle scroll indicator for mobile stats */
+        @media only screen and (max-width: 600px) {
+            .stats-grid.row::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 20px;
+                background: linear-gradient(to right, transparent, rgba(255,255,255,0.8));
+                pointer-events: none;
+                z-index: 1;
+            }
+            
+            .stats-grid.row {
+                position: relative;
+            }
+        }
+        
+        /* Desktop improvements */
+        @media only screen and (min-width: 993px) {
+            .stats-grid .card-panel {
+                margin: 0.25rem 0;
+            }
         }
     </style>
 </head>
 
-<body class="grey lighten-4">
-
-    <!-- Navigation -->
+<body class="grey lighten-4">    <!-- Navigation -->
     <nav class="header-color">
         <div class="nav-wrapper container">
             <a href="/" class="brand-logo">
                 <i class="material-icons left">book</i>Book Price Tracker
             </a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 <li class="active"><a href="/"><i class="material-icons left">dashboard</i>Dashboard</a></li>
                 <li><a href="/admin"><i class="material-icons left">settings</i>Admin</a></li>
@@ -222,28 +480,44 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container" style="margin-top: 2rem;">
+    <!-- Mobile Navigation -->
+    <ul class="sidenav" id="mobile-demo">
+        <li><div class="user-view">
+            <div class="background">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%;"></div>
+            </div>
+            <a href="/"><span class="white-text name">Book Price Tracker</span></a>
+        </div></li>
+        <li class="active"><a href="/"><i class="material-icons">dashboard</i>Dashboard</a></li>
+        <li><a href="/admin"><i class="material-icons">settings</i>Admin</a></li>
+    </ul>
 
-        <!-- Header Stats -->
-        <div class="row">
-            <div class="col s12 m4">
-                <div class="card-panel center-align white">
-                    <i class="material-icons large blue-text">library_books</i>
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 2rem;">        <!-- Header Stats -->
+        <div class="row stats-grid">
+            <div class="col s12 m4 l4">
+                <div class="card-panel center-align white hoverable tooltipped" 
+                     data-position="bottom" 
+                     data-tooltip="Total number of unique books being tracked for price monitoring">
+                    <i class="material-icons blue-text">library_books</i>
                     <h5 class="blue-text">{{ books|length }}</h5>
                     <p>Books Tracked</p>
                 </div>
             </div>
-            <div class="col s12 m4">
-                <div class="card-panel center-align white">
-                    <i class="material-icons large green-text">trending_up</i>
+            <div class="col s12 m4 l4">
+                <div class="card-panel center-align white hoverable tooltipped" 
+                     data-position="bottom" 
+                     data-tooltip="Total number of price data points collected from all sources across all books">
+                    <i class="material-icons green-text">trending_up</i>
                     <h5 class="green-text">{{ total_records }}</h5>
                     <p>Total Price Records</p>
                 </div>
             </div>
-            <div class="col s12 m4">
-                <div class="card-panel center-align white">
-                    <i class="material-icons large orange-text">schedule</i>
+            <div class="col s12 m4 l4">
+                <div class="card-panel center-align white hoverable tooltipped" 
+                     data-position="bottom" 
+                     data-tooltip="Automated price updates run daily to ensure you have the latest pricing information">
+                    <i class="material-icons orange-text">schedule</i>
                     <h5 class="orange-text">Daily</h5>
                     <p>Update Frequency</p>
                 </div>
@@ -270,25 +544,24 @@
                                     style="display: none;">autorenew</i>
                             </div>
                         </span>
-                        
-                        <!-- Grade Level Tabs -->
+                          <!-- Grade Level Tabs -->
                         <div class="row">
                             <div class="col s12">
                                 <ul class="tabs" id="grade-tabs">
-                                    <li class="tab col"><a href="#unassigned-books">Unassigned</a></li>
-                                    <li class="tab col"><a class="active" href="#kindergarten-books">K</a></li>
-                                    <li class="tab col"><a href="#grade-1-books">1st</a></li>
-                                    <li class="tab col"><a href="#grade-2-books">2nd</a></li>
-                                    <li class="tab col"><a href="#grade-3-books">3rd</a></li>
-                                    <li class="tab col"><a href="#grade-4-books">4th</a></li>
-                                    <li class="tab col"><a href="#grade-5-books">5th</a></li>
-                                    <li class="tab col"><a href="#grade-6-books">6th</a></li>
-                                    <li class="tab col"><a href="#grade-7-books">7th</a></li>
-                                    <li class="tab col"><a href="#grade-8-books">8th</a></li>
-                                    <li class="tab col"><a href="#grade-9-books">9th</a></li>
-                                    <li class="tab col"><a href="#grade-10-books">10th</a></li>
-                                    <li class="tab col"><a href="#grade-11-books">11th</a></li>
-                                    <li class="tab col"><a href="#grade-12-books">12th</a></li>
+                                    <li class="tab col s2 m1 l1"><a href="#unassigned-books" class="truncate">Unassigned</a></li>
+                                    <li class="tab col s1 m1 l1"><a class="active" href="#kindergarten-books">K</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-1-books">1st</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-2-books">2nd</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-3-books">3rd</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-4-books">4th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-5-books">5th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-6-books">6th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-7-books">7th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-8-books">8th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-9-books">9th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-10-books">10th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-11-books">11th</a></li>
+                                    <li class="tab col s1 m1 l1"><a href="#grade-12-books">12th</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -396,14 +669,13 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Charts Section -->
+          <!-- Charts Section -->
         {% if charts %}
         <div class="row">
             <!-- Price Comparison Chart -->
             {% if charts.price_comparison %}
-            <div class="col s12 l6">
-                <div class="card">
+            <div class="col s12 m12 l6 xl6">
+                <div class="card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">bar_chart</i>
@@ -420,8 +692,8 @@
 
             <!-- Source Summary Chart -->
             {% if charts.source_summary %}
-            <div class="col s12 l6">
-                <div class="card">
+            <div class="col s12 m12 l6 xl6">
+                <div class="card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">pie_chart</i>
@@ -439,7 +711,7 @@
             <!-- Price Trends Chart -->
             {% if charts.price_trends %}
             <div class="col s12">
-                <div class="card">
+                <div class="card hoverable">
                     <div class="card-content">
                         <span class="card-title">
                             <i class="material-icons left">trending_up</i>
@@ -476,6 +748,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>        // Initialize Material Design components
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize mobile navigation
+            var sidenav = document.querySelectorAll('.sidenav');
+            M.Sidenav.init(sidenav);
+            
             // Initialize tooltips
             var tooltips = document.querySelectorAll('.tooltipped');
             M.Tooltip.init(tooltips);
@@ -734,140 +1010,148 @@
         } finally {
             loadingIcon.style.display = 'none';
         }
-    }
-
-    // Generate HTML for a single book card
+    }    // Generate HTML for a single book card using Materialize grid system
     function generateBookHTML(bookData) {
         const bestPrice = bookData.best_current_price;
-        const priceClass = bestPrice > 50 ? 'red-text' : bestPrice > 25 ? 'orange-text' : 'green-text';
+        const priceClass = bestPrice > 50 ? 'red' : bestPrice > 25 ? 'orange' : 'green';
 
         let html = `
-            <div class="isbn-card" style="margin-bottom: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; min-height: 280px;">
-                <div class="row" style="margin-bottom: 0.5rem; min-height: 250px;">
-                    <div class="col s12 m3" style="display: flex; flex-direction: column; align-items: center;">
-                        <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container" style="width: 180px; height: 200px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; text-align: center; margin-bottom: 0.5rem;">
-                            Loading...
-                        </div>
-                        <div id="image-actions-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions" style="display: none;">
-                            <div class="dropdown-trigger btn-small orange" data-target="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; padding: 0 0.5rem; font-size: 0.7rem;">
-                                <i class="material-icons tiny">image</i> Get Image
-                            </div>
-                            <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
-                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'abebooks')">AbeBooks</a></li>
-                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
-                                <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col s12 m6" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <h6 class="book-title" style="margin: 0 0 0.5rem 0; font-weight: 600; color: #2d3748; font-size: 1.3rem;">
-                                ${bookData.title}
-                            </h6>
-                            <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
-                                <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
-                            </p>
-                        </div>
-                        <div class="row" style="margin-top: 1rem;">
-                            <div class="col s6">
-                                <div class="center-align">
-                                    <strong class="blue-text">${bookData.sources.length}</strong>
-                                    <br><small>Sources</small>
-                                </div>
-                            </div>
-                            <div class="col s6">
-                                <div class="center-align">
-                                    <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
-                                    <br><small>Success Rate</small>
-                                </div>
-                            </div>
-                            <div class="col s6">
-                                <div class="center-align">
-                                    <strong class="orange-text">${bookData.current_price_count || 0}</strong>
-                                    <br><small>Valid Prices</small>
-                                </div>
-                            </div>
-                            <div class="col s6">
-                                <div class="center-align">
-                                    ${bookData.avg_current_price ? `
-                                        <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
-                                        <br><small>Avg Price</small>
-                                    ` : `
-                                        <strong class="grey-text">N/A</strong>
-                                        <br><small>Avg Price</small>
-                                    `}
-                                </div>
-                            </div>
-                            <div class="col s6">
-                                <div class="center-align">
-                                    ${bookData.lowest_price_ever ? `
-                                        <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
-                                        <br><small>Lowest Ever (${new Date(bookData.lowest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
-                                    ` : `
-                                        <strong class="grey-text">N/A</strong>
-                                        <br><small>Lowest Ever</small>
-                                    `}
-                                </div>
-                            </div>
-                            <div class="col s6">
-                                <div class="center-align">
-                                    ${bookData.highest_price_ever ? `
-                                        <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
-                                        <br><small>Highest Ever (${new Date(bookData.highest_price_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })})</small>
-                                    ` : `
-                                        <strong class="grey-text">N/A</strong>
-                                        <br><small>Highest Ever</small>
-                                    `}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col s12 m3" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        ${bestPrice ? `
-                            ${bookData.best_price_url ? `
-                                <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass.replace('-text', '')}" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; align-items: center;">
-                                    <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
-                                        $${bestPrice.toFixed(2)}
-                                    </div>
-                                </a>
-                            ` : `
-                                <div class="btn-large ${priceClass.replace('-text', '')} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; align-items: center;">
-                                    <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: normal;">
-                                        $${bestPrice.toFixed(2)}
+            <div class="book-card-container">
+                <div class="card hoverable">
+                    <div class="card-content">
+                        <div class="row" style="margin-bottom: 0;">
+                            <!-- Book Image Section -->
+                            <div class="col s12 m4 l3 book-card-image">
+                                <div id="book-image-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="book-image-container">
+                                    <div class="preloader-wrapper small active">
+                                        <div class="spinner-layer spinner-blue-only">
+                                            <div class="circle-clipper left"><div class="circle"></div></div>
+                                            <div class="gap-patch"><div class="circle"></div></div>
+                                            <div class="circle-clipper right"><div class="circle"></div></div>
+                                        </div>
                                     </div>
                                 </div>
-                            `}
-                        ` : `
-                            <div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center;">
-                                <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem;">
-                                    N/A
+                                <div id="image-actions-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="image-actions center-align" style="display: none; margin-top: 0.5rem;">
+                                    <a class="dropdown-trigger btn-small orange waves-effect waves-light" href="#!" data-target="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; min-height: 48px;">
+                                        <i class="material-icons left">image</i>Get Image
+                                    </a>
+                                    <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
+                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'abebooks')">AbeBooks</a></li>
+                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
+                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
+                                    </ul>
                                 </div>
-                                <div style="font-size: 0.9rem;">No Price Data</div>
                             </div>
-                        `}
-                    </div>
-                </div>                            
-                <!-- Collapsible ISBN Breakdown -->
-                <ul class="collapsible" style="margin-top: 1rem; box-shadow: none; -webkit-box-shadow: none;">
-                    <li>
-                        <div class="collapsible-header" style="padding: 0.5rem 1rem;">
-                            <i class="material-icons">expand_more</i>
-                            <span style="font-weight: 600;">Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
+                            
+                            <!-- Book Info Section -->
+                            <div class="col s12 m5 l6">
+                                <h6 class="book-title" style="margin: 0 0 0.5rem 0;">
+                                    ${bookData.title}
+                                </h6>
+                                <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
+                                    <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
+                                </p>
+                                
+                                <!-- Book Stats Grid -->
+                                <div class="row book-stats-grid" style="margin-top: 1rem; margin-bottom: 0;">
+                                    <div class="col s6 m6 l4">
+                                        <strong class="blue-text">${bookData.sources.length}</strong>
+                                        <br><small>Sources</small>
+                                    </div>
+                                    <div class="col s6 m6 l4">
+                                        <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
+                                        <br><small>Success Rate</small>
+                                    </div>
+                                    <div class="col s6 m6 l4">
+                                        <strong class="orange-text">${bookData.current_price_count || 0}</strong>
+                                        <br><small>Valid Prices</small>
+                                    </div>
+                                    <div class="col s6 m6 l4">
+                                        ${bookData.avg_current_price ? `
+                                            <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
+                                            <br><small>Avg Price</small>
+                                        ` : `
+                                            <strong class="grey-text">N/A</strong>
+                                            <br><small>Avg Price</small>
+                                        `}
+                                    </div>
+                                    <div class="col s6 m6 l4">
+                                        ${bookData.lowest_price_ever ? `
+                                            <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
+                                            <br><small>Lowest Ever</small>
+                                        ` : `
+                                            <strong class="grey-text">N/A</strong>
+                                            <br><small>Lowest Ever</small>
+                                        `}
+                                    </div>
+                                    <div class="col s6 m6 l4">
+                                        ${bookData.highest_price_ever ? `
+                                            <strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong>
+                                            <br><small>Highest Ever</small>
+                                        ` : `
+                                            <strong class="grey-text">N/A</strong>
+                                            <br><small>Highest Ever</small>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Price Section -->
+                            <div class="col s12 m3 l3 book-price-section">
+                                ${bestPrice ? `
+                                    ${bookData.best_price_url ? `
+                                        <a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                                            <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">
+                                                $${bestPrice.toFixed(2)}
+                                            </div>
+                                            <div style="font-size: 0.8rem; opacity: 0.9;">
+                                                Best Price
+                                            </div>
+                                        </a>
+                                    ` : `
+                                        <div class="btn-large ${priceClass} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                                            <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">
+                                                $${bestPrice.toFixed(2)}
+                                            </div>
+                                            <div style="font-size: 0.8rem; opacity: 0.9;">
+                                                Best Price
+                                            </div>
+                                        </div>
+                                    `}
+                                ` : `
+                                    <div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                                        <div style="font-size: 1.2rem; font-weight: 600; line-height: 1.2;">
+                                            N/A
+                                        </div>
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">
+                                            No Price Data
+                                        </div>
+                                    </div>
+                                `}
+                            </div>
                         </div>
-                        <div class="collapsible-body" style="padding: 1rem;">
-                            <div class="row" style="margin-bottom: 0;">
+                        
+                        <!-- Collapsible ISBN Breakdown -->
+                        <ul class="collapsible" style="margin-top: 1rem; box-shadow: none;">
+                            <li>
+                                <div class="collapsible-header" style="padding: 0.75rem 1rem; min-height: 48px;">
+                                    <i class="material-icons">expand_more</i>
+                                    <span style="font-weight: 600;">Individual ISBNs (${Object.keys(bookData.isbn_details).length})</span>
+                                </div>
+                                <div class="collapsible-body" style="padding: 1rem 0;">
+                                    <div class="row" style="margin-bottom: 0;">
         `;
 
-        // Add individual ISBN entries
+        // Add individual ISBN entries using grid
         Object.values(bookData.isbn_details).forEach(isbnData => {
             const isbnBestPrice = isbnData.min_price;
             const isbnPriceClass = isbnBestPrice ? 
                 (isbnBestPrice > 50 ? 'price-high' : isbnBestPrice > 25 ? 'price-medium' : 'price-low') : 
-                'grey-text';
-
+                'grey-text';            
+            
             html += `
-                <div class="col s12 m6" style="margin-bottom: 1rem;">
-                    <div class="card" style="padding: 1rem; border: 1px solid #f0f0f0;">
+                <div class="col s12 m6 l6 xl4" style="margin-bottom: 1rem;">
+                    <div class="card" style="padding: 1rem; border: 1px solid #f0f0f0; height: 100%;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                             <span class="isbn-code" style="font-size: 0.9rem;">${isbnData.isbn}</span>
                             ${isbnBestPrice ? `
@@ -893,10 +1177,11 @@
                                 ${isbnData.max_price ? `<span style="margin-left: 1rem;"><small><strong>Max:</strong> $${isbnData.max_price.toFixed(2)}</small></span>` : ''}
                             </div>
                         ` : ''}
-                          <!-- Collapsible source details for this ISBN -->
+                        
+                        <!-- Collapsible source details for this ISBN -->
                         <ul class="collapsible" style="margin-top: 0.5rem; box-shadow: none; border: 1px solid #e0e0e0;">
                             <li>
-                                <div class="collapsible-header" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                <div class="collapsible-header" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; min-height: 48px;">
                                     <i class="material-icons tiny">expand_more</i>
                                     <span>Source Details (${isbnData.prices.length})</span>
                                 </div>
@@ -930,11 +1215,11 @@
                         day: 'numeric',
                         year: 'numeric'
                     });
-                
+                  
                 html += `
                     <ul class="collapsible" style="margin: 0.25rem 0; box-shadow: none; border: 1px solid #e9e9e9;">
                         <li class="${isLatest ? 'active' : ''}">
-                            <div class="collapsible-header" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; background: ${isLatest ? '#e3f2fd' : '#f9f9f9'};">
+                            <div class="collapsible-header" style="padding: 0.5rem 0.75rem; font-size: 0.75rem; background: ${isLatest ? '#e3f2fd' : '#f9f9f9'}; min-height: 48px;">
                                 <i class="material-icons tiny" style="font-size: 16px;">date_range</i>
                                 <span style="font-weight: 500; margin-left: 0.25rem;">${formattedDate}</span>
                                 <span class="new badge ${isLatest ? 'blue' : 'grey'} white-text" data-badge-caption="" style="margin-left: auto; font-size: 0.7rem; padding: 0.1rem 0.3rem; min-width: 1.5rem;">${pricesByDate[date].length}</span>
@@ -1006,30 +1291,26 @@
             });
 
             html += `
-                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            `;
-        });
-
-        html += `
-                    </div>
-                </li>
-            </ul>
-        </div>
+            </div>
         `;
         
         return html;
-    }// Load book image for book title using first available ISBN
+    }    // Load book image for book title using first available ISBN
     async function loadBookImageForBook(bookTitle, isbns, iconUrl) {
         const imageId = `book-image-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
         const imageElement = document.getElementById(imageId);
         const imageActionsId = `image-actions-${bookTitle.replace(/[^a-zA-Z0-9]/g, '')}`;
         const imageActions = document.getElementById(imageActionsId);
-        if (!imageElement) return;        // First try the icon_path (local) or icon_url (remote) from books.json
+        if (!imageElement) return;
+
+        // First try the icon_path (local) or icon_url (remote) from books.json
         if (iconUrl && iconUrl.trim() !== "") {
-            // Check if it's a local path or remote URL
-            const isLocalPath = iconUrl.startsWith('/static/') || iconUrl.startsWith('static/');
             imageElement.innerHTML = `<img src="${iconUrl}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
             if (imageActions) imageActions.style.display = 'none';
             return;
