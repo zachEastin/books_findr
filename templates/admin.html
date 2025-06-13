@@ -128,9 +128,7 @@
 
         .grade-content h6 {
             margin-bottom: 15px;
-        }
-
-        /* Responsive tab styling */
+        }        /* Enhanced responsive tab styling */
         .tabs .tab {
             min-width: 60px;
         }
@@ -138,11 +136,110 @@
         .tabs .tab a {
             font-size: 12px;
             padding: 0 8px;
-        }        @media only screen and (max-width: 992px) {
-            .tabs .tab a {
-                font-size: 10px;
-                padding: 0 4px;
+            transition: all 0.3s ease;
+        }
+
+        /* Desktop enhancements (>= 992px) */
+        @media only screen and (min-width: 992px) {
+            .tabs {
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
             }
+            
+            .tabs .tab a {
+                background-color: #f5f5f5;
+                margin: 0 2px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            
+            .tabs .tab a:hover {
+                background-color: #e0e0e0;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            
+            .tabs .tab a.active {
+                background-color: #1976d2 !important;
+                color: white !important;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+                transform: translateY(-2px);
+            }
+            
+            .tabs .indicator {
+                display: none; /* Hide default indicator since we're using custom active styling */
+            }
+        }
+
+        /* Mobile chip navigation (< 992px) */
+        @media only screen and (max-width: 991px) {
+            .desktop-tabs {
+                display: none !important;
+            }
+            
+            .mobile-grade-chips {
+                display: block !important;
+                padding: 10px 0;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+            
+            .mobile-grade-chips::-webkit-scrollbar {
+                height: 4px;
+            }
+            
+            .mobile-grade-chips::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 2px;
+            }
+            
+            .mobile-grade-chips::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 2px;
+            }
+            
+            .grade-chip {
+                display: inline-block;
+                margin: 0 4px;
+                padding: 8px 16px;
+                background-color: #e0e0e0;
+                border: none;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 500;
+                color: #666;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                min-width: 60px;
+                text-align: center;
+                white-space: nowrap;
+            }
+            
+            .grade-chip.active {
+                background-color: #1976d2;
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+            }
+            
+            .grade-chip:hover {
+                background-color: #d0d0d0;
+            }
+            
+            .grade-chip.active:hover {
+                background-color: #1565c0;
+            }
+        }
+
+        /* Hide mobile chips by default */
+        .mobile-grade-chips {
+            display: none;
         }
 
         /* Fix dropdown clipping issues */
@@ -500,11 +597,11 @@
                         <span class="card-title">
                             <i class="material-icons left">school</i>Books by Grade Level
                             <span class="badge blue white-text" id="isbn-count">0</span>
-                        </span>
-                          <!-- Grade Level Tabs -->
+                        </span>                          <!-- Grade Level Tabs -->
                         <div class="row">
                             <div class="col s12">
-                                <ul class="tabs" id="grade-tabs">
+                                <!-- Desktop Tabs -->
+                                <ul class="tabs desktop-tabs" id="grade-tabs">
                                     <li class="tab col s2 m1 l1"><a href="#unassigned-books" class="truncate">Unassigned</a></li>
                                     <li class="tab col s1 m1 l1"><a class="active" href="#kindergarten-books">K</a></li>
                                     <li class="tab col s1 m1 l1"><a href="#grade-1-books">1st</a></li>
@@ -520,6 +617,24 @@
                                     <li class="tab col s1 m1 l1"><a href="#grade-11-books">11th</a></li>
                                     <li class="tab col s1 m1 l1"><a href="#grade-12-books">12th</a></li>
                                 </ul>
+                                
+                                <!-- Mobile Chip Navigation -->
+                                <div class="mobile-grade-chips" id="mobile-grade-chips">
+                                    <button class="grade-chip" data-target="unassigned-books">Unassigned</button>
+                                    <button class="grade-chip active" data-target="kindergarten-books">K</button>
+                                    <button class="grade-chip" data-target="grade-1-books">1st</button>
+                                    <button class="grade-chip" data-target="grade-2-books">2nd</button>
+                                    <button class="grade-chip" data-target="grade-3-books">3rd</button>
+                                    <button class="grade-chip" data-target="grade-4-books">4th</button>
+                                    <button class="grade-chip" data-target="grade-5-books">5th</button>
+                                    <button class="grade-chip" data-target="grade-6-books">6th</button>
+                                    <button class="grade-chip" data-target="grade-7-books">7th</button>
+                                    <button class="grade-chip" data-target="grade-8-books">8th</button>
+                                    <button class="grade-chip" data-target="grade-9-books">9th</button>
+                                    <button class="grade-chip" data-target="grade-10-books">10th</button>
+                                    <button class="grade-chip" data-target="grade-11-books">11th</button>
+                                    <button class="grade-chip" data-target="grade-12-books">12th</button>
+                                </div>
                             </div>
                         </div>
 
@@ -662,10 +777,12 @@
         // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function () {
             M.AutoInit();
-            
-            // Initialize tabs
+              // Initialize tabs
             var tabsEl = document.querySelectorAll('.tabs');
             M.Tabs.init(tabsEl);
+            
+            // Initialize mobile grade chip navigation
+            initializeMobileGradeChips();
             
             // Initialize select elements
             var selectEl = document.querySelectorAll('select');
@@ -1786,9 +1903,53 @@
                     M.toast({ html: 'Error downloading icons', classes: 'red' });
                 } finally {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="large material-icons">image</i>';
-                }
+                    btn.innerHTML = '<i class="large material-icons">image</i>';                }
             }
+
+    // Initialize mobile grade chip navigation
+    function initializeMobileGradeChips() {
+        const gradeChips = document.querySelectorAll('.grade-chip');
+        const gradeContents = document.querySelectorAll('.grade-content');
+        
+        gradeChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                
+                // Remove active class from all chips
+                gradeChips.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked chip
+                this.classList.add('active');
+                
+                // Hide all grade content sections
+                gradeContents.forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show target content section
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.style.display = 'block';
+                }
+                
+                // Scroll the active chip into view
+                this.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            });
+        });
+        
+        // Initialize - show the active chip's content
+        const activeChip = document.querySelector('.grade-chip.active');
+        if (activeChip) {
+            const targetId = activeChip.getAttribute('data-target');
+            gradeContents.forEach(content => {
+                content.style.display = content.id === targetId ? 'block' : 'none';
+            });
+        }
+    }
     </script>
 
     <!-- Manual Book Entry Modal -->
