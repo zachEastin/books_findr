@@ -13,6 +13,7 @@ import html
 import io
 import asyncio
 from threading import Lock
+import traceback
 
 # Import visualization module
 try:
@@ -1289,7 +1290,9 @@ def api_prices_by_book_grouped():
             
             # Get the most recent record for each source across all ISBNs
             book_data_sorted = book_data.sort_values("timestamp", ascending=False)
-            latest_by_source_isbn = book_data_sorted.groupby(["source", "isbn"]).first().reset_index()            # Get valid prices from most recent records
+            latest_by_source_isbn = book_data_sorted.groupby(["source", "isbn"]).first().reset_index()
+            
+            # Get valid prices from most recent records
             valid_latest_prices = latest_by_source_isbn[
                 (latest_by_source_isbn["price"].notna()) & 
                 (latest_by_source_isbn["price"] != "") &
@@ -1301,7 +1304,8 @@ def api_prices_by_book_grouped():
                 valid_prices_numeric = valid_prices_numeric[valid_prices_numeric.notna()]
             else:
                 valid_prices_numeric = pd.Series([])
-              # Calculate overall book statistics
+            
+            # Calculate overall book statistics
             all_prices_data = book_data[
                 (book_data["price"].notna()) & 
                 (book_data["price"] != "") &
@@ -1398,8 +1402,7 @@ def api_prices_by_book_grouped():
                     isbn_prices_numeric = isbn_prices_numeric[isbn_prices_numeric.notna()]
                 else:
                     isbn_prices_numeric = pd.Series([])
-                
-                # Calculate ISBN statistics
+                  # Calculate ISBN statistics
                 isbn_stats = {
                     "isbn": str(isbn),
                     "total_records": int(len(isbn_data)),
@@ -1446,6 +1449,194 @@ def api_prices_by_book_grouped():
     except Exception as e:
         logger.error(f"Error generating grouped book data: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/dashboard-data")
+def api_dashboard_data():
+    """API endpoint that returns merged book, grade, and price data for dashboard optimization"""
+    try:
+        # Load all required data
+        books_data = load_books()  # { title: [ {isbn: {...meta}}, ... ] }
+        grades_data = load_grades()  # { grade: [title, ...] }
+        
+        # Load prices data using existing endpoint logic
+        df = load_prices_data()
+        if df.empty:
+            prices_data = {}
+        else:
+            import numpy as np
+            def clean_nans(obj):
+                if isinstance(obj, dict):
+                    return {k: clean_nans(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [clean_nans(v) for v in obj]
+                elif isinstance(obj, float) and np.isnan(obj):
+                    return None
+                else:
+                    return obj
+            # prices_data = clean_nans(df.to_dict(orient='records'))
+
+            # Group by book title and calculate statistics
+            prices_data = {}
+            for title, group in df.groupby('book_title'):
+                if not isinstance(title, str) and np.isnan(title):
+                    title = ""
+                group = clean_nans(group)
+                # Get successful records only
+                successful_records = group[group['price'].notna() & (group['price'] > 0)]
+                
+                # Calculate basic stats
+                stats = {
+                    'title': title,
+                    'total_records': len(group),
+                    'successful_records': len(successful_records),
+                    'current_price_count': 0,
+                    'avg_current_price': None,
+                    'best_current_price': None,
+                    'best_price_url': None,
+                    'sources': [],
+                    'isbns': group['isbn'].unique().tolist(),
+                    'isbn_details': {}
+                }
+                
+                if not successful_records.empty:
+                    # Get latest price from each source
+                    latest_by_source = successful_records.loc[successful_records.groupby('source')['timestamp'].idxmax()]
+                    current_prices = latest_by_source['price'].tolist()
+                    
+                    if current_prices:
+                        stats['current_price_count'] = len(current_prices)
+                        stats['avg_current_price'] = sum(current_prices) / len(current_prices)
+                        stats['best_current_price'] = min(current_prices)
+                        
+                        # Find best price URL
+                        best_price_row = latest_by_source[latest_by_source['price'] == stats['best_current_price']].iloc[0]
+                        stats['best_price_url'] = best_price_row.get('url', '')
+                        
+                        # Get sources
+                        stats['sources'] = latest_by_source['source'].tolist()
+                    
+                    # Calculate historical stats
+                    all_prices = successful_records['price'].tolist()
+                    stats['lowest_price_ever'] = min(all_prices)
+                    stats['highest_price_ever'] = max(all_prices)
+                    
+                    # Get dates for min/max prices
+                    min_price_row = successful_records[successful_records['price'] == stats['lowest_price_ever']].iloc[0]
+                    max_price_row = successful_records[successful_records['price'] == stats['highest_price_ever']].iloc[0]
+                    stats['lowest_price_date'] = min_price_row['timestamp']
+                    stats['highest_price_date'] = max_price_row['timestamp']
+                
+                # Build ISBN details
+                for isbn in stats['isbns']:
+                    isbn_records = group[group['isbn'] == isbn]
+                    isbn_successful = isbn_records[isbn_records['price'].notna() & (isbn_records['price'] > 0)]
+                    
+                    if not isinstance(isbn, str) and np.isnan(isbn):
+                        isbn = ""
+                    isbn_stats = {
+                        'isbn': isbn,
+                        'total_records': len(isbn_records),
+                        'successful_records': len(isbn_successful),
+                        'sources': [],
+                        'prices': []
+                    }
+                    
+                    if not isbn_successful.empty:
+                        isbn_stats['sources'] = isbn_successful['source'].unique().tolist()
+                        isbn_stats['avg_price'] = isbn_successful['price'].mean()
+                        isbn_stats['min_price'] = isbn_successful['price'].min()
+                        isbn_stats['max_price'] = isbn_successful['price'].max()
+                        isbn_stats['price_count'] = len(isbn_successful)
+                        
+                        # Get recent prices for this ISBN
+                        recent_prices = clean_nans(isbn_successful.tail(10).to_dict('records'))
+                        isbn_stats['prices'] = recent_prices
+                    
+                    stats['isbn_details'][isbn] = isbn_stats
+                
+                prices_data[title] = stats
+          # Create reverse mapping from book title to grade
+        book_to_grade = {}
+        for grade_name, book_list in grades_data.items():
+            for book_title in book_list:
+                book_to_grade[book_title] = grade_name
+        
+        logger.info(f"Created book_to_grade mapping with {len(book_to_grade)} entries")
+        
+        # Debug: Check specific grades
+        debug_grades = ['Kindergarten', '4th Grade', '5th Grade', '6th Grade']
+        for grade in debug_grades:
+            books_in_grade = [title for title, g in book_to_grade.items() if g == grade]
+            logger.info(f"{grade}: {len(books_in_grade)} books mapped")
+        
+        # Merge all data and organize by grade
+        # Initialize with all grades from grades_data plus Unassigned
+        books_by_grade = {'Unassigned': []}
+        for grade_name in grades_data.keys():
+            books_by_grade[grade_name] = []
+        
+        merged_data = {
+            'books_by_grade': books_by_grade,
+            'total_books': 0,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # Get all unique book titles
+        all_titles = set(books_data.keys()) | set(prices_data.keys())
+        
+        for title in all_titles:
+            # Get book metadata
+            book_meta = books_data.get(title, [])
+            # Get price data
+            book_price_data = prices_data.get(title, {})
+            
+            # Create merged book object
+            merged_book = {
+                'title': title,
+                'assigned_grade': book_to_grade.get(title, 'Unassigned'),
+                'isbns': [],
+                'authors': [],
+                'icon_url': '',
+                'icon_path': '',
+                **book_price_data  # Merge in all price statistics
+            }
+            
+            # Add metadata from books.json
+            if book_meta:
+                merged_book['isbns'] = [list(item.keys())[0] for item in book_meta]
+                
+                # Get metadata from first ISBN
+                if book_meta:
+                    first_isbn_key = list(book_meta[0].keys())[0]
+                    meta = book_meta[0][first_isbn_key]
+                    merged_book['authors'] = meta.get('authors', [])
+                    merged_book['icon_url'] = meta.get('icon_url', '')
+                    merged_book['icon_path'] = meta.get('icon_path', '')
+              # Add to appropriate grade
+            grade = merged_book['assigned_grade']
+            if grade in merged_data['books_by_grade']:
+                merged_data['books_by_grade'][grade].append(merged_book)
+                # Debug logging for problematic grades
+                if grade in ['Kindergarten', '4th Grade', '5th Grade', '6th Grade']:
+                    logger.info(f"Added book '{title}' to {grade}")
+            else:
+                merged_data['books_by_grade']['Unassigned'].append(merged_book)
+                logger.warning(f"Book '{title}' assigned to Unassigned because grade '{grade}' not found")
+            
+            merged_data['total_books'] += 1
+        
+        return jsonify({
+            'success': True,
+            'data': merged_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in dashboard data API: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 
 # Image Management Routes

@@ -1333,6 +1333,13 @@
         hasImage: false
     };
 
+    // Pagination variables
+    let currentPage = 1;
+    let booksPerPage = 50;
+    let totalBooks = 0;
+    let totalPages = 1;
+    let allBooksDataPaginated = []; // Stores all book data for pagination
+
     // Function to load and display book-grouped data organized by grade level
     async function loadISBNData() {
         const loadingIcon = document.getElementById('isbn-loading');
@@ -1355,275 +1362,240 @@
             }
         });
 
-        try {
-            loadingIcon.style.display = 'inline-block';
+        // try {
+        loadingIcon.style.display = 'inline-block';
+        
+        // Fetch merged dashboard data from single endpoint
+        const response = await fetch('/api/dashboard-data');
 
-            // Fetch all books, grades, and price data
-            const [booksResponse, gradesResponse, pricesResponse] = await Promise.all([
-                fetch('/api/books'),
-                fetch('/api/grades'),
-                fetch('/api/prices-by-book')
-            ]);
-
-            if (!booksResponse.ok || !gradesResponse.ok || !pricesResponse.ok) {
-                throw new Error('Failed to load data');
-            }
-
-            const booksData = await booksResponse.json(); // { title: [ {isbn: {...meta}}, ... ] }
-            const gradesData = await gradesResponse.json(); // { grade: [title, ...] }
-            const pricesResult = await pricesResponse.json(); // { data: { title: { ...priceData } } }
-            const pricesData = pricesResult.data || {};
-
-            // Organize books by grade level
-            const gradeMapping = {
-                'Kindergarten': 'kindergarten-list',
-                '1st Grade': 'grade-1-list',
-                '2nd Grade': 'grade-2-list',
-                '3rd Grade': 'grade-3-list',
-                '4th Grade': 'grade-4-list',
-                '5th Grade': 'grade-5-list',
-                '6th Grade': 'grade-6-list',
-                '7th Grade': 'grade-7-list',
-                '8th Grade': 'grade-8-list',
-                '9th Grade': 'grade-9-list',
-                '10th Grade': 'grade-10-list',
-                '11th Grade': 'grade-11-list',
-                '12th Grade': 'grade-12-list'
-            };
-
-            // Create reverse mapping to find which grade a book belongs to
-            const bookToGrade = {};
-            for (const [gradeName, bookList] of Object.entries(gradesData)) {
-                bookList.forEach(bookTitle => {
-                    bookToGrade[bookTitle] = gradeName;
-                });
-            }
-
-            // Clear all containers
-            gradeContainers.forEach(containerId => {
-                const container = document.getElementById(containerId);
-                if (container) {
-                    container.innerHTML = '';
-                }
-            });
-
-            // Merge all book titles from booksData and pricesData
-            const allTitles = new Set([
-                ...Object.keys(booksData),
-                ...Object.keys(pricesData)
-            ]);
-            
-            // Organize and display books
-            allTitles.forEach(title => {
-                // Book meta from booksData (for ISBNs, authors, etc)
-                const bookMeta = booksData[title];
-                // Price data from pricesData (may be undefined)
-                const bookPriceData = pricesData[title];
-                // Compose a merged bookData object for rendering
-                let mergedBookData;
-                if (bookPriceData) {
-                    // Use price data as base, but add icon_url from meta if missing
-                    mergedBookData = { ...bookPriceData };
-                    if (bookMeta && bookMeta.length > 0) {
-                        // Try to get icon_url from first ISBN meta if not present
-                        if (!mergedBookData.icon_url) {
-                            const firstIsbnKey = Object.keys(bookMeta[0])[0];
-                            const meta = bookMeta[0][firstIsbnKey];
-                            if (meta && meta.icon_url) mergedBookData.icon_url = meta.icon_url;
-                        }
-                    }                } else if (bookMeta && bookMeta.length > 0) {
-                    // No price data, but we have meta: build a minimal bookData
-                    const isbns = bookMeta.map(item => Object.keys(item)[0]);
-                    const firstIsbnKey = Object.keys(bookMeta[0])[0];
-                    const meta = bookMeta[0][firstIsbnKey];
-                    mergedBookData = {
-                        title: title,
-                        isbns: isbns,
-                        icon_url: meta && meta.icon_url ? meta.icon_url : '',
-                        sources: [],
-                        successful_records: 0,
-                        total_records: 0,
-                        current_price_count: 0,
-                        avg_current_price: null,
-                        lowest_price_ever: null,
-                        lowest_price_date: null,
-                        highest_price_ever: null,
-                        highest_price_date: null,
-                        best_current_price: null,
-                        best_price_url: null,
-                        isbn_details: Object.fromEntries(isbns.map(isbn => [isbn, {
-                            isbn: isbn,
-                            sources: [],
-                            successful_records: 0,
-                            total_records: 0,
-                            price_count: 0,
-                            avg_price: null,
-                            max_price: null,
-                            min_price: null,
-                            prices: []
-                        }]))
-                    };
-                } else {
-                    // Should not happen, but skip if no data at all
-                    return;
-                }
-
-                // Add grade information and create filter data
-                const assignedGrade = bookToGrade[title];
-                mergedBookData.assignedGrade = assignedGrade || 'Unassigned';
-                
-                // Get author information from metadata
-                if (bookMeta && bookMeta.length > 0) {
-                    const firstIsbnKey = Object.keys(bookMeta[0])[0];
-                    const meta = bookMeta[0][firstIsbnKey];
-                    mergedBookData.authors = meta && meta.authors ? meta.authors : [];
-                }
-
-                // Store for filtering
-                allBooksData.push(mergedBookData);
-
-                const containerId = assignedGrade ? gradeMapping[assignedGrade] : 'unassigned-list';
-                const container = document.getElementById(containerId);
-                if (container) {
-                    // Add book card directly without grid wrapper to avoid nested grid conflicts
-                    container.innerHTML += generateBookHTML(mergedBookData);
-                }
-            });
-
-            // Show empty messages for grade levels with no books
-            gradeContainers.forEach(containerId => {
-                const container = document.getElementById(containerId);
-                if (container && container.innerHTML === '') {
-                    container.innerHTML = '<div class="center-align grey-text" style="padding: 2rem;">No books assigned to this grade level</div>';
-                }
-            });
-
-            // Initialize dropdowns and collapsibles after adding HTML
-            M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
-            M.Collapsible.init(document.querySelectorAll('.collapsible'));            // Load images for each book
-            allTitles.forEach(title => {
-                const bookMeta = booksData[title];
-                let iconUrl = '';
-                let isbns = [];
-                if (bookMeta && bookMeta.length > 0) {
-                    isbns = bookMeta.map(item => Object.keys(item)[0]);
-                    // Correctly access the metadata using the proper structure
-                    const firstIsbnKey = Object.keys(bookMeta[0])[0];
-                    const meta = bookMeta[0][firstIsbnKey];
-                    // First check for a local icon_path, then fall back to icon_url
-                    if (meta && meta.icon_path) {
-                        iconUrl = '/' + meta.icon_path;
-                    } else if (meta && meta.icon_url) {
-                        iconUrl = meta.icon_url;
-                    }
-                }
-                // Try to get icon_url from price data if not in meta
-                if (!iconUrl && pricesData[title] && pricesData[title].icon_url) {
-                    iconUrl = pricesData[title].icon_url;
-                }
-                if (isbns.length > 0) {
-                    loadBookImageForBook(title, isbns, iconUrl);
-                }
-            });
-
-        } catch (error) {
-            console.error('Error loading book data:', error);
-            gradeContainers.forEach(containerId => {
-                const container = document.getElementById(containerId);
-                if (container) {
-                    container.innerHTML = `
-                        <div class="center-align" style="padding: 2rem;">
-                            <i class="material-icons large red-text">error</i>
-                            <h5 class="red-text">Error Loading Data</h5>
-                            <p class="grey-text">${error.message}</p>
-                            <button class="btn blue" onclick="loadISBNData()">
-                                <i class="material-icons left">refresh</i>Retry
-                            </button>
-                        </div>                `;
-                }
-            });
-        } finally {
-            loadingIcon.style.display = 'none';
-            // Apply any active filters after loading
-            if (typeof applyFilters === 'function') {
-                applyFilters();
-            }
+        if (!response.ok) {
+            throw new Error('Failed to load dashboard data');
         }
-    }
 
-    // Generate HTML for a single book card using responsive mobile-first design
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Unknown error loading dashboard data');
+        }
+
+        const dashboardData = result.data;
+        const booksByGrade = dashboardData.books_by_grade;
+
+        // Mapping from grade names to HTML container IDs
+        const gradeMapping = {
+            'Unassigned': 'unassigned-list',
+            'Kindergarten': 'kindergarten-list',
+            '1st Grade': 'grade-1-list',
+            '2nd Grade': 'grade-2-list',
+            '3rd Grade': 'grade-3-list',
+            '4th Grade': 'grade-4-list',
+            '5th Grade': 'grade-5-list',
+            '6th Grade': 'grade-6-list',
+            '7th Grade': 'grade-7-list',
+            '8th Grade': 'grade-8-list',
+            '9th Grade': 'grade-9-list',
+            '10th Grade': 'grade-10-list',
+            '11th Grade': 'grade-11-list',
+            '12th Grade': 'grade-12-list'
+        };            // Clear all containers first
+        gradeContainers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = '';
+            }
+        });
+
+        // Collect all books from all grades for pagination
+        allBooksDataPaginated = [];
+        Object.entries(booksByGrade).forEach(([gradeName, booksInGrade]) => {
+            booksInGrade.forEach(bookData => {
+                bookData.assigned_grade = gradeName; // Ensure grade is set
+                allBooksDataPaginated.push(bookData);
+                allBooksData.push(bookData); // Keep original array for filtering
+            });
+        });
+
+        // Set up pagination
+        totalBooks = allBooksDataPaginated.length;
+        updatePagination();
+
+        // Render current page
+        renderCurrentPage();
+
+        // Initialize Material Design components after adding HTML
+        M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
+        M.Collapsible.init(document.querySelectorAll('.collapsible'));            // Initialize lazy loading for images after DOM is ready
+        initializeLazyImageLoading();
+
+        // } catch (error) {
+        //     console.error('Error loading book data:', error);
+        //     gradeContainers.forEach(containerId => {
+        //         const container = document.getElementById(containerId);
+        //         if (container) {
+        //             container.innerHTML = `
+        //                 <div class="center-align" style="padding: 2rem;">
+        //                     <i class="material-icons large red-text">error</i>
+        //                     <h5 class="red-text">Error Loading Data</h5>
+        //                     <p class="grey-text">${error.message}</p>
+        //                     <button class="btn blue" onclick="loadISBNData()">
+        //                         <i class="material-icons left">refresh</i>Retry
+        //                     </button>
+        //                 </div>
+        //             `;
+        //         }
+        //     });
+        // } finally {
+        //     loadingIcon.style.display = 'none';
+        //     // Apply any active filters after loading
+        //     if (typeof applyFilters === 'function') {
+        //         applyFilters();
+        //     }
+        // }
+    }    // Generate HTML for a single book card using responsive mobile-first design
     function generateBookHTML(bookData) {
+        // Pre-compute common values to avoid repeated calculations
         const bestPrice = bookData.best_current_price;
         const priceClass = bestPrice > 50 ? 'red' : bestPrice > 25 ? 'orange' : 'green';
         const cleanTitle = bookData.title.replace(/[^a-zA-Z0-9]/g, '');
-        let html = `
-            <div class="book-card-container">
-                <div class="card hoverable" data-book-title="${cleanTitle}">
-                    <div class="card-content">
-                        <!-- Desktop Layout (hidden on mobile) -->
-                        <div class="desktop-book-layout hide-on-small-only">
-                            <!-- Book Image Section -->
-                            <div class="desktop-book-image">
-                                <div id="book-image-${cleanTitle}" class="book-image-container">
-                                    <div class="preloader-wrapper small active">
-                                        <div class="spinner-layer spinner-blue-only">
-                                            <div class="circle-clipper left"><div class="circle"></div></div>
-                                            <div class="gap-patch"><div class="circle"></div></div>
-                                            <div class="circle-clipper right"><div class="circle"></div></div>
+        const escapedTitle = bookData.title.replace(/'/g, "\\'");
+        const isbnCount = bookData.isbns ? bookData.isbns.length : 0;
+        const isbnText = `${isbnCount} ISBN${isbnCount !== 1 ? 's' : ''}`;
+        const sourceCount = bookData.sources ? bookData.sources.length : 0;
+        const firstIsbn = bookData.isbns && bookData.isbns.length > 0 ? bookData.isbns[0] : '';
+        
+        // Pre-compute price displays
+        const avgPriceDisplay = bookData.avg_current_price 
+            ? `<strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong><br><small>Avg Price</small>`
+            : `<strong class="grey-text">N/A</strong><br><small>Avg Price</small>`;
+        
+        const lowestPriceDisplay = bookData.lowest_price_ever 
+            ? `<strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong><br><small>Lowest Ever</small>`
+            : `<strong class="grey-text">N/A</strong><br><small>Lowest Ever</small>`;
+            
+        const highestPriceDisplay = bookData.highest_price_ever 
+            ? `<strong class="teal-text">$${bookData.highest_price_ever.toFixed(2)}</strong><br><small>Highest Ever</small>`
+            : `<strong class="grey-text">N/A</strong><br><small>Highest Ever</small>`;
+
+        // Pre-compute best price button
+        const bestPriceButton = bestPrice ? (
+            bookData.best_price_url 
+                ? `<a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                    <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">$${bestPrice.toFixed(2)}</div>
+                    <div style="font-size: 0.8rem; opacity: 0.9;">Best Price</div>
+                   </a>`
+                : `<div class="btn-large ${priceClass} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                    <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">$${bestPrice.toFixed(2)}</div>
+                    <div style="font-size: 0.8rem; opacity: 0.9;">Best Price</div>
+                   </div>`
+        ) : `<div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
+                <div style="font-size: 1.2rem; font-weight: 600; line-height: 1.2;">N/A</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">No Price Data</div>
+              </div>`;
+
+        // Build the complete HTML using template literal for better performance
+        return `<div class="book-card-container">
+            <div class="card hoverable" data-book-title="${cleanTitle}">
+                <div class="card-content">
+                    <!-- Desktop Layout (hidden on mobile) -->
+                    <div class="desktop-book-layout hide-on-small-only">
+                        <!-- Book Image Section -->
+                        <div class="desktop-book-image">                            <div id="book-image-${cleanTitle}" class="book-image-container" data-lazy-image="true" data-book-title="${cleanTitle}" data-isbns='${JSON.stringify(bookData.isbns)}' data-icon-url="${bookData.icon_url || ''}">
+                                <div class="center-align" style="color: #ccc; padding: 1rem;">
+                                    <i class="material-icons" style="font-size: 2rem;">image</i>
+                                    <br><small>Loading...</small>
+                                </div>
+                            </div>
+                            <div id="image-actions-${cleanTitle}" class="image-actions center-align" style="display: none; margin-top: 0.5rem;">
+                                <a class="dropdown-trigger btn-small orange waves-effect waves-light" href="#!" data-target="image-dropdown-${cleanTitle}" style="width: 100%; min-height: 48px;">
+                                    <i class="material-icons left">image</i>Get Image
+                                </a>
+                                <ul id="image-dropdown-${cleanTitle}" class="dropdown-content">
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'abebooks')">AbeBooks</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'christianbook')">ChristianBook</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'rainbowresource')">RainbowResource</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Book Info Section -->
+                        <div class="desktop-book-info">
+                            <h6 class="book-title" style="margin: 0 0 0.5rem 0;">${bookData.title}</h6>
+                            <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
+                                <span class="isbn-code">${isbnText}</span>
+                            </p>
+                            
+                            <!-- Book Stats Grid -->
+                            <div class="desktop-stats-grid">
+                                <div class="stat-item">
+                                    <strong class="blue-text">${sourceCount}</strong>
+                                    <br><small>Sources</small>
+                                </div>
+                                <div class="stat-item">
+                                    <strong class="green-text">${bookData.successful_records || 0}/${bookData.total_records || 0}</strong>
+                                    <br><small>Success Rate</small>
+                                </div>
+                                <div class="stat-item">
+                                    <strong class="orange-text">${bookData.current_price_count || 0}</strong>
+                                    <br><small>Valid Prices</small>
+                                </div>
+                                <div class="stat-item">${avgPriceDisplay}</div>
+                                <div class="stat-item">${lowestPriceDisplay}</div>
+                                <div class="stat-item">${highestPriceDisplay}</div>
+                            </div>
+                        </div>
+                          
+                        <!-- Price Section -->
+                        <div class="desktop-book-price">${bestPriceButton}</div>
+                    </div>
+                    
+                    <!-- Mobile Layout (visible only on small screens) -->
+                    <div class="hide-on-med-and-up">
+                        <div class="mobile-book-layout">
+                            <div class="mobile-book-header row" style="margin-bottom: 1rem;">
+                                <div class="col s8">
+                                    <h6 class="book-title" style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">${bookData.title}</h6>
+                                    <p style="margin: 0; color: #666; font-size: 0.85rem;">
+                                        <span class="isbn-code">${isbnText}</span>
+                                    </p>
+                                </div>
+                                <div class="col s4">                                    <div id="book-image-mobile-${cleanTitle}" class="book-image-container center-align" data-lazy-image="true" data-book-title="${cleanTitle}" data-isbns='${JSON.stringify(bookData.isbns)}' data-icon-url="${bookData.icon_url || ''}">
+                                        <div class="center-align" style="color: #ccc; padding: 0.5rem;">
+                                            <i class="material-icons" style="font-size: 1.5rem;">image</i>
+                                            <br><small>Loading...</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="image-actions-${cleanTitle}" class="image-actions center-align" style="display: none; margin-top: 0.5rem;">
-                                    <a class="dropdown-trigger btn-small orange waves-effect waves-light" href="#!" data-target="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" style="width: 100%; min-height: 48px;">
-                                        <i class="material-icons left">image</i>Get Image
-                                    </a>
-                                    <ul id="image-dropdown-${bookData.title.replace(/[^a-zA-Z0-9]/g, '')}" class="dropdown-content">
-                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'abebooks')">AbeBooks</a></li>
-                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'christianbook')">ChristianBook</a></li>
-                                        <li><a href="#!" onclick="downloadBookImageForBook('${bookData.title}', '${bookData.isbns[0]}', 'rainbowresource')">RainbowResource</a></li>
-                                    </ul>
+                            </div>
+                            
+                            <!-- Mobile Stats -->
+                            <div class="book-stats-grid row" style="margin-bottom: 1rem;">
+                                <div class="col s6 center-align">
+                                    <strong class="blue-text">${sourceCount}</strong><br><small>Sources</small>
+                                </div>
+                                <div class="col s6 center-align">
+                                    <strong class="orange-text">${bookData.current_price_count || 0}</strong><br><small>Valid Prices</small>
                                 </div>
                             </div>
                             
-                            <!-- Book Info Section -->
-                            <div class="desktop-book-info">
-                                <h6 class="book-title" style="margin: 0 0 0.5rem 0;">
-                                    ${bookData.title}
-                                </h6>
-                                <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
-                                    <span class="isbn-code">${bookData.isbns.length} ISBN${bookData.isbns.length > 1 ? 's' : ''}</span>
-                                </p>
-                                
-                                <!-- Book Stats Grid -->
-                                <div class="desktop-stats-grid">
-                                    <div class="stat-item">
-                                        <strong class="blue-text">${bookData.sources.length}</strong>
-                                        <br><small>Sources</small>
-                                    </div>
-                                    <div class="stat-item">
-                                        <strong class="green-text">${bookData.successful_records}/${bookData.total_records}</strong>
-                                        <br><small>Success Rate</small>
-                                    </div>
-                                    <div class="stat-item">
-                                        <strong class="orange-text">${bookData.current_price_count || 0}</strong>
-                                        <br><small>Valid Prices</small>
-                                    </div>
-                                    <div class="stat-item">
-                                        ${bookData.avg_current_price ? `
-                                            <strong class="purple-text">$${bookData.avg_current_price.toFixed(2)}</strong>
-                                            <br><small>Avg Price</small>
-                                        ` : `
-                                            <strong class="grey-text">N/A</strong>
-                                            <br><small>Avg Price</small>
-                                        `}
-                                    </div>
-                                    <div class="stat-item">
-                                        ${bookData.lowest_price_ever ? `
-                                            <strong class="red-text">$${bookData.lowest_price_ever.toFixed(2)}</strong>
-                                            <br><small>Lowest Ever</small>
-                                        ` : `
-                                            <strong class="grey-text">N/A</strong>
-                                            <br><small>Lowest Ever</small>
+                            <!-- Mobile Price Section -->
+                            <div class="book-price-section">${bestPriceButton}</div>
+                            
+                            <!-- Mobile Image Actions -->
+                            <div id="image-actions-mobile-${cleanTitle}" class="image-actions center-align" style="display: none; margin-top: 0.5rem;">
+                                <a class="dropdown-trigger btn-small orange waves-effect waves-light" href="#!" data-target="image-dropdown-mobile-${cleanTitle}" style="width: 100%;">
+                                    <i class="material-icons left">image</i>Get Image
+                                </a>
+                                <ul id="image-dropdown-mobile-${cleanTitle}" class="dropdown-content">
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'abebooks')">AbeBooks</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'christianbook')">ChristianBook</a></li>
+                                    <li><a href="#!" onclick="downloadBookImageForBook('${escapedTitle}', '${firstIsbn}', 'rainbowresource')">RainbowResource</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
                                         `}
                                     </div>
                                     <div class="stat-item">                                        ${bookData.highest_price_ever ? `
@@ -1676,14 +1648,10 @@
                         <div class="hide-on-med-and-up">
                             <!-- Mobile Book Header -->
                             <div class="mobile-book-header">
-                                <div class="mobile-book-image">
-                                    <div id="book-image-mobile-${cleanTitle}" class="book-image-container">
-                                        <div class="preloader-wrapper small active">
-                                            <div class="spinner-layer spinner-blue-only">
-                                                <div class="circle-clipper left"><div class="circle"></div></div>
-                                                <div class="gap-patch"><div class="circle"></div></div>
-                                                <div class="circle-clipper right"><div class="circle"></div></div>
-                                            </div>
+                                <div class="mobile-book-image">                                    <div id="book-image-mobile-${cleanTitle}" class="book-image-container" data-lazy-image="true" data-book-title="${cleanTitle}" data-isbns='${JSON.stringify(bookData.isbns)}' data-icon-url="${bookData.icon_url || ''}">
+                                        <div class="center-align" style="color: #ccc; padding: 0.5rem;">
+                                            <i class="material-icons" style="font-size: 1.5rem;">image</i>
+                                            <br><small>Loading...</small>
                                         </div>
                                     </div>
                                 </div>
@@ -1846,6 +1814,7 @@
                             <li>
                                 <div class="collapsible-header" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; min-height: 48px;">
                                     <i class="material-icons tiny">expand_more</i>
+
                                     <span>Source Details (${isbnData.prices.length})</span>
                                 </div>
                                 <div class="collapsible-body" style="padding: 0.5rem;">
@@ -1956,16 +1925,6 @@
                                 </div>
                             </li>
                         </ul>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += `
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
                         
                         <!-- Mobile ISBN Breakdown (compact version) -->
                         <ul class="collapsible mobile-isbn-breakdown hide-on-med-and-up" style="margin-top: 0.5rem; box-shadow: none;">
@@ -1976,6 +1935,7 @@
                                 </div>
                                 <div class="collapsible-body">
         `;
+        });
 
         // Add simplified mobile ISBN entries
         Object.values(bookData.isbn_details).forEach(isbnData => {
@@ -2014,9 +1974,10 @@
                 </div>
             </div>
         `;
-        
-        return html;
-    }    // Load book image for book title using first available ISBN
+          return html;
+    }
+
+    // Load book image for book title using first available ISBN
     async function loadBookImageForBook(bookTitle, isbns, iconUrl) {
         const cleanTitle = bookTitle.replace(/[^a-zA-Z0-9]/g, '');
         const imageId = `book-image-${cleanTitle}`;
@@ -2099,9 +2060,151 @@
             console.error('Error downloading image:', error);
             if (typeof M !== 'undefined' && M.toast) {
                 M.toast({ html: 'Error downloading image', classes: 'red' });
+            }        }
+    }
+
+    // Lazy Loading Implementation for Images
+    let imageObserver;
+    const imageCache = new Map(); // Cache for loaded image URLs
+    
+    function initializeLazyImageLoading() {
+        // Check if Intersection Observer is supported
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: Load all images immediately for unsupported browsers
+            loadAllImagesImmediately();
+            return;
+        }
+        
+        // Create intersection observer for lazy loading
+        imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const imageContainer = entry.target;
+                    const bookTitle = imageContainer.dataset.bookTitle;
+                    const isbns = JSON.parse(imageContainer.dataset.isbns || '[]');
+                    const iconUrl = imageContainer.dataset.iconUrl || '';
+                    
+                    // Load the image
+                    loadBookImageForBookLazy(bookTitle, isbns, iconUrl, imageContainer);
+                    
+                    // Stop observing this image container
+                    imageObserver.unobserve(imageContainer);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '50px', // Start loading 50px before the image comes into view
+            threshold: 0.1
+        });
+        
+        // Find all book image containers and observe them
+        const imageContainers = document.querySelectorAll('[data-lazy-image="true"]');
+        imageContainers.forEach(container => {
+            imageObserver.observe(container);
+        });
+    }
+    
+    async function loadBookImageForBookLazy(bookTitle, isbns, iconUrl, containerElement) {
+        const cleanTitle = bookTitle.replace(/[^a-zA-Z0-9]/g, '');
+        const mobileContainerElement = document.getElementById(`book-image-mobile-${cleanTitle}`);
+        
+        // Check cache first
+        const cacheKey = `${bookTitle}-${isbns.join('-')}`;
+        if (imageCache.has(cacheKey)) {
+            const cachedImageHTML = imageCache.get(cacheKey);
+            containerElement.innerHTML = cachedImageHTML;
+            if (mobileContainerElement) {
+                mobileContainerElement.innerHTML = cachedImageHTML;
+            }
+            hideImageActions(cleanTitle);
+            return;
+        }
+        
+        // First try the icon_path (local) or icon_url (remote) from books.json
+        if (iconUrl && iconUrl.trim() !== "") {
+            const imageHTML = `<img src="${iconUrl}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" loading="lazy">`;
+            containerElement.innerHTML = imageHTML;
+            if (mobileContainerElement) {
+                mobileContainerElement.innerHTML = imageHTML;
+            }
+            imageCache.set(cacheKey, imageHTML);
+            hideImageActions(cleanTitle);
+            return;
+        }
+
+        // Try to get existing images for any of the ISBNs
+        let imageFound = false;
+        for (const isbn of isbns) {
+            try {
+                const response = await fetch(`/api/images/${isbn}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    for (const [source, imageInfo] of Object.entries(data.images)) {
+                        if (imageInfo.exists) {
+                            const imageHTML = `<img src="${imageInfo.url}" alt="Book cover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" loading="lazy">`;
+                            containerElement.innerHTML = imageHTML;
+                            if (mobileContainerElement) {
+                                mobileContainerElement.innerHTML = imageHTML;
+                            }
+                            imageCache.set(cacheKey, imageHTML);
+                            imageFound = true;
+                            break;
+                        }
+                    }
+                    if (imageFound) break;
+                }
+            } catch (error) {
+                console.error('Error loading image for ISBN:', isbn, error);
             }
         }
-    }    // Search and Filter Functions
+
+        if (!imageFound) {
+            const fallbackHTML = '<i class="material-icons" style="font-size: 1.5rem; color: #ccc;">image</i><br><small>No Image</small>';
+            containerElement.innerHTML = fallbackHTML;
+            if (mobileContainerElement) {
+                mobileContainerElement.innerHTML = fallbackHTML;
+            }
+            imageCache.set(cacheKey, fallbackHTML);
+            showImageActions(cleanTitle);
+        } else {
+            hideImageActions(cleanTitle);
+        }
+    }
+    
+    function hideImageActions(cleanTitle) {
+        const imageActions = document.getElementById(`image-actions-${cleanTitle}`);
+        const mobileImageActions = document.getElementById(`image-actions-mobile-${cleanTitle}`);
+        if (imageActions) imageActions.style.display = 'none';
+        if (mobileImageActions) mobileImageActions.style.display = 'none';
+    }
+    
+    function showImageActions(cleanTitle) {
+        const imageActions = document.getElementById(`image-actions-${cleanTitle}`);
+        const mobileImageActions = document.getElementById(`image-actions-mobile-${cleanTitle}`);
+        if (imageActions) imageActions.style.display = 'block';
+        if (mobileImageActions) mobileImageActions.style.display = 'block';
+    }
+    
+    function loadAllImagesImmediately() {
+        // Fallback for browsers without Intersection Observer support
+        allBooksData.forEach(bookData => {
+            let iconUrl = '';
+            let isbns = bookData.isbns || [];
+            
+            // Check for icon_path first (local), then icon_url (remote)
+            if (bookData.icon_path) {
+                iconUrl = '/' + bookData.icon_path;
+            } else if (bookData.icon_url) {
+                iconUrl = bookData.icon_url;
+            }
+            
+            if (isbns.length > 0) {
+                loadBookImageForBook(bookData.title, isbns, iconUrl);
+            }
+        });
+    }
+
+    // Search and Filter Functions
     function setGradeFilter(grade) {
         currentFilters.grade = grade;
         document.getElementById('grade-filter-text').textContent = grade || 'All Grades';
@@ -2127,7 +2230,9 @@
             }
         }
         applyFilters();
-    }function clearAllFilters() {
+    }
+    
+    function clearAllFilters() {
         // Reset all filters
         currentFilters = {
             search: '',
@@ -2147,8 +2252,7 @@
         document.querySelectorAll('.filter-chip').forEach(chip => {
             chip.classList.remove('active');
         });
-        
-        // Hide clear filters button
+          // Hide clear filters button
         const clearBtn = document.getElementById('clear-filters-btn');
         if (clearBtn) {
             clearBtn.style.display = 'none';
@@ -2156,7 +2260,9 @@
         
         // Apply filters (show all books)
         applyFilters();
-    }    function applyFilters() {
+    }
+
+    function applyFilters() {
         let filteredBooks = [...allBooksData];
         let activeFilters = [];
 
@@ -2179,7 +2285,7 @@
         // Apply grade filter
         if (currentFilters.grade) {
             filteredBooks = filteredBooks.filter(book => 
-                book.assignedGrade === currentFilters.grade
+                book.assigned_grade === currentFilters.grade
             );
             activeFilters.push(`Grade: ${currentFilters.grade}`);
         }
@@ -2221,11 +2327,21 @@
                 return book.icon_url && book.icon_url.trim() !== '';
             });
             activeFilters.push('Has Image');
-        }        // Update the display  
-        updateBookDisplay(filteredBooks);
+        }
+
+        // Update the paginated data with filtered results
+        allBooksDataPaginated = filteredBooks;
+        totalBooks = filteredBooks.length;
+        currentPage = 1; // Reset to first page when filters change
+        
+        // Update pagination and render
+        updatePagination();
+        renderCurrentPage();
+        
+        // Update search results info
         updateSearchResults(filteredBooks.length, allBooksData.length, activeFilters);
         
-        // Show/hide clear filters button based on active filters
+        // Show/hide clear filters button
         const clearBtn = document.getElementById('clear-filters-btn');
         if (clearBtn) {
             clearBtn.style.display = activeFilters.length > 0 ? 'inline-block' : 'none';
@@ -2274,6 +2390,9 @@
                 }
             }
         });
+
+        // Update pagination
+        updatePagination(filteredBooks);
     }
 
     function updateSearchResults(filteredCount, totalCount, activeFilters) {
@@ -2290,24 +2409,33 @@
                 
                 if (activeFilters.length > 0) {
                     html += ` • Filters: ${activeFilters.join(', ')}`;
-                }
-                
+                }                
                 html += `</div>`;
                 
                 resultsInfo.innerHTML = html;
                 resultsInfo.style.display = 'block';
             }
         }
-    }    // Initialize search input handler
+    }
+
+    // Initialize search input handler with debouncing
     function initializeSearchInput() {
         const searchInput = document.getElementById('book-search-input');
         if (searchInput) {
+            let searchTimeout;
             searchInput.addEventListener('input', function(e) {
-                currentFilters.search = e.target.value;
-                applyFilters();
+                // Clear previous timeout
+                clearTimeout(searchTimeout);
+                  // Debounce search input to avoid excessive filtering
+                searchTimeout = setTimeout(() => {
+                    currentFilters.search = e.target.value;
+                    applyFilters();
+                }, 300); // 300ms delay
             });
         }
-    }    // Initialize dropdowns and search after page load
+    }
+
+    // Initialize dropdowns and search after page load
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Materialize dropdowns
         M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {
@@ -2367,11 +2495,343 @@
         }
     }
 
-    // Auto-refresh data every 5 minutes
-    setInterval(function () {
-        location.reload();
-    }, 300000);
-    </script>
+    // Pagination functions
+    // currentPage = 1;
+    booksPerPage = 0;
+
+    function changePage(delta) {
+        const newPage = currentPage + delta;
+        const totalPages = Math.ceil(allBooksData.length / booksPerPage);
+
+        if (newPage < 1 || newPage > totalPages) {
+            return;
+        }
+
+        currentPage = newPage;
+        updateBookDisplay(getCurrentPageBooks());
+        updatePaginationControls();
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        updateBookDisplay(getCurrentPageBooks());
+        updatePaginationControls();
+    }
+
+    function changeBooksPerPage() {
+        const select = document.getElementById('books-per-page');
+        booksPerPage = parseInt(select.value, 10);
+        currentPage = 1; // Reset to first page
+        updateBookDisplay(getCurrentPageBooks());
+        updatePaginationControls();
+    }
+
+    function getCurrentPageBooks() {
+        const start = (currentPage - 1) * booksPerPage;
+        const end = start + booksPerPage;
+        return allBooksData.slice(start, end);
+    }
+
+    function updatePaginationControls() {
+        const totalPages = Math.ceil(allBooksData.length / booksPerPage);
+        const paginationContainer = document.getElementById('pagination-container');
+        const prevPageButton = document.getElementById('prev-page');
+        const nextPageButton = document.getElementById('next-page');
+
+        // Update pagination info text
+        const paginationInfoText = document.getElementById('pagination-info-text');
+        if (paginationInfoText) {
+            paginationInfoText.textContent = `Showing page ${currentPage} of ${totalPages}`;
+        }
+
+        // Show/hide pagination container
+        if (totalPages > 1) {
+            paginationContainer.style.display = 'block';
+        } else {
+            paginationContainer.style.display = 'none';
+        }
+
+        // Update active/inactive state of page buttons
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.getElementById(`page-${i}`);
+            if (pageButton) {
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                    pageButton.classList.remove('waves-effect');
+                } else {
+                    pageButton.classList.remove('active');
+                    pageButton.classList.add('waves-effect');
+                }
+            }
+        }
+
+        // Disable prev/next buttons if on first/last page
+        if (prevPageButton) {
+            if (currentPage === 1) {
+                prevPageButton.classList.add('disabled');
+            } else {
+                prevPageButton.classList.remove('disabled');
+            }
+        }
+
+        if (nextPageButton) {
+            if (currentPage === totalPages) {
+                nextPageButton.classList.add('disabled');
+            } else {
+                nextPageButton.classList.remove('disabled');
+            }
+        }
+    }
+
+    // Pagination Functions
+    function updatePagination() {
+        totalPages = booksPerPage === 0 ? 1 : Math.ceil(totalBooks / booksPerPage);
+        
+        // Show/hide pagination container
+        const paginationContainer = document.getElementById('pagination-container');
+        if (paginationContainer) {
+            paginationContainer.style.display = totalPages > 1 ? 'block' : 'none';
+        }
+        
+        // Update pagination info
+        const paginationInfo = document.getElementById('pagination-info-text');
+        if (paginationInfo) {
+            if (booksPerPage === 0) {
+                paginationInfo.textContent = `Showing all ${totalBooks} books`;
+            } else {
+                const startBook = (currentPage - 1) * booksPerPage + 1;
+                const endBook = Math.min(currentPage * booksPerPage, totalBooks);
+                paginationInfo.textContent = `Showing ${startBook}-${endBook} of ${totalBooks} books (Page ${currentPage} of ${totalPages})`;
+            }
+        }
+        
+        // Update pagination buttons
+        updatePaginationButtons();
+    }
+    
+    function updatePaginationButtons() {
+        const prevButton = document.getElementById('prev-page');
+        const nextButton = document.getElementById('next-page');
+        
+        // Update prev button
+        if (prevButton) {
+            if (currentPage <= 1) {
+                prevButton.classList.add('disabled');
+            } else {
+                prevButton.classList.remove('disabled');
+            }
+        }
+        
+        // Update next button
+        if (nextButton) {
+            if (currentPage >= totalPages) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
+            }
+        }
+        
+        // Update page number buttons (showing current page and surrounding pages)
+        const pageButtons = document.querySelectorAll('[id^="page-"]');
+        pageButtons.forEach(button => {
+            button.style.display = 'none';
+            button.classList.remove('active');
+        });
+        
+        // Show relevant page buttons
+        const maxPageButtons = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+        
+        // Adjust start if we're near the end
+        if (endPage - startPage + 1 < maxPageButtons) {
+            startPage = Math.max(1, endPage - maxPageButtons + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            let pageButton = document.getElementById(`page-${i}`);
+            if (!pageButton) {
+                // Create new page button if it doesn't exist
+                pageButton = document.createElement('li');
+                pageButton.id = `page-${i}`;
+                pageButton.innerHTML = `<a href="#!" onclick="goToPage(${i})">${i}</a>`;
+                
+                // Insert before next button
+                const nextButton = document.getElementById('next-page');
+                if (nextButton) {
+                    nextButton.parentNode.insertBefore(pageButton, nextButton);
+                }
+            }
+            
+            pageButton.style.display = 'inline-block';
+            if (i === currentPage) {
+                pageButton.classList.add('active');
+            } else {
+                pageButton.classList.remove('active');
+                pageButton.classList.add('waves-effect');
+            }
+        }
+    }
+    
+    function renderCurrentPage() {
+        // Clear all containers
+        const gradeContainers = [
+            'unassigned-list', 'kindergarten-list', 'grade-1-list', 'grade-2-list',
+            'grade-3-list', 'grade-4-list', 'grade-5-list', 'grade-6-list',
+            'grade-7-list', 'grade-8-list', 'grade-9-list', 'grade-10-list',
+            'grade-11-list', 'grade-12-list'
+        ];
+        
+        gradeContainers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = '';
+            }
+        });
+        
+        // Get books for current page
+        let booksToShow;
+        if (booksPerPage === 0) {
+            booksToShow = allBooksDataPaginated;
+        } else {
+            const startIndex = (currentPage - 1) * booksPerPage;
+            const endIndex = startIndex + booksPerPage;
+            booksToShow = allBooksDataPaginated.slice(startIndex, endIndex);
+        }
+        
+        // Group books by grade
+        const gradeMapping = {
+            'Unassigned': 'unassigned-list',
+            'Kindergarten': 'kindergarten-list',
+            '1st Grade': 'grade-1-list',
+            '2nd Grade': 'grade-2-list',
+            '3rd Grade': 'grade-3-list',
+            '4th Grade': 'grade-4-list',
+            '5th Grade': 'grade-5-list',
+            '6th Grade': 'grade-6-list',
+            '7th Grade': 'grade-7-list',
+            '8th Grade': 'grade-8-list',
+            '9th Grade': 'grade-9-list',
+            '10th Grade': 'grade-10-list',
+            '11th Grade': 'grade-11-list',
+            '12th Grade': 'grade-12-list'
+        };
+        
+        // Group books by grade for this page
+        const booksByGrade = {};
+        Object.keys(gradeMapping).forEach(grade => {
+            booksByGrade[grade] = [];
+        });
+        
+        booksToShow.forEach(book => {
+            const grade = book.assigned_grade || 'Unassigned';
+            if (booksByGrade[grade]) {
+                booksByGrade[grade].push(book);
+            } else {
+                booksByGrade['Unassigned'].push(book);
+            }
+        });
+        
+        // Render books for each grade
+        Object.entries(booksByGrade).forEach(([gradeName, books]) => {
+            const containerId = gradeMapping[gradeName];
+            const container = document.getElementById(containerId);
+            
+            if (container && books.length > 0) {
+                let gradeHTML = '';
+                books.forEach(bookData => {
+                    gradeHTML += generateBookHTML(bookData);
+                });
+                container.innerHTML = gradeHTML;
+            }
+        });
+        
+        // Initialize Material Design components
+        M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
+        M.Collapsible.init(document.querySelectorAll('.collapsible'));
+        
+        // Initialize lazy loading for new images
+        initializeLazyImageLoading();
+    }
+    
+    function changePage(direction) {
+        const newPage = currentPage + direction;
+        if (newPage >= 1 && newPage <= totalPages) {
+            currentPage = newPage;
+            updatePagination();
+            renderCurrentPage();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+    
+    function goToPage(pageNumber) {        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            currentPage = pageNumber;
+            updatePagination();
+            renderCurrentPage();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+    
+    function changeBooksPerPage() {
+        const select = document.getElementById('books-per-page');
+        if (select) {
+            booksPerPage = parseInt(select.value);
+            currentPage = 1; // Reset to first page
+            updatePagination();
+            renderCurrentPage();
+        }
+    }
+
+    // Initialize dropdowns and search after page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Materialize dropdowns
+        M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {
+            coverTrigger: false,
+            constrainWidth: false
+        });
+        
+        // Initialize search input
+        initializeSearchInput();
+          // Initialize mobile grade chips
+        initializeMobileGradeChips();
+          // Debug: Check grades after page load
+        setTimeout(() => {
+            console.log('=== GRADE DEBUG ===');
+            if (typeof allBooksDataPaginated !== 'undefined') {
+                console.log('Total books loaded:', allBooksDataPaginated.length);
+                const gradeCount = {};
+                allBooksDataPaginated.forEach(book => {
+                    const grade = book.assigned_grade || 'Unassigned';
+                    gradeCount[grade] = (gradeCount[grade] || 0) + 1;
+                });
+                console.log('Books by grade in allBooksDataPaginated:', gradeCount);
+                
+                // Check specific grade containers
+                ['Kindergarten', '4th Grade', '5th Grade', '6th Grade'].forEach(grade => {
+                    const containerMap = {
+                        'Kindergarten': 'kindergarten-list',
+                        '4th Grade': 'grade-4-list', 
+                        '5th Grade': 'grade-5-list', 
+                        '6th Grade': 'grade-6-list'
+                    };
+                    const container = document.getElementById(containerMap[grade]);
+                    if (container) {
+                        console.log(`${grade} container innerHTML length:`, container.innerHTML.length);
+                        console.log(`${grade} first 100 chars:`, container.innerHTML.substring(0, 100));
+                    } else {
+                        console.log(`${grade} container not found!`);
+                    }
+                });
+            } else {
+                console.log('allBooksDataPaginated not defined');
+            }
+        }, 3000);
+    });
+</script>
 </body>
 
 </html>
