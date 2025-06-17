@@ -653,19 +653,17 @@
         /* Responsive grid for book cards */
         @media (min-width: 600px) {
             .grade-list {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 992px) {
-            .grade-list {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(1, 1fr);
             }
         }
         
         @media (min-width: 1200px) {
+            .container {
+                width: 80%;
+                max-width: none;
+            }
             .grade-list {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
           /* Book card container adjustments */
@@ -689,6 +687,10 @@
         .desktop-book-info {
             flex: 1;
             min-width: 0;
+        }
+        .desktop-book-info-holder {
+            display: flex;
+            flex-direction: row;
         }
         
         .desktop-book-price {
@@ -864,6 +866,14 @@
         @media only screen and (min-width: 993px) {
             .stats-grid .card-panel {
                 margin: 0.25rem 0;
+            }
+        }
+        @media only screen and (min-width: 1880px) {
+            .stats-grid .card-panel {
+                margin: 0.25rem 0;
+            }
+            .grade-list {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -1481,11 +1491,9 @@
             bookData.best_price_url 
                 ? `<a href="${bookData.best_price_url}" target="_blank" class="btn-large ${priceClass} waves-effect waves-light" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
                     <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">$${bestPrice.toFixed(2)}</div>
-                    <div style="font-size: 0.8rem; opacity: 0.9;">Best Price</div>
                    </a>`
                 : `<div class="btn-large ${priceClass} disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
                     <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.2;">$${bestPrice.toFixed(2)}</div>
-                    <div style="font-size: 0.8rem; opacity: 0.9;">Best Price</div>
                    </div>`
         ) : `<div class="btn-large grey disabled" style="margin-bottom: 0.5rem; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; width: 100%;">
                 <div style="font-size: 1.2rem; font-weight: 600; line-height: 1.2;">N/A</div>
@@ -1518,12 +1526,19 @@
                         </div>
                         
                         <!-- Book Info Section -->
-                        <div class="desktop-book-info">
-                            <h6 class="book-title" style="margin: 0 0 0.5rem 0;">${bookData.title}</h6>
-                            <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
-                                <span class="isbn-code">${isbnText}</span>
-                            </p>
-                            
+                        <div>
+                            <div class="desktop-book-info-holder">
+                                <div class="desktop-book-info">
+                                    <h6 class="book-title" style="margin: 0 0 0.5rem 0;">${bookData.title}</h6>
+                                    <p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">
+                                        <span class="isbn-code">${isbnText}</span>
+                                    </p>
+
+                                    </div>
+                                <!-- Price Section -->
+                                <div class="desktop-book-price">${bestPriceButton}</div>
+                            </div>
+
                             <!-- Book Stats Grid -->
                             <div class="desktop-stats-grid">
                                 <div class="stat-item">
@@ -1543,9 +1558,6 @@
                                 <div class="stat-item">${highestPriceDisplay}</div>
                             </div>
                         </div>
-                          
-                        <!-- Price Section -->
-                        <div class="desktop-book-price">${bestPriceButton}</div>
                     </div>
                     
                     <!-- Mobile Layout (visible only on small screens) -->
